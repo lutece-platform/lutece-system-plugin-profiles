@@ -1,0 +1,19 @@
+<div class="content-box" >
+
+    <h2>#i18n{profiles.create_profile.pageTitle}</h2>
+			       
+    <form method="post" name="create_profile" action="jsp/admin/plugins/profiles/DoCreateProfile.jsp">
+        <p>
+            <label for="profile_key" >#i18n{profiles.create_profile.key} * :</label>
+            <input type="text" id="profile_key" name="profile_key" tabindex="1" size="20" maxlength="50" />			
+        </p>
+        <p>
+            <label for="profile_description" >#i18n{profiles.create_profile.description} * :</label>
+            <input type="text" id="profile_description" name="profile_description" tabindex="1" size="50" maxlength="255" />			
+        </p>
+        <p>
+            <input type="submit" value="#i18n{profiles.create_profile.buttonLabelCreate}" tabindex="10" class="button" />
+            <input class="button" type="button" onclick="javascript:history.go(-1)" value="#i18n{portal.admin.message.buttonCancel}" />
+        </p>
+    </form>
+</div>

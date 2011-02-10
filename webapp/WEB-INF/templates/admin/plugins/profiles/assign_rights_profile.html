@@ -1,0 +1,121 @@
+<div id="left">
+    <div class="content-box" >
+    	<h2>#i18n{profiles.assign_rights_profile.profileKey} : ${profile.key}</h2>
+        <table>
+            <tr>
+                <th>
+                     #i18n{profiles.assign_rights_profile.profileDescription}
+                </th>
+            </tr>
+            <tr>
+                <td>
+                    ${profile.description}
+                </td>
+            </tr>
+            <tr>
+                <th>
+                     #i18n{profiles.assign_rights_profile.numberRights}
+                </th>
+            </tr>
+            <tr>
+                <td>
+                    ${assigned_number}
+                </td>
+            </tr>
+            <tr>
+                <th>
+                     #i18n{profiles.assign_rights_profile.actions}
+                </th>
+            </tr>
+            <tr>
+                <td>
+                	<@item_navigation item_navigator=item_navigator />
+                	<#if profile.actions?exists>
+						<#list profile.actions as action>
+						 	<a href="${action.url}?profile_key=${profile.key}">
+						  		<img src="${action.iconUrl}" alt="${action.name}" title="${action.description}">
+						  	</a>
+						</#list>
+					</#if>
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>
+<div id="right">
+	<div class="content-box">
+	    <h2>#i18n{profiles.assign_rights_profile.pageTitle}</h2>
+	    <div class="multibox"  width="100%">
+		     <#if available_list?size &gt; 0 >
+		     	<form name="assign-rights-profile" method="post" action="jsp/admin/plugins/profiles/DoAssignRightsProfile.jsp">		
+		        	<table width="100%" >
+			            <tr>
+			                <th>
+			                    #i18n{profiles.assign_rights_profile.labelAvailableRights}
+			                </th>
+			            </tr>
+			            
+		                <tr>
+		                 	<td>
+		                    	<@comboWithParamsAndLength name="rights_list" default_value="" additionalParameters="multiple='multiple' size='10' style='width:100%;'" items=available_list?sort_by('name') max_length=175 />		    
+		                    </td>					
+		                </tr>
+		                <tr>
+		                    <td align="center">
+		                    	<#if permission>
+			                        <input type="submit" value="#i18n{profiles.assign_rights_profile.labelButtonValidate}" class="button" />
+								</#if>
+								<input type="submit" name="cancel" value="#i18n{portal.admin.message.buttonCancel}" class="button"/>
+								<input type="hidden" name="profile_key" value="${profile.key}" />
+		                    </td>
+		                </tr>
+			        </table>	
+		    	</form>
+	    	<#else>
+	    		<p>
+	          		#i18n{profiles.assign_rights_profile.noRightToAssign}
+	          	</p>
+	        </#if>
+	    </div>	
+	</div>
+	
+	<div class="content-box"> 
+		<h2>
+		    #i18n{profiles.assign_rights_profile.labelAssignedRights}
+		</h2>
+		        
+	    <#if assigned_list?size &gt; 0 >
+	    	<table width="80%">
+	    		 <tr>            
+		            <th>#i18n{profiles.assign_rights_profile.columnTitleName}</th>
+		            <th>#i18n{profiles.assign_rights_profile.columnTitleDescription}</th>
+		            <th>#i18n{profiles.assign_rights_profile.columnTitleLevel}</th>        
+		            <th>#i18n{profiles.assign_rights_profile.actions}</th>
+		        </tr>
+	        	<#list assigned_list?sort_by('name') as assigned_item>
+	        		<#if assigned_item_has_next || assigned_list?size = 1>
+	        			<#assign anchor = assigned_item_index>
+	        		<#else>
+	        			<#assign anchor = assigned_item_index - 1 >
+	        		</#if>
+		            <tr id="anchor-${assigned_item_index}">
+		                <td>${assigned_item.name}</td>
+		                <td>${assigned_item.description}</td>
+		                <td>${assigned_item.level}</td>
+	                    <td>
+	                    	<#if permission>
+				                <a href="jsp/admin/plugins/profiles/DoUnassignRightProfile.jsp?profile_key=${profile.key}&id_right=${assigned_item.id}&anchor=anchor-${anchor}" >
+				                    <img src="images/admin/skin/actions/delete.png" alt="#i18n{profiles.assign_rights_profile.actionUnassign}" title="#i18n{profiles.assign_rights_profile.actionUnassign}" />
+				                </a>
+				            </#if>
+	               		</td>
+		            </tr>
+	        	</#list>
+	   		</table>
+	    <#else>
+	    	<p>
+	    		#i18n{profiles.assign_rights_profile.noAssignedList}
+	    	</p>
+	    </#if>	    
+	</div>
+</div>

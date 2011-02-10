@@ -1,0 +1,19 @@
+<div class="content-box" >
+
+    <h2>#i18n{profiles.create_view.pageTitle}</h2>
+			       
+    <form method="post" name="create_view" action="jsp/admin/plugins/profiles/DoCreateView.jsp">
+        <p>
+            <label for="view_key" >#i18n{profiles.create_view.key} * :</label>
+            <input type="text" id="view_key" name="view_key" tabindex="1" size="20" maxlength="50" />			
+        </p>
+        <p>
+            <label for="view_description" >#i18n{profiles.create_view.description} * :</label>
+            <input type="text" id="view_description" name="view_description" tabindex="1" size="50" maxlength="255" />			
+        </p>
+        <p>
+            <input type="submit" value="#i18n{profiles.create_view.buttonLabelCreate}" tabindex="10" class="button" />
+            <input class="button" type="button" onclick="javascript:history.go(-1)" value="#i18n{portal.admin.message.buttonCancel}" />
+        </p>
+    </form>
+</div>

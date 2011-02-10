@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="ISO-8859-1" standalone="no"?><plug-in>
+    <!-- Plugin Informations --> 
+    <name>profiles</name>
+    <class>fr.paris.lutece.plugins.profiles.service.ProfilesPlugin</class>
+    <version>1.0.1</version>
+    <description>profiles.plugin.description</description>
+    <documentation/>
+    <installation/>
+    <changes/>
+    <user-guide/>
+    <description>profiles.plugin.description</description>
+    <provider>profiles.plugin.provider</provider>
+    <provider-url>http://lutece.paris.fr</provider-url>
+    <icon-url>images/admin/skin/plugins/profiles/profiles.png</icon-url>
+    <copyright>Copyright 2001-2010 Mairie de Paris</copyright>
+    <core-version-dependency>
+		<min-core-version>2.4.0</min-core-version>
+		<max-core-version/>	
+    </core-version-dependency>
+    <db-pool-required>1</db-pool-required>
+
+    <!--Administration interface parameters-->
+    <admin-features>	
+        <admin-feature>
+            <feature-id>PROFILES_MANAGEMENT</feature-id>
+            <feature-title>profiles.adminFeature.profiles_management.name</feature-title>
+            <feature-description>profiles.adminFeature.profiles_management.description</feature-description>
+            <feature-level>0</feature-level>
+            <feature-url>jsp/admin/plugins/profiles/ManageProfiles.jsp</feature-url>
+           	<feature-icon-url>images/admin/skin/plugins/profiles/profiles.png</feature-icon-url>
+           	<feature-documentation-url>jsp/admin/documentation/AdminDocumentation.jsp?doc=admin-profiles</feature-documentation-url>
+        </admin-feature>
+        <admin-feature>
+            <feature-id>PROFILES_VIEWS_MANAGEMENT</feature-id>
+            <feature-title>profiles.adminFeature.views_management.name</feature-title>
+            <feature-description>profiles.adminFeature.views_management.description</feature-description>
+            <feature-level>0</feature-level>
+            <feature-url>jsp/admin/plugins/profiles/ManageViews.jsp</feature-url>
+           	<feature-icon-url>images/admin/skin/plugins/profiles/views.png</feature-icon-url>
+           	<feature-documentation-url>jsp/admin/documentation/AdminDocumentation.jsp?doc=admin-profiles</feature-documentation-url>
+        </admin-feature>
+     </admin-features>
+     
+    <!-- RBAC Resources -->
+	<rbac-resource-types>
+		<rbac-resource-type>
+			<rbac-resource-type-class>
+				fr.paris.lutece.plugins.profiles.service.ProfilesResourceIdService
+			</rbac-resource-type-class>
+		</rbac-resource-type>
+		<rbac-resource-type>
+			<rbac-resource-type-class>
+				fr.paris.lutece.plugins.profiles.service.views.ViewsResourceIdService
+			</rbac-resource-type-class>
+		</rbac-resource-type>
+	</rbac-resource-types>
+</plug-in>
