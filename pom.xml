@@ -48,6 +48,6 @@
     <scm>
         <connection>scm:svn:http://dev.lutece.paris.fr/svn/lutece/portal/trunk/plugins/system/plugin-profiles</connection>
         <developerConnection>scm:svn:https://dev.lutece.paris.fr/svn/lutece/portal/trunk/plugins/system/plugin-profiles</developerConnection>
-        <url>http://dev.lutece.paris.fr/viewvc/portal/trunk/plugins/system/plugin-profiles</url>
+        <url>http://dev.lutece.paris.fr/viewvc/lutece/portal/trunk/plugins/system/plugin-profiles</url>
     </scm>
 </project>
