@@ -40,7 +40,7 @@ import java.util.Locale;
 import javax.servlet.http.HttpServletRequest;
 
 import fr.paris.lutece.plugins.profiles.service.ProfilesPlugin;
-import fr.paris.lutece.plugins.profiles.web.constants.ProfilesConstants;
+import fr.paris.lutece.plugins.profiles.utils.constants.ProfilesConstants;
 import fr.paris.lutece.portal.business.rbac.AdminRole;
 import fr.paris.lutece.portal.business.rbac.AdminRoleHome;
 import fr.paris.lutece.portal.business.right.Right;

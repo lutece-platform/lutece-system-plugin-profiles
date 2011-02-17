@@ -38,7 +38,7 @@ import java.net.URLEncoder;
 
 import javax.servlet.http.HttpServletRequest;
 
-import fr.paris.lutece.plugins.profiles.web.constants.ProfilesConstants;
+import fr.paris.lutece.plugins.profiles.utils.constants.ProfilesConstants;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.util.url.UrlItem;

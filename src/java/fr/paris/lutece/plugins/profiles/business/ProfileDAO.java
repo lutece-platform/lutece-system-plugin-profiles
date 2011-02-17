@@ -37,7 +37,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import fr.paris.lutece.plugins.profiles.business.views.View;
-import fr.paris.lutece.plugins.profiles.web.constants.ProfilesConstants;
+import fr.paris.lutece.plugins.profiles.utils.constants.ProfilesConstants;
 import fr.paris.lutece.portal.business.rbac.AdminRole;
 import fr.paris.lutece.portal.business.right.Right;
 import fr.paris.lutece.portal.business.user.AdminUser;

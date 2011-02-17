@@ -38,7 +38,7 @@ import java.util.Collection;
 import java.util.List;
 
 import fr.paris.lutece.plugins.profiles.business.Profile;
-import fr.paris.lutece.plugins.profiles.web.constants.ProfilesConstants;
+import fr.paris.lutece.plugins.profiles.utils.constants.ProfilesConstants;
 import fr.paris.lutece.portal.business.dashboard.DashboardFactory;
 import fr.paris.lutece.portal.business.dashboard.DashboardFilter;
 import fr.paris.lutece.portal.service.dashboard.IDashboardComponent;

@@ -52,7 +52,7 @@ import fr.paris.lutece.plugins.profiles.business.views.ViewHome;
 import fr.paris.lutece.plugins.profiles.service.ProfilesPlugin;
 import fr.paris.lutece.plugins.profiles.service.ProfilesResourceIdService;
 import fr.paris.lutece.plugins.profiles.service.ProfilesService;
-import fr.paris.lutece.plugins.profiles.web.constants.ProfilesConstants;
+import fr.paris.lutece.plugins.profiles.utils.constants.ProfilesConstants;
 import fr.paris.lutece.portal.business.rbac.AdminRole;
 import fr.paris.lutece.portal.business.rbac.AdminRoleHome;
 import fr.paris.lutece.portal.business.rbac.RBAC;

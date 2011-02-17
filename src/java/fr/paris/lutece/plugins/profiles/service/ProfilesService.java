@@ -49,7 +49,7 @@ import fr.paris.lutece.plugins.profiles.business.views.View;
 import fr.paris.lutece.plugins.profiles.business.views.ViewAction;
 import fr.paris.lutece.plugins.profiles.business.views.ViewActionHome;
 import fr.paris.lutece.plugins.profiles.business.views.ViewHome;
-import fr.paris.lutece.plugins.profiles.web.constants.ProfilesConstants;
+import fr.paris.lutece.plugins.profiles.utils.constants.ProfilesConstants;
 import fr.paris.lutece.portal.business.dashboard.DashboardFilter;
 import fr.paris.lutece.portal.business.dashboard.DashboardHome;
 import fr.paris.lutece.portal.business.user.AdminUser;
