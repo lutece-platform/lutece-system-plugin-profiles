@@ -31,7 +31,7 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.profiles.web.constants;
+package fr.paris.lutece.plugins.profiles.utils.constants;
 
 /**
  * 
