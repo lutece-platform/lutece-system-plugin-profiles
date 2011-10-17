@@ -38,7 +38,7 @@ package fr.paris.lutece.plugins.profiles.utils.constants;
  * ProfilesConstants
  *
  */
-public class ProfilesConstants 
+public final class ProfilesConstants 
 {
 	// Constants
 	public static final String EMPTY_STRING = "";
@@ -127,6 +127,15 @@ public class ProfilesConstants
     public static final String PARAMETER_DASHBOARD_COLUMN = "dashboard_column";
     public static final String PARAMETER_DASHBOARD_ORDER = "dashboard_order";
     public static final String PARAMETER_COLUMN = "column";
+    public static final String PARAMETER_MODIFY_PROFILE = "modify_profile";
+    public static final String PARAMETER_ASSIGN_RIGHT = "assign_right";
+    public static final String PARAMETER_ASSIGN_WORKGROUP = "assign_workgroup";
+    public static final String PARAMETER_ASSIGN_ROLE = "assign_role";
+    public static final String PARAMETER_ASSIGN_VIEW = "assign_view";
+    public static final String PARAMETER_ASSIGN_USER = "assign_user";
+    public static final String PARAMETER_MODIFY_VIEW = "modify_view";
+    public static final String PARAMETER_ASSIGN_PROFILE = "assign_profile";
+    public static final String PARAMETER_ASSIGN_DASHBOARD = "assign_dashboard";
     
     // MESSAGES
     public static final String MESSAGE_PROFILE_ALREADY_EXISTS = "profiles.message.profileAlreadyExists";
@@ -135,4 +144,11 @@ public class ProfilesConstants
     public static final String MESSAGE_VIEW_ALREADY_EXISTS = "profiles.message.viewAlreadyExists";
     public static final String MESSAGE_CONFIRM_REMOVE_VIEW = "profiles.message.confirmRemoveView";
     public static final String MESSAGE_DASHBOARD_NOT_FOUND = "portal.dashboard.message.dashboardNotFound";
+
+    /**
+     * Private constructor
+     */
+    private ProfilesConstants(  )
+    {
+    }
 }

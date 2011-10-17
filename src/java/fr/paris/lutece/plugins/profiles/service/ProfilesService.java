@@ -44,10 +44,12 @@ import java.util.Map;
 import fr.paris.lutece.plugins.profiles.business.Profile;
 import fr.paris.lutece.plugins.profiles.business.ProfileAction;
 import fr.paris.lutece.plugins.profiles.business.ProfileActionHome;
+import fr.paris.lutece.plugins.profiles.business.ProfileFilter;
 import fr.paris.lutece.plugins.profiles.business.ProfileHome;
 import fr.paris.lutece.plugins.profiles.business.views.View;
 import fr.paris.lutece.plugins.profiles.business.views.ViewAction;
 import fr.paris.lutece.plugins.profiles.business.views.ViewActionHome;
+import fr.paris.lutece.plugins.profiles.business.views.ViewFilter;
 import fr.paris.lutece.plugins.profiles.business.views.ViewHome;
 import fr.paris.lutece.plugins.profiles.utils.constants.ProfilesConstants;
 import fr.paris.lutece.portal.business.dashboard.DashboardFilter;
@@ -56,6 +58,7 @@ import fr.paris.lutece.portal.business.user.AdminUser;
 import fr.paris.lutece.portal.service.dashboard.DashboardService;
 import fr.paris.lutece.portal.service.dashboard.IDashboardComponent;
 import fr.paris.lutece.portal.service.plugin.Plugin;
+import fr.paris.lutece.portal.service.plugin.PluginService;
 import fr.paris.lutece.portal.service.rbac.RBACService;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.util.ReferenceList;
@@ -97,25 +100,26 @@ public class ProfilesService
     
     /**
      * Get the item navigator
+     * @param pFilter the profile filter
      * @param profile the profile
      * @param url the url
-     * @param plugin Plugin
      * @return the item navigator
      */
-    public ItemNavigator getItemNavigator( Profile profile, UrlItem url, Plugin plugin )
+    public ItemNavigator getItemNavigator( ProfileFilter pFilter, Profile profile, UrlItem url )
     {
-    	Map<Integer, String> listItem = new HashMap<Integer, String>(  );
-        Collection<Profile> listAllProfiles = ProfileHome.findAll( plugin );
-        int nMapKey = 1;
-        int nCurrentItemId = 1;
+    	Plugin plugin = PluginService.getPlugin( ProfilesPlugin.PLUGIN_NAME );
+    	List<String> listItem = new ArrayList<String>(  );
+        Collection<Profile> listAllProfiles = ProfileHome.findProfilesByFilter( pFilter, plugin );
+        int nIndex = 0;
+        int nCurrentItemId = 0;
         for( Profile allProfile : listAllProfiles )
         {
-    		listItem.put( nMapKey, allProfile.getKey(  ) );
+    		listItem.add( allProfile.getKey(  ) );
         	if( allProfile.getKey(  ).equals( profile.getKey(  ) ) )
         	{
-        		nCurrentItemId = nMapKey;
+        		nCurrentItemId = nIndex;
         	}
-        	nMapKey++;
+        	nIndex++;
         }
         return new ItemNavigator( listItem, nCurrentItemId, url.getUrl(  ), ProfilesConstants.PARAMETER_PROFILE_KEY );
     }
@@ -146,25 +150,26 @@ public class ProfilesService
     
     /**
      * Get the item navigator
+     * @param vFilter the view filter
      * @param view the view
      * @param url the url
-     * @param plugin Plugin
      * @return the item navigator
      */
-    public ItemNavigator getItemNavigator( View view, UrlItem url, Plugin plugin )
+    public ItemNavigator getItemNavigator( ViewFilter vFilter, View view, UrlItem url )
     {
-    	Map<Integer, String> listItem = new HashMap<Integer, String>(  );
-        Collection<View> listAllViews = ViewHome.findAll( plugin );
-        int nMapKey = 1;
-        int nCurrentItemId = 1;
+    	Plugin plugin = PluginService.getPlugin( ProfilesPlugin.PLUGIN_NAME );
+    	List<String> listItem = new ArrayList<String>(  );
+        Collection<View> listAllViews = ViewHome.findViewsByFilter( vFilter, plugin );
+        int nIndex = 0;
+        int nCurrentItemId = 0;
         for( View allView : listAllViews )
         {
-    		listItem.put( nMapKey, allView .getKey(  ) );
-        	if( allView .getKey(  ).equals( view.getKey(  ) ) )
+    		listItem.add( allView.getKey(  ) );
+        	if( allView.getKey(  ).equals( view.getKey(  ) ) )
         	{
-        		nCurrentItemId = nMapKey;
+        		nCurrentItemId = nIndex;
         	}
-        	nMapKey++;
+        	nIndex++;
         }
         return new ItemNavigator( listItem, nCurrentItemId, url.getUrl(  ), ProfilesConstants.PARAMETER_VIEW_KEY );
     }

@@ -103,10 +103,14 @@ public class ViewsJspBean extends PluginAdminPageJspBean
     private static final String JSP_ASSIGN_PROFILES_VIEW = "AssignProfilesView.jsp";
     private static final String JSP_URL_MANAGE_DASHBOARDS = "jsp/admin/plugins/profiles/ManageDashboards.jsp";
     private static final String JSP_MANAGE_DASHBOARDS = "ManageDashboards.jsp";
-    
+
+    // VARIABLES
     private int _nItemsPerPage;
     private int _nDefaultItemsPerPage;
     private String _strCurrentPageIndex;
+    private Map<String, ItemNavigator> _itemNavigators = new HashMap<String, ItemNavigator>(  );
+    private ProfilesService _profilesService = ProfilesService.getInstance(  );
+    private ViewFilter _vFilter;
 
     /**
      * Return views management
@@ -116,12 +120,15 @@ public class ViewsJspBean extends PluginAdminPageJspBean
 	public String getManageViews( HttpServletRequest request )
     {
         setPageTitleProperty( ProfilesConstants.PROPERTY_MANAGE_VIEWS_PAGETITLE );
+
+        // Reinit session
+        reinitItemNavigators(  );
         
         // FILTER
-        ViewFilter vFilter = new ViewFilter(  );
-        boolean bIsSearch = vFilter.setFilter( request );
+        _vFilter = new ViewFilter(  );
+        boolean bIsSearch = _vFilter.setFilter( request );
         
-        List<View> filteredViews = ( List<View> ) ViewHome.findViewsByFilter( vFilter, getPlugin(  ) );
+        List<View> filteredViews = ( List<View> ) ViewHome.findViewsByFilter( _vFilter, getPlugin(  ) );
                 
         // SORT
         String strSortedAttributeName = request.getParameter( Parameters.SORTED_ATTRIBUTE_NAME );
@@ -157,13 +164,13 @@ public class ViewsJspBean extends PluginAdminPageJspBean
         String strSortSearchAttribute = ProfilesConstants.EMPTY_STRING;
         if( bIsSearch )
         {
-        	vFilter.setUrlAttributes( url );
-        	strSortSearchAttribute = ProfilesConstants.AMPERSAND + vFilter.getUrlAttributes(  );
+        	_vFilter.setUrlAttributes( url );
+        	strSortSearchAttribute = ProfilesConstants.AMPERSAND + _vFilter.getUrlAttributes(  );
         }
 
         // PAGINATOR
-        LocalizedPaginator paginator = new LocalizedPaginator( filteredViews, _nItemsPerPage, url.getUrl(  ), Paginator.PARAMETER_PAGE_INDEX,
-                _strCurrentPageIndex, getLocale(  ) );
+        LocalizedPaginator<View> paginator = new LocalizedPaginator<View>( filteredViews, _nItemsPerPage,
+        		url.getUrl(  ), Paginator.PARAMETER_PAGE_INDEX, _strCurrentPageIndex, getLocale(  ) );
         
         // PERMISSIONS
         for( View view : filteredViews )
@@ -180,7 +187,7 @@ public class ViewsJspBean extends PluginAdminPageJspBean
         model.put( ProfilesConstants.MARK_NB_ITEMS_PER_PAGE, ProfilesConstants.EMPTY_STRING + _nItemsPerPage );
         model.put( ProfilesConstants.MARK_PAGINATOR, paginator );
         model.put( ProfilesConstants.MARK_LIST_VIEWS, paginator.getPageItems(  ) );
-        model.put( ProfilesConstants.MARK_SEARCH_FILTER, vFilter );
+        model.put( ProfilesConstants.MARK_SEARCH_FILTER, _vFilter );
         model.put( ProfilesConstants.MARK_SEARCH_IS_SEARCH, bIsSearch );
         model.put( ProfilesConstants.MARK_SORT_SEARCH_ATTRIBUTE, strSortSearchAttribute );
         model.put( ProfilesConstants.MARK_PERMISSION, bPermission );
@@ -325,7 +332,7 @@ public class ViewsJspBean extends PluginAdminPageJspBean
         UrlItem url = new UrlItem( strBaseUrl );
         
         // ITEM NAVIGATION
-        ItemNavigator itemNavigator = ProfilesService.getInstance(  ).getItemNavigator( view, url, getPlugin(  ) );
+        setItemNavigator( ProfilesConstants.PARAMETER_MODIFY_VIEW, view, url );
 
         // PERMISSIONS
     	List<ViewAction> listActions = ProfilesService.getInstance(  ).getListActions( getUser(  ), view, 
@@ -334,7 +341,7 @@ public class ViewsJspBean extends PluginAdminPageJspBean
         
         Map<String, Object> model = new HashMap<String, Object>(  );
         model.put( ProfilesConstants.MARK_VIEW, view );
-        model.put( ProfilesConstants.MARK_ITEM_NAVIGATOR, itemNavigator );
+        model.put( ProfilesConstants.MARK_ITEM_NAVIGATOR, _itemNavigators.get( ProfilesConstants.PARAMETER_MODIFY_VIEW ) );
         model.put( ProfilesConstants.MARK_PERMISSION, bPermission );
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_MODIFY_VIEW, getLocale(  ), model );
@@ -484,12 +491,12 @@ public class ViewsJspBean extends PluginAdminPageJspBean
         boolean bPermission = RBACService.isAuthorized( View.RESOURCE_TYPE, strViewKey, strPermission, getUser(  ) );
         
         // ITEM NAVIGATION
-        ItemNavigator itemNavigator = ProfilesService.getInstance(  ).getItemNavigator( view, url, getPlugin(  ) );
+        setItemNavigator( ProfilesConstants.PARAMETER_ASSIGN_PROFILE, view, url );
         
         // PAGINATOR
         url.addParameter( ProfilesConstants.PARAMETER_PROFILE_KEY, view.getKey(  ) );
-        LocalizedPaginator paginator = new LocalizedPaginator( listFilteredProfiles, _nItemsPerPage, url.getUrl(  ), Paginator.PARAMETER_PAGE_INDEX,
-                    _strCurrentPageIndex, getLocale(  ) );
+        LocalizedPaginator<Profile> paginator = new LocalizedPaginator<Profile>( listFilteredProfiles, _nItemsPerPage, 
+        		url.getUrl(  ), Paginator.PARAMETER_PAGE_INDEX, _strCurrentPageIndex, getLocale(  ) );
 
         // PERMISSIONS
     	List<ViewAction> listActions = ProfilesService.getInstance(  ).getListActions( getUser(  ), view, 
@@ -500,7 +507,7 @@ public class ViewsJspBean extends PluginAdminPageJspBean
         model.put( ProfilesConstants.MARK_AVAILABLE_LIST, listAvailableProfiles );
         model.put( ProfilesConstants.MARK_ASSIGNED_LIST, paginator.getPageItems(  ) );
         model.put( ProfilesConstants.MARK_ASSIGNED_NUMBER, listAssignedProfiles.size(  ) );
-        model.put( ProfilesConstants.MARK_ITEM_NAVIGATOR, itemNavigator );
+        model.put( ProfilesConstants.MARK_ITEM_NAVIGATOR, _itemNavigators.get( ProfilesConstants.PARAMETER_ASSIGN_PROFILE ) );
         model.put( ProfilesConstants.MARK_NB_ITEMS_PER_PAGE, ProfilesConstants.EMPTY_STRING + _nItemsPerPage );
         model.put( ProfilesConstants.MARK_PAGINATOR, paginator );
         model.put( ProfilesConstants.MARK_PERMISSION, bPermission );
@@ -618,7 +625,7 @@ public class ViewsJspBean extends PluginAdminPageJspBean
         UrlItem url = new UrlItem( strBaseUrl );
         
         // ITEM NAVIGATION
-        ItemNavigator itemNavigator = ProfilesService.getInstance(  ).getItemNavigator( view, url, getPlugin(  ) );
+        setItemNavigator( ProfilesConstants.PARAMETER_ASSIGN_DASHBOARD, view, url );
 
         // PERMISSIONS
     	List<ViewAction> listActions = ProfilesService.getInstance(  ).getListActions( getUser(  ), view, 
@@ -640,7 +647,7 @@ public class ViewsJspBean extends PluginAdminPageJspBean
 
 		model.put( ProfilesConstants.MARK_VIEW, view );
 		model.put( ProfilesConstants.MARK_PERMISSION, bPermission );
-		model.put( ProfilesConstants.MARK_ITEM_NAVIGATOR, itemNavigator );
+		model.put( ProfilesConstants.MARK_ITEM_NAVIGATOR, _itemNavigators.get( ProfilesConstants.PARAMETER_ASSIGN_DASHBOARD ) );
         
 		HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_MANAGE_DASHBOARDS, getLocale(  ), model );
 
@@ -782,4 +789,36 @@ public class ViewsJspBean extends PluginAdminPageJspBean
 		return JSP_MANAGE_DASHBOARDS + ProfilesConstants.INTERROGATION_MARK + 
 				ProfilesConstants.PARAMETER_VIEW_KEY + ProfilesConstants.EQUAL + strViewKey;
 	}
+
+	/**
+     * Get the item navigator
+     * @param strItemNavigatorKey the item navigator key
+     * @param view the view
+     * @param url the url
+     */
+    private void setItemNavigator( String strItemNavigatorKey, View view, UrlItem url )
+    {
+    	ItemNavigator itemNavigator = _itemNavigators.get( strItemNavigatorKey );
+    	if ( itemNavigator == null )
+    	{
+    		if ( _vFilter == null )
+    		{
+    			_vFilter = new ViewFilter(  );
+    		}
+    		itemNavigator = _profilesService.getItemNavigator( _vFilter, view, url );
+    	}
+    	else
+    	{
+    		itemNavigator.setCurrentItemId( view.getKey(  ) );
+    	}
+    	_itemNavigators.put( strItemNavigatorKey, itemNavigator );
+    }
+    
+    /**
+     * Reinit the item navigator
+     */
+    private void reinitItemNavigators(  )
+    {
+    	_itemNavigators = new HashMap<String, ItemNavigator>(  );
+    }
 }

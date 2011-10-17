@@ -132,10 +132,14 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
     private static final String JSP_ASSIGN_USERS_PROFILE = "AssignUsersProfile.jsp";
     private static final String JSP_URL_ASSIGN_VIEW_PROFILE = "jsp/admin/plugins/profiles/AssignViewProfile.jsp";
     private static final String JSP_ASSIGN_VIEW_PROFILE = "AssignViewProfile.jsp";
-    
+
+    // VARIABLES
     private int _nItemsPerPage;
     private int _nDefaultItemsPerPage;
     private String _strCurrentPageIndex;
+    private Map<String, ItemNavigator> _itemNavigators = new HashMap<String, ItemNavigator>(  );
+    private ProfilesService _profilesService = ProfilesService.getInstance(  );
+    private ProfileFilter _pFilter;
 
     /**
      * Return management page of plugin profiles
@@ -146,11 +150,14 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
     {
         setPageTitleProperty( ProfilesConstants.PROPERTY_MANAGE_PROFILES_PAGETITLE );
         
-        // FILTER
-        ProfileFilter pFilter = new ProfileFilter(  );
-        boolean bIsSearch = pFilter.setFilter( request );
+        // Reinit item navigator
+        reinitItemNavigators(  );
         
-        List<Profile> filteredProfiles = ( List<Profile> ) ProfileHome.findProfilesByFilter( pFilter, getPlugin(  ) );
+        // FILTER
+        _pFilter = new ProfileFilter(  );
+        boolean bIsSearch = _pFilter.setFilter( request );
+        
+        List<Profile> filteredProfiles = ( List<Profile> ) ProfileHome.findProfilesByFilter( _pFilter, getPlugin(  ) );
                 
         // SORT
         String strSortedAttributeName = request.getParameter( Parameters.SORTED_ATTRIBUTE_NAME );
@@ -186,13 +193,13 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
         String strSortSearchAttribute = ProfilesConstants.EMPTY_STRING;
         if( bIsSearch )
         {
-        	pFilter.setUrlAttributes( url );
-        	strSortSearchAttribute = ProfilesConstants.AMPERSAND + pFilter.getUrlAttributes(  );
+        	_pFilter.setUrlAttributes( url );
+        	strSortSearchAttribute = ProfilesConstants.AMPERSAND + _pFilter.getUrlAttributes(  );
         }
 
         // PAGINATOR
-        LocalizedPaginator paginator = new LocalizedPaginator( filteredProfiles, _nItemsPerPage, url.getUrl(  ), Paginator.PARAMETER_PAGE_INDEX,
-                _strCurrentPageIndex, getLocale(  ) );
+        LocalizedPaginator<Profile> paginator = new LocalizedPaginator<Profile>( filteredProfiles, _nItemsPerPage, 
+        		url.getUrl(  ), Paginator.PARAMETER_PAGE_INDEX, _strCurrentPageIndex, getLocale(  ) );
         
         // PERMISSIONS
         for( Profile profile : filteredProfiles )
@@ -209,7 +216,7 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
         model.put( ProfilesConstants.MARK_NB_ITEMS_PER_PAGE, ProfilesConstants.EMPTY_STRING + _nItemsPerPage );
         model.put( ProfilesConstants.MARK_PAGINATOR, paginator );
         model.put( ProfilesConstants.MARK_LIST_PROFILES, paginator.getPageItems(  ) );
-        model.put( ProfilesConstants.MARK_SEARCH_FILTER, pFilter );
+        model.put( ProfilesConstants.MARK_SEARCH_FILTER, _pFilter );
         model.put( ProfilesConstants.MARK_SEARCH_IS_SEARCH, bIsSearch );
         model.put( ProfilesConstants.MARK_SORT_SEARCH_ATTRIBUTE, strSortSearchAttribute );
         model.put( ProfilesConstants.MARK_PERMISSION, bPermission );
@@ -384,7 +391,7 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
         UrlItem url = new UrlItem( strBaseUrl );
         
         // ITEM NAVIGATION
-        ItemNavigator itemNavigator = ProfilesService.getInstance(  ).getItemNavigator( profile, url, getPlugin(  ) );
+        setItemNavigator( ProfilesConstants.PARAMETER_MODIFY_PROFILE, profile, url );
 
         // PERMISSIONS
     	List<ProfileAction> listActions = ProfilesService.getInstance(  ).getListActions( getUser(  ), profile, 
@@ -393,7 +400,7 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
         
         Map<String, Object> model = new HashMap<String, Object>(  );
         model.put( ProfilesConstants.MARK_PROFILE, profile );
-        model.put( ProfilesConstants.MARK_ITEM_NAVIGATOR, itemNavigator );
+        model.put( ProfilesConstants.MARK_ITEM_NAVIGATOR, _itemNavigators.get( ProfilesConstants.PARAMETER_MODIFY_PROFILE ) );
         model.put( ProfilesConstants.MARK_PERMISSION, bPermission );
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_MODIFY_PROFILE, getLocale(  ), model );
@@ -456,7 +463,7 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
      * @return the html code for display the modes list
      */
     public String getAssignRightsProfile( HttpServletRequest request )
-    {    	
+    {
         Map<String, Object> model = new HashMap<String, Object>(  );
         setPageTitleProperty( ProfilesConstants.PROPERTY_ASSIGN_RIGHTS_PROFILE_PAGETITLE );
 
@@ -515,7 +522,7 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
         UrlItem url = new UrlItem( strBaseUrl );
         
         // ITEM NAVIGATION
-        ItemNavigator itemNavigator = ProfilesService.getInstance(  ).getItemNavigator( profile, url, getPlugin(  ) );
+        setItemNavigator( ProfilesConstants.PARAMETER_ASSIGN_RIGHT, profile, url );
 
         // PERMISSIONS
     	List<ProfileAction> listActions = ProfilesService.getInstance(  ).getListActions( getUser(  ), profile, 
@@ -526,7 +533,7 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
         model.put( ProfilesConstants.MARK_AVAILABLE_LIST, listAvailableRights );
         model.put( ProfilesConstants.MARK_ASSIGNED_LIST, listAssignedRights );
         model.put( ProfilesConstants.MARK_ASSIGNED_NUMBER, listAssignedRights.size(  ) );
-        model.put( ProfilesConstants.MARK_ITEM_NAVIGATOR, itemNavigator );
+        model.put( ProfilesConstants.MARK_ITEM_NAVIGATOR, _itemNavigators.get( ProfilesConstants.PARAMETER_ASSIGN_RIGHT ) );
         model.put( ProfilesConstants.MARK_PERMISSION, bPermission );
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_ASSIGN_RIGHTS_PROFILE, getLocale(  ), model );
@@ -755,12 +762,12 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
         boolean bPermission = RBACService.isAuthorized( Profile.RESOURCE_TYPE, strProfileKey, strPermission, getUser(  ) );
         
         // ITEM NAVIGATION
-        ItemNavigator itemNavigator = ProfilesService.getInstance(  ).getItemNavigator( profile, url, getPlugin(  ) );
+        setItemNavigator( ProfilesConstants.PARAMETER_ASSIGN_WORKGROUP, profile, url );
         
         // PAGINATOR
         url.addParameter( ProfilesConstants.PARAMETER_PROFILE_KEY, profile.getKey(  ) );
-        LocalizedPaginator paginator = new LocalizedPaginator( listFilteredWorkgroups, _nItemsPerPage, url.getUrl(  ), Paginator.PARAMETER_PAGE_INDEX,
-                    _strCurrentPageIndex, getLocale(  ) );
+        LocalizedPaginator<AdminWorkgroup> paginator = new LocalizedPaginator<AdminWorkgroup>( listFilteredWorkgroups, 
+        		_nItemsPerPage, url.getUrl(  ), Paginator.PARAMETER_PAGE_INDEX, _strCurrentPageIndex, getLocale(  ) );
 
         // PERMISSIONS
     	List<ProfileAction> listActions = ProfilesService.getInstance(  ).getListActions( getUser(  ), profile, 
@@ -771,7 +778,7 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
         model.put( ProfilesConstants.MARK_AVAILABLE_LIST, listAvailableWorkgroups );
         model.put( ProfilesConstants.MARK_ASSIGNED_LIST, paginator.getPageItems(  ) );
         model.put( ProfilesConstants.MARK_ASSIGNED_NUMBER, listAssignedWorkgroups.size(  ) );
-        model.put( ProfilesConstants.MARK_ITEM_NAVIGATOR, itemNavigator );
+        model.put( ProfilesConstants.MARK_ITEM_NAVIGATOR, _itemNavigators.get( ProfilesConstants.PARAMETER_ASSIGN_WORKGROUP ) );
         model.put( ProfilesConstants.MARK_NB_ITEMS_PER_PAGE, ProfilesConstants.EMPTY_STRING + _nItemsPerPage );
         model.put( ProfilesConstants.MARK_PAGINATOR, paginator );
         model.put( ProfilesConstants.MARK_SEARCH_IS_SEARCH, bIsSearch );
@@ -966,12 +973,12 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
         boolean bPermission = RBACService.isAuthorized( Profile.RESOURCE_TYPE, strProfileKey, strPermission, getUser(  ) );
         
         // ITEM NAVIGATION
-        ItemNavigator itemNavigator = ProfilesService.getInstance(  ).getItemNavigator( profile, url, getPlugin(  ) );
+        setItemNavigator( ProfilesConstants.PARAMETER_ASSIGN_ROLE, profile, url );
         
         // PAGINATOR
         url.addParameter( ProfilesConstants.PARAMETER_PROFILE_KEY, profile.getKey(  ) );
-        LocalizedPaginator paginator = new LocalizedPaginator( listAssignedRoles, _nItemsPerPage, url.getUrl(  ), Paginator.PARAMETER_PAGE_INDEX,
-                    _strCurrentPageIndex, getLocale(  ) );
+        LocalizedPaginator<AdminRole> paginator = new LocalizedPaginator<AdminRole>( listAssignedRoles, _nItemsPerPage, 
+        		url.getUrl(  ), Paginator.PARAMETER_PAGE_INDEX, _strCurrentPageIndex, getLocale(  ) );
 
         // PERMISSIONS
     	List<ProfileAction> listActions = ProfilesService.getInstance(  ).getListActions( getUser(  ), profile, 
@@ -983,7 +990,7 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
         model.put( ProfilesConstants.MARK_AVAILABLE_LIST, listAvailableRoles );
         model.put( ProfilesConstants.MARK_ASSIGNED_LIST, paginator.getPageItems(  ) );
         model.put( ProfilesConstants.MARK_ASSIGNED_NUMBER, listAssignedRoles.size(  ) );
-        model.put( ProfilesConstants.MARK_ITEM_NAVIGATOR, itemNavigator );
+        model.put( ProfilesConstants.MARK_ITEM_NAVIGATOR, _itemNavigators.get( ProfilesConstants.PARAMETER_ASSIGN_ROLE ) );
         model.put( ProfilesConstants.MARK_NB_ITEMS_PER_PAGE, ProfilesConstants.EMPTY_STRING + _nItemsPerPage );
         model.put( ProfilesConstants.MARK_PAGINATOR, paginator );
         model.put( ProfilesConstants.MARK_PERMISSION, bPermission );
@@ -1185,11 +1192,11 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
         boolean bPermission = RBACService.isAuthorized( Profile.RESOURCE_TYPE, strProfileKey, strPermission, getUser(  ) );
         
         // ITEM NAVIGATION
-        ItemNavigator itemNavigator = ProfilesService.getInstance(  ).getItemNavigator( profile, url, getPlugin(  ) );
+        setItemNavigator( ProfilesConstants.PARAMETER_ASSIGN_USER, profile, url );
         
         // PAGINATOR
         url.addParameter( ProfilesConstants.PARAMETER_PROFILE_KEY, profile.getKey(  ) );
-        LocalizedPaginator paginator = new LocalizedPaginator( listFilteredUsers, _nItemsPerPage, url.getUrl(  ), Paginator.PARAMETER_PAGE_INDEX,
+        LocalizedPaginator<AdminUser> paginator = new LocalizedPaginator<AdminUser>( listFilteredUsers, _nItemsPerPage, url.getUrl(  ), Paginator.PARAMETER_PAGE_INDEX,
                     _strCurrentPageIndex, getLocale(  ) );
         
         // USER LEVEL
@@ -1231,7 +1238,7 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
         model.put( ProfilesConstants.MARK_AVAILABLE_LIST, listAvailableUsers );
         model.put( ProfilesConstants.MARK_ASSIGNED_LIST, paginator.getPageItems(  ) );
         model.put( ProfilesConstants.MARK_ASSIGNED_NUMBER, listAssignedUsers.size(  ) );
-        model.put( ProfilesConstants.MARK_ITEM_NAVIGATOR, itemNavigator );
+        model.put( ProfilesConstants.MARK_ITEM_NAVIGATOR, _itemNavigators.get( ProfilesConstants.PARAMETER_ASSIGN_USER ) );
         model.put( ProfilesConstants.MARK_NB_ITEMS_PER_PAGE, ProfilesConstants.EMPTY_STRING + _nItemsPerPage );
         model.put( ProfilesConstants.MARK_PAGINATOR, paginator );
         model.put( ProfilesConstants.MARK_PERMISSION, bPermission );
@@ -1405,7 +1412,7 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
         UrlItem url = new UrlItem( strBaseUrl );
         
         // ITEM NAVIGATION
-        ItemNavigator itemNavigator = ProfilesService.getInstance(  ).getItemNavigator( profile, url, getPlugin(  ) );
+        setItemNavigator( ProfilesConstants.PARAMETER_ASSIGN_VIEW, profile, url );
         
         // PERMISSIONS
     	List<ProfileAction> listActions = ProfilesService.getInstance(  ).getListActions( getUser(  ), profile, 
@@ -1414,7 +1421,7 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
         
         model.put( ProfilesConstants.MARK_PROFILE, profile );
         model.put( ProfilesConstants.MARK_AVAILABLE_LIST, listViews );
-        model.put( ProfilesConstants.MARK_ITEM_NAVIGATOR, itemNavigator );
+        model.put( ProfilesConstants.MARK_ITEM_NAVIGATOR, _itemNavigators.get( ProfilesConstants.PARAMETER_ASSIGN_VIEW ) );
         model.put( ProfilesConstants.MARK_PERMISSION, bPermission );
         model.put( ProfilesConstants.MARK_ASSIGNED_VIEW, assignedView );
         
@@ -1468,5 +1475,37 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
         }
         
         return strReturn;
+    }
+
+    /**
+     * Get the item navigator
+     * @param strItemNavigatorKey the item navigator key
+     * @param profile the profile
+     * @param url the url
+     */
+    private void setItemNavigator( String strItemNavigatorKey, Profile profile, UrlItem url )
+    {
+    	ItemNavigator itemNavigator = _itemNavigators.get( strItemNavigatorKey );
+    	if ( itemNavigator == null )
+    	{
+    		if ( _pFilter == null )
+    		{
+    			_pFilter = new ProfileFilter(  );
+    		}
+    		itemNavigator = _profilesService.getItemNavigator( _pFilter, profile, url );
+    	}
+    	else
+    	{
+    		itemNavigator.setCurrentItemId( profile.getKey(  ) );
+    	}
+    	_itemNavigators.put( strItemNavigatorKey, itemNavigator );
+    }
+    
+    /**
+     * Reinit the item navigator
+     */
+    private void reinitItemNavigators(  )
+    {
+    	_itemNavigators = new HashMap<String, ItemNavigator>(  );
     }
 }
