@@ -33,8 +33,6 @@
  */
 package fr.paris.lutece.plugins.profiles.service;
 
-import java.util.Locale;
-
 import fr.paris.lutece.plugins.profiles.business.Profile;
 import fr.paris.lutece.plugins.profiles.business.ProfileHome;
 import fr.paris.lutece.portal.service.plugin.Plugin;
@@ -45,47 +43,48 @@ import fr.paris.lutece.portal.service.rbac.ResourceType;
 import fr.paris.lutece.portal.service.rbac.ResourceTypeManager;
 import fr.paris.lutece.util.ReferenceList;
 
+import java.util.Locale;
+
+
 /**
- * 
+ *
  * Class ProfileResourceIdService
  *
  */
 public class ProfilesResourceIdService extends ResourceIdService
 {
-	public static final String PERMISSION_CREATE_PROFILE = "CREATE_PROFILE";
-	public static final String PERMISSION_MODIFY_PROFILE = "MODIFY_PROFILE";
-	public static final String PERMISSION_DELETE_PROFILE = "DELETE_PROFILE";
-	
-	public static final String PERMISSION_MANAGE_USERS_ASSIGNMENT = "MANAGE_USERS_ASSIGNMENT";
-	public static final String PERMISSION_MANAGE_RIGHTS_ASSIGNMENT = "MANAGE_RIGHTS_ASSIGNMENT";
-	public static final String PERMISSION_MANAGE_ROLES_ASSIGNMENT = "MANAGE_ROLES_ASSIGNMENT";
-	public static final String PERMISSION_MANAGE_WORKGROUPS_ASSIGNMENT = "MANAGE_WORKGROUPS_ASSIGNMENT";
-	public static final String PERMISSION_MANAGE_VIEW_ASSIGNMENT = "MANAGE_VIEW_ASSIGNMENT";
-	
-	private static final String PROPERTY_LABEL_RESOURCE_TYPE = "profiles.permission.label.resource_type_profile";
-	private static final String PROPERTY_LABEL_CREATE_PROFILE = "profiles.permission.label.create_profile";
-	private static final String PROPERTY_LABEL_MODIFY_PROFILE = "profiles.permission.label.modify_profile";
-	private static final String PROPERTY_LABEL_DELETE_PROFILE = "profiles.permission.label.delete_profile";
-	private static final String PROPERTY_LABEL_MANAGE_USERS_ASSIGNMENT = "profiles.permission.label.manage_users_assignment";
-	private static final String PROPERTY_LABEL_MANAGE_RIGHTS_ASSIGNMENT = "profiles.permission.label.manage_rights_assignment";
-	private static final String PROPERTY_LABEL_MANAGE_ROLES_ASSIGNMENT = "profiles.permission.label.manage_roles_assignment";
-	private static final String PROPERTY_LABEL_MANAGE_WORKGROUPS_ASSIGNMENT = "profiles.permission.label.manage_workgroups_assignment";
-	private static final String PROPERTY_LABEL_MANAGE_VIEW_ASSIGNMENT = "profiles.permission.label.manage_view_assignment";
-	
-	/**
-	 * Create a new instance of ProfilesResourceIdService
-	 */
-	public ProfilesResourceIdService(  )
-	{
-		setPluginName( ProfilesPlugin.PLUGIN_NAME );
-	}
-	
-	/**
-     * Initializes the service
+    public static final String PERMISSION_CREATE_PROFILE = "CREATE_PROFILE";
+    public static final String PERMISSION_MODIFY_PROFILE = "MODIFY_PROFILE";
+    public static final String PERMISSION_DELETE_PROFILE = "DELETE_PROFILE";
+    public static final String PERMISSION_MANAGE_USERS_ASSIGNMENT = "MANAGE_USERS_ASSIGNMENT";
+    public static final String PERMISSION_MANAGE_RIGHTS_ASSIGNMENT = "MANAGE_RIGHTS_ASSIGNMENT";
+    public static final String PERMISSION_MANAGE_ROLES_ASSIGNMENT = "MANAGE_ROLES_ASSIGNMENT";
+    public static final String PERMISSION_MANAGE_WORKGROUPS_ASSIGNMENT = "MANAGE_WORKGROUPS_ASSIGNMENT";
+    public static final String PERMISSION_MANAGE_VIEW_ASSIGNMENT = "MANAGE_VIEW_ASSIGNMENT";
+    private static final String PROPERTY_LABEL_RESOURCE_TYPE = "profiles.permission.label.resource_type_profile";
+    private static final String PROPERTY_LABEL_CREATE_PROFILE = "profiles.permission.label.create_profile";
+    private static final String PROPERTY_LABEL_MODIFY_PROFILE = "profiles.permission.label.modify_profile";
+    private static final String PROPERTY_LABEL_DELETE_PROFILE = "profiles.permission.label.delete_profile";
+    private static final String PROPERTY_LABEL_MANAGE_USERS_ASSIGNMENT = "profiles.permission.label.manage_users_assignment";
+    private static final String PROPERTY_LABEL_MANAGE_RIGHTS_ASSIGNMENT = "profiles.permission.label.manage_rights_assignment";
+    private static final String PROPERTY_LABEL_MANAGE_ROLES_ASSIGNMENT = "profiles.permission.label.manage_roles_assignment";
+    private static final String PROPERTY_LABEL_MANAGE_WORKGROUPS_ASSIGNMENT = "profiles.permission.label.manage_workgroups_assignment";
+    private static final String PROPERTY_LABEL_MANAGE_VIEW_ASSIGNMENT = "profiles.permission.label.manage_view_assignment";
+
+    /**
+     * Create a new instance of ProfilesResourceIdService
      */
-	public void register(  ) 
-	{
-		ResourceType rt = new ResourceType(  );
+    public ProfilesResourceIdService(  )
+    {
+        setPluginName( ProfilesPlugin.PLUGIN_NAME );
+    }
+
+    /**
+    * Initializes the service
+    */
+    public void register(  )
+    {
+        ResourceType rt = new ResourceType(  );
         rt.setResourceIdServiceClass( ProfilesResourceIdService.class.getName(  ) );
         rt.setResourceTypeKey( Profile.RESOURCE_TYPE );
         rt.setResourceTypeLabelKey( PROPERTY_LABEL_RESOURCE_TYPE );
@@ -94,67 +93,68 @@ public class ProfilesResourceIdService extends ResourceIdService
         p.setPermissionKey( PERMISSION_CREATE_PROFILE );
         p.setPermissionTitleKey( PROPERTY_LABEL_CREATE_PROFILE );
         rt.registerPermission( p );
-        
+
         p = new Permission(  );
         p.setPermissionKey( PERMISSION_MODIFY_PROFILE );
         p.setPermissionTitleKey( PROPERTY_LABEL_MODIFY_PROFILE );
         rt.registerPermission( p );
-        
+
         p = new Permission(  );
         p.setPermissionKey( PERMISSION_DELETE_PROFILE );
         p.setPermissionTitleKey( PROPERTY_LABEL_DELETE_PROFILE );
         rt.registerPermission( p );
-        
+
         p = new Permission(  );
         p.setPermissionKey( PERMISSION_MANAGE_USERS_ASSIGNMENT );
         p.setPermissionTitleKey( PROPERTY_LABEL_MANAGE_USERS_ASSIGNMENT );
         rt.registerPermission( p );
-        
+
         p = new Permission(  );
         p.setPermissionKey( PERMISSION_MANAGE_RIGHTS_ASSIGNMENT );
         p.setPermissionTitleKey( PROPERTY_LABEL_MANAGE_RIGHTS_ASSIGNMENT );
         rt.registerPermission( p );
-        
+
         p = new Permission(  );
         p.setPermissionKey( PERMISSION_MANAGE_ROLES_ASSIGNMENT );
         p.setPermissionTitleKey( PROPERTY_LABEL_MANAGE_ROLES_ASSIGNMENT );
         rt.registerPermission( p );
-        
+
         p = new Permission(  );
         p.setPermissionKey( PERMISSION_MANAGE_WORKGROUPS_ASSIGNMENT );
         p.setPermissionTitleKey( PROPERTY_LABEL_MANAGE_WORKGROUPS_ASSIGNMENT );
         rt.registerPermission( p );
-        
+
         p = new Permission(  );
         p.setPermissionKey( PERMISSION_MANAGE_VIEW_ASSIGNMENT );
         p.setPermissionTitleKey( PROPERTY_LABEL_MANAGE_VIEW_ASSIGNMENT );
         rt.registerPermission( p );
 
         ResourceTypeManager.registerResourceType( rt );
-	}
-	
-	/**
-     * Returns a list of profiles resource ids
-     * @param locale The current locale
-     * @return A list of resource ids
-     */
-	public ReferenceList getResourceIdList( Locale locale ) 
-	{
-		Plugin plugin = PluginService.getPlugin( ProfilesPlugin.PLUGIN_NAME );
-		return ProfileHome.getProfilesList( plugin );
-	}
+    }
 
-	/**
-     * Returns the Title of a given resource
-     * @param strProfileKey the profile key
-     * @param locale The current locale
-     * @return The Title of a given resource
-     */
-	public String getTitle( String strProfileKey, Locale locale )
-	{
-		Plugin plugin = PluginService.getPlugin( ProfilesPlugin.PLUGIN_NAME );
-		Profile profile = ProfileHome.findByPrimaryKey( strProfileKey, plugin );
-		
-		return ( profile != null ) ? profile.getKey(  ) : null;
-	}
+    /**
+    * Returns a list of profiles resource ids
+    * @param locale The current locale
+    * @return A list of resource ids
+    */
+    public ReferenceList getResourceIdList( Locale locale )
+    {
+        Plugin plugin = PluginService.getPlugin( ProfilesPlugin.PLUGIN_NAME );
+
+        return ProfileHome.getProfilesList( plugin );
+    }
+
+    /**
+    * Returns the Title of a given resource
+    * @param strProfileKey the profile key
+    * @param locale The current locale
+    * @return The Title of a given resource
+    */
+    public String getTitle( String strProfileKey, Locale locale )
+    {
+        Plugin plugin = PluginService.getPlugin( ProfilesPlugin.PLUGIN_NAME );
+        Profile profile = ProfileHome.findByPrimaryKey( strProfileKey, plugin );
+
+        return ( profile != null ) ? profile.getKey(  ) : null;
+    }
 }

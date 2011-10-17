@@ -33,18 +33,19 @@
  */
 package fr.paris.lutece.plugins.profiles.utils.constants;
 
+
 /**
- * 
+ *
  * ProfilesConstants
  *
  */
-public final class ProfilesConstants 
+public final class ProfilesConstants
 {
-	// Constants
-	public static final String EMPTY_STRING = "";
-	public static final String EQUAL = "=";
-	public static final String AMPERSAND = "&";
-	public static final String PERCENT = "%";
+    // Constants
+    public static final String EMPTY_STRING = "";
+    public static final String EQUAL = "=";
+    public static final String AMPERSAND = "&";
+    public static final String PERCENT = "%";
     public static final String SPACE = " ";
     public static final String OPEN_BRACKET = "(";
     public static final String CLOSED_BRACKET = ")";
@@ -54,8 +55,8 @@ public final class ProfilesConstants
     public static final String LAST_NAME = "last_name";
     public static final String ALL = "ALL";
     public static final int CONSTANTE_FIRST_ORDER = 1;
-    
-	// PROPERTIES
+
+    // PROPERTIES
     public static final String PROPERTY_ENCODING_URL = "lutece.encoding.url";
     public static final String PROPERTY_MANAGE_PROFILES_PAGETITLE = "profiles.manage_profiles.pageTitle";
     public static final String PROPERTY_CREATE_PROFILE_PAGETITLE = "profiles.create_profile.pageTitle";
@@ -75,7 +76,7 @@ public final class ProfilesConstants
     public static final String PROPERTY_NO_MULTIPLE_VIEWS = "profiles.message.noMultipleViews";
     public static final String PROPERTY_ASSIGN_PROFILES_VIEW_PAGETITLE = "profiles.assign_profiles_view.pageTitle";
     public static final String PROPERTY_ASSIGN_VIEW_PROFILE_PAGETITLE = "profiles.assign_view_profile.pageTitle";
-    
+
     // MARKS 
     public static final String MARK_LIST_PROFILES = "list_profiles";
     public static final String MARK_NB_ITEMS_PER_PAGE = "nb_items_per_page";
@@ -102,11 +103,11 @@ public final class ProfilesConstants
     public static final String MARK_LIST_AVAILABLE_COLUMNS = "list_available_columns";
     public static final String MARK_MAP_AVAILABLE_ORDERS = "map_available_orders";
     public static final String MARK_MAP_COLUMN_ORDER_STATUS = "map_column_order_status";
-    
+
     // PARAMETERS
     public static final String PARAMETER_SEARCH_IS_SEARCH = "search_is_search";
-	public static final String PARAMETER_SEARCH_KEY = "search_key";
-	public static final String PARAMETER_SEARCH_DESCRIPTION = "search_description";
+    public static final String PARAMETER_SEARCH_KEY = "search_key";
+    public static final String PARAMETER_SEARCH_DESCRIPTION = "search_description";
     public static final String PARAMETER_PROFILE_KEY = "profile_key";
     public static final String PARAMETER_PROFILE_DESCRIPTION = "profile_description";
     public static final String PARAMETER_CANCEL = "cancel";
@@ -136,7 +137,7 @@ public final class ProfilesConstants
     public static final String PARAMETER_MODIFY_VIEW = "modify_view";
     public static final String PARAMETER_ASSIGN_PROFILE = "assign_profile";
     public static final String PARAMETER_ASSIGN_DASHBOARD = "assign_dashboard";
-    
+
     // MESSAGES
     public static final String MESSAGE_PROFILE_ALREADY_EXISTS = "profiles.message.profileAlreadyExists";
     public static final String MESSAGE_ACCENTUATED_CHARACTER = "profiles.message.accentuatedCharacter";

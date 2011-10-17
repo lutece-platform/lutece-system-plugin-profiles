@@ -33,21 +33,22 @@
  */
 package fr.paris.lutece.plugins.profiles.business.views;
 
-import java.util.Collection;
-import java.util.List;
-
 import fr.paris.lutece.plugins.profiles.business.Profile;
 import fr.paris.lutece.portal.business.dashboard.DashboardFilter;
 import fr.paris.lutece.portal.service.dashboard.IDashboardComponent;
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.util.ReferenceList;
 
+import java.util.Collection;
+import java.util.List;
+
+
 /**
- * 
+ *
  * IViewDAO
  *
  */
-public interface IViewDAO 
+public interface IViewDAO
 {
     /**
      * Delete a view from the table
@@ -84,31 +85,31 @@ public interface IViewDAO
      * @param plugin Plugin
      */
     void store( View view, Plugin plugin );
-	
+
     /**
      * Find view by filter
      * @param vFilter the Filter
      * @param plugin Plugin
      * @return List of views
      */
-	Collection<View> selectViewsByFilter( ViewFilter vFilter, Plugin plugin );
-	
-	/**
-     * Check if a view already exists or not
-     * @param strKey The view key
-     * @param plugin Plugin
-     * @return true if it already exists, false otherwise
-     */
-	boolean checkExistView( String strKey, Plugin plugin );
+    Collection<View> selectViewsByFilter( ViewFilter vFilter, Plugin plugin );
 
-	/**
-     * Get the list of views
-     * @param plugin Plugin
-     * @return the list of views
-     */
-	ReferenceList getViewsList( Plugin plugin );
+    /**
+    * Check if a view already exists or not
+    * @param strKey The view key
+    * @param plugin Plugin
+    * @return true if it already exists, false otherwise
+    */
+    boolean checkExistView( String strKey, Plugin plugin );
 
-	/* PROFILES */
+    /**
+    * Get the list of views
+    * @param plugin Plugin
+    * @return the list of views
+    */
+    ReferenceList getViewsList( Plugin plugin );
+
+    /* PROFILES */
 
     /**
      * Get the list of profiles associated to the view
@@ -116,22 +117,22 @@ public interface IViewDAO
      * @param plugin Plugin
      * @return The list of users
      */
-	Collection<Profile> selectProfilesListForView( String strViewKey, Plugin plugin );
-	
-	/**
-     * Get the view from a profile
-     * @param strProfileKey the profile key
-     * @param plugin Plugin
-     * @return the view associated to the profile
-     */
-	View selectViewForProfile( String strProfileKey, Plugin plugin );
-	
-	/**
-     * Check if the given profile has a view or not
-     * @param strProfileKey the profile key
-     * @param plugin Plugin
-     * @return true if the profile has the view, false otherwise
-     */
+    Collection<Profile> selectProfilesListForView( String strViewKey, Plugin plugin );
+
+    /**
+    * Get the view from a profile
+    * @param strProfileKey the profile key
+    * @param plugin Plugin
+    * @return the view associated to the profile
+    */
+    View selectViewForProfile( String strProfileKey, Plugin plugin );
+
+    /**
+    * Check if the given profile has a view or not
+    * @param strProfileKey the profile key
+    * @param plugin Plugin
+    * @return true if the profile has the view, false otherwise
+    */
     boolean hasView( String strProfileKey, Plugin plugin );
 
     /**
@@ -141,31 +142,32 @@ public interface IViewDAO
      * @param plugin Plugin
      */
     void insertProfileForView( String strViewKey, String strProfileKey, Plugin plugin );
-    
+
     /**
      * Remove a profile from a view
      * @param strViewKey The view Key
      * @param plugin Plugin
      */
     void deleteProfiles( String strViewKey, Plugin plugin );
-    
+
     /**
      * Remove profile from a view
      * @param strViewKey the view key
-     * @param strProfileKey the profile key 
+     * @param strProfileKey the profile key
      * @param plugin Plugin
      */
     void deleteProfileFromView( String strViewKey, String strProfileKey, Plugin plugin );
-    
+
     /* DASHBOARDS */
-    
+
     /**
      * Load the list of dashboards from a given view key
      * @param strViewKey the view key
      * @param plugin Plugin
+     * @return a list of {@link IDashboardComponent}
      */
     List<IDashboardComponent> selectDashboards( String strViewKey, Plugin plugin );
-    
+
     /**
      * Load the dashboard
      * @param strDashboardName the dashboard name
@@ -174,7 +176,7 @@ public interface IViewDAO
      * @return the dashboard
      */
     IDashboardComponent selectDashboard( String strDashboardName, String strViewKey, Plugin plugin );
-    
+
     /**
      * Insert a dashboard for a view
      * @param strViewKey the view key
@@ -182,14 +184,14 @@ public interface IViewDAO
      * @param plugin Plugin
      */
     void insertDashboard( String strViewKey, IDashboardComponent dashboard, Plugin plugin );
-    
+
     /**
      * Delete all dashboards of a view
      * @param strViewKey the view key
      * @param plugin Plugin
      */
     void deleteDashboards( String strViewKey, Plugin plugin );
-    
+
     /**
      * Delete a dashboard of a view
      * @param strViewKey the view key
@@ -197,7 +199,7 @@ public interface IViewDAO
      * @param plugin Plugin
      */
     void deleteDashboard( String strViewKey, String strDashboardName, Plugin plugin );
-    
+
     /**
      * Update a dashboard
      * @param strViewKey the view key
@@ -205,14 +207,14 @@ public interface IViewDAO
      * @param plugin Plugin
      */
     void storeDashboard( String strViewKey, IDashboardComponent dashboard, Plugin plugin );
- 
+
     /**
      * Returns the max order value, for all columns
      * @param plugin Plugin
      * @return the max order
      */
     int selectMaxOrder( Plugin plugin );
-    
+
     /**
      * Returns the max order value, for the given column
      * @param nColumn the column
@@ -220,14 +222,14 @@ public interface IViewDAO
      * @return the max order
      */
     int selectMaxOrder( int nColumn, Plugin plugin );
-    
+
     /**
      * Returns the columns list
      * @param plugin Plugin
      * @return the columns list
      */
     List<Integer> selectColumns( Plugin plugin );
-    
+
     /**
      * Finds all dashboard components matching filter
      * @param filter the filter

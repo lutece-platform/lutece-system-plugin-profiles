@@ -36,23 +36,31 @@ package fr.paris.lutece.plugins.profiles.service.views;
 import fr.paris.lutece.portal.service.dashboard.DashboardListenerService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 
+
 /**
- * 
+ *
  * ProfilesAdminUserFieldListenerService
  *
  */
-public class ViewDashboardListenerService 
+public final class ViewDashboardListenerService
 {
-	private static final String SPRING_CONTEXT_NAME = "profiles";
-	private static final String BEAN_VIEW_DASHBOARD_SERVICE = "profiles.viewDashboardListenerService";
-	
-	/**
-	 * Get DashboardListenerService
-	 * @return the service
-	 */
-	public static DashboardListenerService getService(  )
-	{
-		return ( DashboardListenerService ) SpringContextService.getPluginBean( SPRING_CONTEXT_NAME,
-				BEAN_VIEW_DASHBOARD_SERVICE );
-	}
+    private static final String SPRING_CONTEXT_NAME = "profiles";
+    private static final String BEAN_VIEW_DASHBOARD_SERVICE = "profiles.viewDashboardListenerService";
+
+    /**
+     * Private constructor
+     */
+    private ViewDashboardListenerService(  )
+    {
+    }
+
+    /**
+     * Get DashboardListenerService
+     * @return the service
+     */
+    public static DashboardListenerService getService(  )
+    {
+        return (DashboardListenerService) SpringContextService.getPluginBean( SPRING_CONTEXT_NAME,
+            BEAN_VIEW_DASHBOARD_SERVICE );
+    }
 }

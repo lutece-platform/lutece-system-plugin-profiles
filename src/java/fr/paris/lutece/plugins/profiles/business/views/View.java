@@ -33,40 +33,26 @@
  */
 package fr.paris.lutece.plugins.profiles.business.views;
 
-import java.util.List;
-
-import fr.paris.lutece.plugins.profiles.service.views.ViewDashboardListenerService;
 import fr.paris.lutece.portal.service.rbac.RBACResource;
 
+import java.util.List;
+
+
 /**
- * 
+ *
  * This class provides the object View
  *
  */
 public class View implements RBACResource
 {
-	public static final String RESOURCE_TYPE = "PROFILES_VIEWS";
-	
-	private static ViewDashboardListener _viewDashboardListener;
-	private String _strKey;
+    public static final String RESOURCE_TYPE = "PROFILES_VIEWS";
+    private String _strKey;
     private String _strDescription;
     private List<ViewAction> _listActions;
 
     /**
-     * Init function
-     */
-    public static void init(  )
-    {
-    	if ( _viewDashboardListener == null )
-    	{
-    		_viewDashboardListener = new ViewDashboardListener(  );
-    		ViewDashboardListenerService.getService(  ).registerListener( _viewDashboardListener );
-    	}
-    }
-    
-    /**
      * Gets the profile key
-     * 
+     *
      * @return Returns the Key.
      */
     public String getKey(  )
@@ -86,7 +72,7 @@ public class View implements RBACResource
 
     /**
      * Returns the profile's description
-     * 
+     *
      * @return Returns the Description.
      */
     public String getDescription(  )
@@ -104,41 +90,41 @@ public class View implements RBACResource
         _strDescription = strDescription;
     }
 
-	/**
-	 * RBAC resource implementation
-	 * 
-	 * @return The resource type code
-	 */
-	public String getResourceId(  ) 
-	{
-		return _strKey;
-	}
-
-	/**
+    /**
      * RBAC resource implementation
-     * 
-     * @return The resourceId
+     *
+     * @return The resource type code
      */
-	public String getResourceTypeCode(  ) 
-	{
-		return RESOURCE_TYPE;
-	}
+    public String getResourceId(  )
+    {
+        return _strKey;
+    }
 
-	/**
-	 *
-	 * @return a list of action can be use for the profile
-	 */
-	public List<ViewAction> getActions(  )
-	{
-		return _listActions;
-	}
-	
-	/**
-	 * set a list of action can be use for the directory
-	 * @param profileActions a list of action must be use for the profile
-	 */
-	public void setActions( List<ViewAction> profileActions )
-	{
-		_listActions = profileActions;
-	}
+    /**
+    * RBAC resource implementation
+    *
+    * @return The resourceId
+    */
+    public String getResourceTypeCode(  )
+    {
+        return RESOURCE_TYPE;
+    }
+
+    /**
+     *
+     * @return a list of action can be use for the profile
+     */
+    public List<ViewAction> getActions(  )
+    {
+        return _listActions;
+    }
+
+    /**
+     * set a list of action can be use for the directory
+     * @param profileActions a list of action must be use for the profile
+     */
+    public void setActions( List<ViewAction> profileActions )
+    {
+        _listActions = profileActions;
+    }
 }

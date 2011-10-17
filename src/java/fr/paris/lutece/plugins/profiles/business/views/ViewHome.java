@@ -33,9 +33,6 @@
  */
 package fr.paris.lutece.plugins.profiles.business.views;
 
-import java.util.Collection;
-import java.util.List;
-
 import fr.paris.lutece.plugins.profiles.business.Profile;
 import fr.paris.lutece.portal.business.dashboard.DashboardFilter;
 import fr.paris.lutece.portal.service.dashboard.IDashboardComponent;
@@ -43,23 +40,27 @@ import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.util.ReferenceList;
 
+import java.util.Collection;
+import java.util.List;
+
+
 /**
- * 
+ *
  * ProfileHome
  *
  */
-public final class ViewHome 
+public final class ViewHome
 {
-	// Static variable pointed at the DAO instance
-    private static IViewDAO _dao = ( IViewDAO ) SpringContextService.getPluginBean( "profiles", "profiles.viewDAO" );
-    
+    // Static variable pointed at the DAO instance
+    private static IViewDAO _dao = (IViewDAO) SpringContextService.getPluginBean( "profiles", "profiles.viewDAO" );
+
     /**
      * Private constructor - this class need not be instantiated
      */
     private ViewHome(  )
     {
     }
-    
+
     /**
      * Creation of an instance of View
      * @param view The instance of the View which contains the informations to store
@@ -119,7 +120,7 @@ public final class ViewHome
     {
         return _dao.selectViewsList( plugin );
     }
-    
+
     /**
      * Find Views by filter
      * @param vFilter the Filter
@@ -128,9 +129,9 @@ public final class ViewHome
      */
     public static Collection<View> findViewsByFilter( ViewFilter vFilter, Plugin plugin )
     {
-    	return _dao.selectViewsByFilter( vFilter, plugin );
+        return _dao.selectViewsByFilter( vFilter, plugin );
     }
-    
+
     /**
      * Check if a view already exists or not
      * @param strViewKey The view key
@@ -139,7 +140,7 @@ public final class ViewHome
      */
     public static boolean checkExistView( String strViewKey, Plugin plugin )
     {
-    	return _dao.checkExistView( strViewKey, plugin );
+        return _dao.checkExistView( strViewKey, plugin );
     }
 
     /**
@@ -149,9 +150,9 @@ public final class ViewHome
      */
     public static ReferenceList getViewsList( Plugin plugin )
     {
-    	return _dao.getViewsList( plugin );
+        return _dao.getViewsList( plugin );
     }
-        
+
     /* PROFILES */
 
     /**
@@ -162,20 +163,20 @@ public final class ViewHome
      */
     public static Collection<Profile> getProfilesListForView( String strViewKey, Plugin plugin )
     {
-    	return _dao.selectProfilesListForView( strViewKey, plugin );
+        return _dao.selectProfilesListForView( strViewKey, plugin );
     }
-    
+
     /**
      * Get the view from a profile
      * @param strProfileKey the profile key
      * @param plugin Plugin
      * @return the view associated to the profile
      */
-	public static View findViewForProfile( String strProfileKey, Plugin plugin )
-	{
-		return _dao.selectViewForProfile( strProfileKey, plugin );
-	}
-    
+    public static View findViewForProfile( String strProfileKey, Plugin plugin )
+    {
+        return _dao.selectViewForProfile( strProfileKey, plugin );
+    }
+
     /**
      * Check if the given profile has a view or not
      * @param strProfileKey the profile key
@@ -184,7 +185,7 @@ public final class ViewHome
      */
     public static boolean hasView( String strProfileKey, Plugin plugin )
     {
-    	return _dao.hasView( strProfileKey, plugin );
+        return _dao.hasView( strProfileKey, plugin );
     }
 
     /**
@@ -195,9 +196,9 @@ public final class ViewHome
      */
     public static void addProfileForView( String strViewKey, String strProfileKey, Plugin plugin )
     {
-    	_dao.insertProfileForView( strViewKey, strProfileKey, plugin );
+        _dao.insertProfileForView( strViewKey, strProfileKey, plugin );
     }
-    
+
     /**
      * Remove a profile from a view
      * @param strViewKey The view Key
@@ -205,9 +206,9 @@ public final class ViewHome
      */
     public static void removeProfiles( String strViewKey, Plugin plugin )
     {
-    	_dao.deleteProfiles( strViewKey, plugin );
+        _dao.deleteProfiles( strViewKey, plugin );
     }
-    
+
     /**
      * Remove a view from a profile
      * @param strViewKey the view key
@@ -216,21 +217,22 @@ public final class ViewHome
      */
     public static void removeProfileFromView( String strViewKey, String strProfileKey, Plugin plugin )
     {
-    	_dao.deleteProfileFromView( strViewKey, strProfileKey, plugin );
+        _dao.deleteProfileFromView( strViewKey, strProfileKey, plugin );
     }
 
     /* DASHBOARDS */
-    
+
     /**
      * Load the list of dashboards from a given view key
      * @param strViewKey the view key
      * @param plugin Plugin
+     * @return a list of {@link IDashboardComponent}
      */
     public static List<IDashboardComponent> findDashboards( String strViewKey, Plugin plugin )
     {
-    	return _dao.selectDashboards( strViewKey, plugin );
+        return _dao.selectDashboards( strViewKey, plugin );
     }
-    
+
     /**
      * Load the dashboard
      * @param strDashboardName the dashboard name
@@ -240,9 +242,9 @@ public final class ViewHome
      */
     public static IDashboardComponent findDashboard( String strDashboardName, String strViewKey, Plugin plugin )
     {
-    	return _dao.selectDashboard( strDashboardName, strViewKey, plugin );
+        return _dao.selectDashboard( strDashboardName, strViewKey, plugin );
     }
-    
+
     /**
      * Insert a dashboard for a view
      * @param strViewKey the view key
@@ -251,81 +253,82 @@ public final class ViewHome
      */
     public static void createDashboard( String strViewKey, IDashboardComponent dashboard, Plugin plugin )
     {
-    	_dao.insertDashboard( strViewKey, dashboard, plugin );
+        _dao.insertDashboard( strViewKey, dashboard, plugin );
     }
-   
-   /**
-    * Delete all dashboards of a view
-    * @param strViewKey the view key
-    * @param plugin Plugin
-    */
-   public static void removeDashboards( String strViewKey, Plugin plugin )
-   {
-	   _dao.deleteDashboards( strViewKey, plugin );
-   }
-   
-   /**
-    * Delete a dashboard of a view
-    * @param strViewKey the view key
-    * @param strDashboardName the dashboard name
-    * @param plugin Plugin
-    */
-   public static void removeDashboard( String strViewKey, String strDashboardName, Plugin plugin )
-   {
-	   _dao.deleteDashboard( strViewKey, strDashboardName, plugin );
-   }
-   
-   /**
-    * Update a dashboard
-    * @param strViewKey the view key
-    * @param dashboard the dashboard
-    * @param plugin Plugin
-    */
-   public static void updateDashboard( String strViewKey, IDashboardComponent dashboard, Plugin plugin )
-   {
-	   _dao.storeDashboard( strViewKey, dashboard, plugin );
-   }
 
-   /**
-	 * Loads the data of all the IDashboardComponent
-	 * @param filter the filter
-	 * @param strViewKey the view key
-	 * @param plugin Plugin
-	 * @return the list which contains the data of all the IDashboardComponent
-	 */
-	public static List<IDashboardComponent> findDashboardsByFilter( DashboardFilter filter, String strViewKey, Plugin plugin )
-	{
-		return _dao.selectDashboardsByFilter( filter, strViewKey, plugin );
-	}
-	
-   /**
-	 * Finds the max order for all columns.
-	 * @param plugin Plugin
-	 * @return the max order
-	 */
-	public static int findMaxOrder( Plugin plugin )
-	{
-		return _dao.selectMaxOrder( plugin );
-	}
+    /**
+     * Delete all dashboards of a view
+     * @param strViewKey the view key
+     * @param plugin Plugin
+     */
+    public static void removeDashboards( String strViewKey, Plugin plugin )
+    {
+        _dao.deleteDashboards( strViewKey, plugin );
+    }
 
-	/**
-	 * Finds the max order for the column.
-	 * @param nColumn the column
-	 * @param plugin Plugin
-	 * @return the max order
-	 */
-	public static int findMaxOrder( int nColumn, Plugin plugin )
-	{
-		return _dao.selectMaxOrder( nColumn, plugin );
-	}
+    /**
+     * Delete a dashboard of a view
+     * @param strViewKey the view key
+     * @param strDashboardName the dashboard name
+     * @param plugin Plugin
+     */
+    public static void removeDashboard( String strViewKey, String strDashboardName, Plugin plugin )
+    {
+        _dao.deleteDashboard( strViewKey, strDashboardName, plugin );
+    }
 
-	/**
-	 * Finds all columns
-	 * @param plugin Plugin
-	 * @return the list of columns
-	 */
-	public static List<Integer> findColumns( Plugin plugin )
-	{
-		return _dao.selectColumns( plugin );
-	}
+    /**
+     * Update a dashboard
+     * @param strViewKey the view key
+     * @param dashboard the dashboard
+     * @param plugin Plugin
+     */
+    public static void updateDashboard( String strViewKey, IDashboardComponent dashboard, Plugin plugin )
+    {
+        _dao.storeDashboard( strViewKey, dashboard, plugin );
+    }
+
+    /**
+          * Loads the data of all the IDashboardComponent
+          * @param filter the filter
+          * @param strViewKey the view key
+          * @param plugin Plugin
+          * @return the list which contains the data of all the IDashboardComponent
+          */
+    public static List<IDashboardComponent> findDashboardsByFilter( DashboardFilter filter, String strViewKey,
+        Plugin plugin )
+    {
+        return _dao.selectDashboardsByFilter( filter, strViewKey, plugin );
+    }
+
+    /**
+          * Finds the max order for all columns.
+          * @param plugin Plugin
+          * @return the max order
+          */
+    public static int findMaxOrder( Plugin plugin )
+    {
+        return _dao.selectMaxOrder( plugin );
+    }
+
+    /**
+     * Finds the max order for the column.
+     * @param nColumn the column
+     * @param plugin Plugin
+     * @return the max order
+     */
+    public static int findMaxOrder( int nColumn, Plugin plugin )
+    {
+        return _dao.selectMaxOrder( nColumn, plugin );
+    }
+
+    /**
+     * Finds all columns
+     * @param plugin Plugin
+     * @return the list of columns
+     */
+    public static List<Integer> findColumns( Plugin plugin )
+    {
+        return _dao.selectColumns( plugin );
+    }
 }

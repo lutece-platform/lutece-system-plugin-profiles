@@ -33,34 +33,35 @@
  */
 package fr.paris.lutece.plugins.profiles.business;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.util.sql.DAOUtil;
 
+import java.util.ArrayList;
+import java.util.List;
+
+
 /**
- * 
+ *
  * ProfileActionDAO
  *
  */
-public class ProfileActionDAO implements IProfileActionDAO 
+public class ProfileActionDAO implements IProfileActionDAO
 {
-	private static final String SQL_QUERY_SELECT_ACTIONS = " SELECT name_key, description_key, action_url, icon_url, action_permission " +
-    	" FROM profile_action ";
-	
-	/**
-     * {@inheritDoc}
-     */
-	public List<ProfileAction> selectActionsList( Plugin plugin )
-	{
-		List<ProfileAction> listActions = new ArrayList<ProfileAction>(  );
+    private static final String SQL_QUERY_SELECT_ACTIONS = " SELECT name_key, description_key, action_url, icon_url, action_permission " +
+        " FROM profile_action ";
+
+    /**
+    * {@inheritDoc}
+    */
+    public List<ProfileAction> selectActionsList( Plugin plugin )
+    {
+        List<ProfileAction> listActions = new ArrayList<ProfileAction>(  );
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_ACTIONS, plugin );
         daoUtil.executeQuery(  );
 
         while ( daoUtil.next(  ) )
         {
-        	ProfileAction action = new ProfileAction(  );
+            ProfileAction action = new ProfileAction(  );
             action.setNameKey( daoUtil.getString( 1 ) );
             action.setDescriptionKey( daoUtil.getString( 2 ) );
             action.setUrl( daoUtil.getString( 3 ) );
@@ -72,5 +73,5 @@ public class ProfileActionDAO implements IProfileActionDAO
         daoUtil.free(  );
 
         return listActions;
-	}
+    }
 }

@@ -36,23 +36,31 @@ package fr.paris.lutece.plugins.profiles.service;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.user.attribute.AdminUserFieldListenerService;
 
+
 /**
- * 
+ *
  * ProfilesAdminUserFieldListenerService
  *
  */
-public class ProfilesAdminUserFieldListenerService 
+public final class ProfilesAdminUserFieldListenerService
 {
-	private static final String SPRING_CONTEXT_NAME = "profiles";
-	private static final String BEAN_PROFILES_ADMIN_USER_FIELD_SERVICE = "profiles.profilesAdminUserFieldListenerService";
-	
-	/**
-	 * Get AdminUserFieldListenerService
-	 * @return the service
-	 */
-	public static AdminUserFieldListenerService getService(  )
-	{
-		return ( AdminUserFieldListenerService ) SpringContextService.getPluginBean( SPRING_CONTEXT_NAME,
-				BEAN_PROFILES_ADMIN_USER_FIELD_SERVICE );
-	}
+    private static final String SPRING_CONTEXT_NAME = "profiles";
+    private static final String BEAN_PROFILES_ADMIN_USER_FIELD_SERVICE = "profiles.profilesAdminUserFieldListenerService";
+
+    /**
+     * Private constructor
+     */
+    private ProfilesAdminUserFieldListenerService(  )
+    {
+    }
+
+    /**
+     * Get AdminUserFieldListenerService
+     * @return the service
+     */
+    public static AdminUserFieldListenerService getService(  )
+    {
+        return (AdminUserFieldListenerService) SpringContextService.getPluginBean( SPRING_CONTEXT_NAME,
+            BEAN_PROFILES_ADMIN_USER_FIELD_SERVICE );
+    }
 }

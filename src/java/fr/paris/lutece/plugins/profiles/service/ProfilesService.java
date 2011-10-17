@@ -33,14 +33,6 @@
  */
 package fr.paris.lutece.plugins.profiles.service;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
 import fr.paris.lutece.plugins.profiles.business.Profile;
 import fr.paris.lutece.plugins.profiles.business.ProfileAction;
 import fr.paris.lutece.plugins.profiles.business.ProfileActionHome;
@@ -65,24 +57,32 @@ import fr.paris.lutece.util.ReferenceList;
 import fr.paris.lutece.util.html.ItemNavigator;
 import fr.paris.lutece.util.url.UrlItem;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+
 /**
- * 
+ *
  * ProfilesService
  *
  */
-public class ProfilesService 
+public class ProfilesService
 {
-	private static ProfilesService _singleton;
-	
-	/**
-     * Initialize the profiles service
-     *
-     */
+    private static ProfilesService _singleton;
+
+    /**
+    * Initialize the profiles service
+    *
+    */
     public void init(  )
     {
-        
     }
-    
+
     /**
      * Returns the instance of the singleton
      *
@@ -97,7 +97,7 @@ public class ProfilesService
 
         return _singleton;
     }
-    
+
     /**
      * Get the item navigator
      * @param pFilter the profile filter
@@ -107,23 +107,27 @@ public class ProfilesService
      */
     public ItemNavigator getItemNavigator( ProfileFilter pFilter, Profile profile, UrlItem url )
     {
-    	Plugin plugin = PluginService.getPlugin( ProfilesPlugin.PLUGIN_NAME );
-    	List<String> listItem = new ArrayList<String>(  );
+        Plugin plugin = PluginService.getPlugin( ProfilesPlugin.PLUGIN_NAME );
+        List<String> listItem = new ArrayList<String>(  );
         Collection<Profile> listAllProfiles = ProfileHome.findProfilesByFilter( pFilter, plugin );
         int nIndex = 0;
         int nCurrentItemId = 0;
-        for( Profile allProfile : listAllProfiles )
+
+        for ( Profile allProfile : listAllProfiles )
         {
-    		listItem.add( allProfile.getKey(  ) );
-        	if( allProfile.getKey(  ).equals( profile.getKey(  ) ) )
-        	{
-        		nCurrentItemId = nIndex;
-        	}
-        	nIndex++;
+            listItem.add( allProfile.getKey(  ) );
+
+            if ( allProfile.getKey(  ).equals( profile.getKey(  ) ) )
+            {
+                nCurrentItemId = nIndex;
+            }
+
+            nIndex++;
         }
+
         return new ItemNavigator( listItem, nCurrentItemId, url.getUrl(  ), ProfilesConstants.PARAMETER_PROFILE_KEY );
     }
-    
+
     /**
      * Get the list of actions
      * @param user the current user
@@ -133,21 +137,24 @@ public class ProfilesService
      * @param plugin Plugin
      * @return the list of actions
      */
-    public List<ProfileAction> getListActions( AdminUser user, Profile profile, String strPermission, Locale locale, Plugin plugin )
+    public List<ProfileAction> getListActions( AdminUser user, Profile profile, String strPermission, Locale locale,
+        Plugin plugin )
     {
-    	List<ProfileAction> listActions = new ArrayList<ProfileAction>(  );
-        for( ProfileAction action : ProfileActionHome.selectActionsList( locale, plugin ) )
+        List<ProfileAction> listActions = new ArrayList<ProfileAction>(  );
+
+        for ( ProfileAction action : ProfileActionHome.selectActionsList( locale, plugin ) )
         {
-        	if( !action.getPermission(  ).equals( strPermission ) )
-        	{
-        		listActions.add( action );
-        	}
+            if ( !action.getPermission(  ).equals( strPermission ) )
+            {
+                listActions.add( action );
+            }
         }
-        listActions = ( List<ProfileAction> ) RBACService.getAuthorizedActionsCollection( listActions, profile, user );
-        
+
+        listActions = (List<ProfileAction>) RBACService.getAuthorizedActionsCollection( listActions, profile, user );
+
         return listActions;
     }
-    
+
     /**
      * Get the item navigator
      * @param vFilter the view filter
@@ -157,23 +164,27 @@ public class ProfilesService
      */
     public ItemNavigator getItemNavigator( ViewFilter vFilter, View view, UrlItem url )
     {
-    	Plugin plugin = PluginService.getPlugin( ProfilesPlugin.PLUGIN_NAME );
-    	List<String> listItem = new ArrayList<String>(  );
+        Plugin plugin = PluginService.getPlugin( ProfilesPlugin.PLUGIN_NAME );
+        List<String> listItem = new ArrayList<String>(  );
         Collection<View> listAllViews = ViewHome.findViewsByFilter( vFilter, plugin );
         int nIndex = 0;
         int nCurrentItemId = 0;
-        for( View allView : listAllViews )
+
+        for ( View allView : listAllViews )
         {
-    		listItem.add( allView.getKey(  ) );
-        	if( allView.getKey(  ).equals( view.getKey(  ) ) )
-        	{
-        		nCurrentItemId = nIndex;
-        	}
-        	nIndex++;
+            listItem.add( allView.getKey(  ) );
+
+            if ( allView.getKey(  ).equals( view.getKey(  ) ) )
+            {
+                nCurrentItemId = nIndex;
+            }
+
+            nIndex++;
         }
+
         return new ItemNavigator( listItem, nCurrentItemId, url.getUrl(  ), ProfilesConstants.PARAMETER_VIEW_KEY );
     }
-    
+
     /**
      * Get the list of actions
      * @param user the current user
@@ -183,18 +194,21 @@ public class ProfilesService
      * @param plugin Plugin
      * @return the list of actions
      */
-    public List<ViewAction> getListActions( AdminUser user, View view, String strPermission, Locale locale, Plugin plugin )
+    public List<ViewAction> getListActions( AdminUser user, View view, String strPermission, Locale locale,
+        Plugin plugin )
     {
-    	List<ViewAction> listActions = new ArrayList<ViewAction>(  );
-        for( ViewAction action : ViewActionHome.selectActionsList( locale, plugin ) )
+        List<ViewAction> listActions = new ArrayList<ViewAction>(  );
+
+        for ( ViewAction action : ViewActionHome.selectActionsList( locale, plugin ) )
         {
-        	if( !action.getPermission(  ).equals( strPermission ) )
-        	{
-        		listActions.add( action );
-        	}
+            if ( !action.getPermission(  ).equals( strPermission ) )
+            {
+                listActions.add( action );
+            }
         }
-        listActions = ( List<ViewAction> ) RBACService.getAuthorizedActionsCollection( listActions, view, user );
-        
+
+        listActions = (List<ViewAction>) RBACService.getAuthorizedActionsCollection( listActions, view, user );
+
         return listActions;
     }
 
@@ -206,276 +220,301 @@ public class ProfilesService
      * @return the list of dashboards
      */
     public Map<String, List<IDashboardComponent>> getAllSetDashboards( String strViewKey, AdminUser user, Plugin plugin )
-    {	
-    	Map<String, List<IDashboardComponent>> mapDashboardComponents = new HashMap<String, List<IDashboardComponent>>(  );
-    	
-    	// Personnalized dashboard positions
-    	List<IDashboardComponent> listDashboards = ViewHome.findDashboards( strViewKey, plugin );
+    {
+        Map<String, List<IDashboardComponent>> mapDashboardComponents = new HashMap<String, List<IDashboardComponent>>(  );
 
-		for ( IDashboardComponent dashboard : listDashboards )
-		{
-			int nColumn = dashboard.getZone(  );
-			boolean bRight = user.checkRight( dashboard.getRight(  ) ) || dashboard.getRight(  ).equalsIgnoreCase( ProfilesConstants.ALL );
-			if ( !bRight )
-			{
-				continue;
-			}
+        // Personnalized dashboard positions
+        List<IDashboardComponent> listDashboards = ViewHome.findDashboards( strViewKey, plugin );
 
-			String strColumn = Integer.toString( nColumn );
-			// find this column list
-			List<IDashboardComponent> listDashboardsColumn = mapDashboardComponents.get( strColumn );
+        for ( IDashboardComponent dashboard : listDashboards )
+        {
+            int nColumn = dashboard.getZone(  );
+            boolean bRight = user.checkRight( dashboard.getRight(  ) ) ||
+                dashboard.getRight(  ).equalsIgnoreCase( ProfilesConstants.ALL );
 
-			if ( listDashboardsColumn == null )
-			{
-				// the list does not exist, create it
-				listDashboardsColumn = new ArrayList<IDashboardComponent>(  );
-				mapDashboardComponents.put( strColumn, listDashboardsColumn );
-			}
+            if ( !bRight )
+            {
+                continue;
+            }
 
-			// add dashboard to the list
-			listDashboardsColumn.add( dashboard );
-		}
-    	
-    	return mapDashboardComponents;
+            String strColumn = Integer.toString( nColumn );
+
+            // find this column list
+            List<IDashboardComponent> listDashboardsColumn = mapDashboardComponents.get( strColumn );
+
+            if ( listDashboardsColumn == null )
+            {
+                // the list does not exist, create it
+                listDashboardsColumn = new ArrayList<IDashboardComponent>(  );
+                mapDashboardComponents.put( strColumn, listDashboardsColumn );
+            }
+
+            // add dashboard to the list
+            listDashboardsColumn.add( dashboard );
+        }
+
+        return mapDashboardComponents;
     }
 
     /**
      * Get the list of dashboards that are not set
      * @param strViewKey the view key
+     * @param user the admin user
      * @param plugin Plugin
      * @return the list of dashboards
      */
     public List<IDashboardComponent> getNotSetDashboards( String strViewKey, AdminUser user, Plugin plugin )
     {
-    	List<IDashboardComponent> listDashboards = DashboardHome.findAll(  ); 
-    	List<IDashboardComponent> listPersonnalizedDashboards = ViewHome.findDashboards( strViewKey, plugin );
-    	List<IDashboardComponent> listNotSetDashboards = new ArrayList<IDashboardComponent>(  );
-    	
-    	for ( IDashboardComponent dashboard : listDashboards )
-    	{
-    		boolean bRight = user.checkRight( dashboard.getRight(  ) ) || dashboard.getRight(  ).equalsIgnoreCase( ProfilesConstants.ALL );
-    		if ( !listPersonnalizedDashboards.contains( dashboard ) && bRight && 
-    				dashboard.getZone(  ) <= DashboardService.getInstance(  ).getColumnCount(  ) )
-    		{
-    			listNotSetDashboards.add( dashboard );
-    		}
-    	}
-    	
-    	return listNotSetDashboards;
+        List<IDashboardComponent> listDashboards = DashboardHome.findAll(  );
+        List<IDashboardComponent> listPersonnalizedDashboards = ViewHome.findDashboards( strViewKey, plugin );
+        List<IDashboardComponent> listNotSetDashboards = new ArrayList<IDashboardComponent>(  );
+
+        for ( IDashboardComponent dashboard : listDashboards )
+        {
+            boolean bRight = user.checkRight( dashboard.getRight(  ) ) ||
+                dashboard.getRight(  ).equalsIgnoreCase( ProfilesConstants.ALL );
+
+            if ( !listPersonnalizedDashboards.contains( dashboard ) && bRight &&
+                    ( dashboard.getZone(  ) <= DashboardService.getInstance(  ).getColumnCount(  ) ) )
+            {
+                listNotSetDashboards.add( dashboard );
+            }
+        }
+
+        return listNotSetDashboards;
     }
-    
+
     /**
-	 * Builds all refList order for all columns
-	 * @param plugin Plugin
-	 * @return the map with column id as key
-	 */
-	public Map<String, ReferenceList> getMapAvailableOrders( Plugin plugin )
-	{
-		Map<String, ReferenceList> mapAvailableOrders = new HashMap<String, ReferenceList>(  );
-		// get columns
-		for ( Integer nColumn : ViewHome.findColumns( plugin ) )
-		{
-			// get orders
-			mapAvailableOrders.put( nColumn.toString(  ), getListAvailableOrders( nColumn, plugin ) );
-		}
+         * Builds all refList order for all columns
+         * @param plugin Plugin
+         * @return the map with column id as key
+         */
+    public Map<String, ReferenceList> getMapAvailableOrders( Plugin plugin )
+    {
+        Map<String, ReferenceList> mapAvailableOrders = new HashMap<String, ReferenceList>(  );
 
-		return mapAvailableOrders;
-	}
-	
-	/**
-	 * Orders reference list for the given column
-	 * @param nColumn column
-	 * @param plugin Plugin
-	 * @return the refList
-	 */
-	public ReferenceList getListAvailableOrders( int nColumn, Plugin plugin )
-	{
-		ReferenceList refList = new ReferenceList(  );
+        // get columns
+        for ( Integer nColumn : ViewHome.findColumns( plugin ) )
+        {
+            // get orders
+            mapAvailableOrders.put( nColumn.toString(  ), getListAvailableOrders( nColumn, plugin ) );
+        }
 
-		// add empty item
-		refList.addItem( ProfilesConstants.EMPTY_STRING, ProfilesConstants.EMPTY_STRING );
+        return mapAvailableOrders;
+    }
 
-		int nMaxOrder = ViewHome.findMaxOrder( nColumn, plugin );
+    /**
+     * Orders reference list for the given column
+     * @param nColumn column
+     * @param plugin Plugin
+     * @return the refList
+     */
+    public ReferenceList getListAvailableOrders( int nColumn, Plugin plugin )
+    {
+        ReferenceList refList = new ReferenceList(  );
 
-		for ( int nOrder = 1; nOrder <= nMaxOrder; nOrder++ )
-		{
-			refList.addItem( nOrder, Integer.toString( nOrder ) );
-		}
+        // add empty item
+        refList.addItem( ProfilesConstants.EMPTY_STRING, ProfilesConstants.EMPTY_STRING );
 
-		return refList;
-	}
-	
-	/**
-	 * Returns list with available column
-	 * @return all available columns
-	 */
-	public ReferenceList getListAvailableColumns(  )
-	{
-		ReferenceList refList = new ReferenceList(  );
+        int nMaxOrder = ViewHome.findMaxOrder( nColumn, plugin );
 
-		// add empty item
-		refList.addItem( ProfilesConstants.EMPTY_STRING, ProfilesConstants.EMPTY_STRING );
+        for ( int nOrder = 1; nOrder <= nMaxOrder; nOrder++ )
+        {
+            refList.addItem( nOrder, Integer.toString( nOrder ) );
+        }
 
-		for ( int nColumnIndex = 1; nColumnIndex <= DashboardService.getInstance(  ).getColumnCount(  ); nColumnIndex++ )
-		{
-			refList.addItem( nColumnIndex, Integer.toString( nColumnIndex ) );
-		}
+        return refList;
+    }
 
-		return refList;
-	}
-	
-	/**
-	 * Moves the dashboard.
-	 * @param dashboard to move, with new values
-	 * @param nOldColumn previous column id
-	 * @param nOldOrder previous order
-	 * @param bCreate <code>true</code> if this is a new dashboard, <code>false</code> otherwise.
-	 */
-	public void doMoveDashboard( IDashboardComponent dashboard, int nOldColumn, int nOldOrder, 
-			boolean bCreate, String strViewKey, Plugin plugin )
-	{
-		int nColumn = dashboard.getZone(  );
-		int nOrder = dashboard.getOrder(  );
+    /**
+     * Returns list with available column
+     * @return all available columns
+     */
+    public ReferenceList getListAvailableColumns(  )
+    {
+        ReferenceList refList = new ReferenceList(  );
 
-		// find the dashboard already with this order and column
-		DashboardFilter filter = new DashboardFilter(  );
-		filter.setFilterColumn( nColumn );
+        // add empty item
+        refList.addItem( ProfilesConstants.EMPTY_STRING, ProfilesConstants.EMPTY_STRING );
 
-		List<IDashboardComponent> listColumnDashboards = ViewHome.findDashboardsByFilter( filter, strViewKey, plugin );
+        for ( int nColumnIndex = 1; nColumnIndex <= DashboardService.getInstance(  ).getColumnCount(  );
+                nColumnIndex++ )
+        {
+            refList.addItem( nColumnIndex, Integer.toString( nColumnIndex ) );
+        }
 
-		if ( listColumnDashboards != null && !listColumnDashboards.isEmpty(  ) )
-		{
-			if ( AppLogService.isDebugEnabled(  ) )
-			{
-				AppLogService.debug( "Reordering  dashboard column " + dashboard.getZone(  ) );
-			}
+        return refList;
+    }
 
-			// sort by order
-			Collections.sort( listColumnDashboards );
-			int nMaxOrder = listColumnDashboards.get( listColumnDashboards.size(  ) - 1 ).getOrder(  );
+    /**
+     * Moves the dashboard.
+     * @param dashboard to move, with new values
+     * @param nOldColumn previous column id
+     * @param nOldOrder previous order
+     * @param bCreate <code>true</code> if this is a new dashboard, <code>false</code> otherwise.
+     * @param strViewKey the view key
+     * @param plugin the plugin
+     */
+    public void doMoveDashboard( IDashboardComponent dashboard, int nOldColumn, int nOldOrder, boolean bCreate,
+        String strViewKey, Plugin plugin )
+    {
+        int nColumn = dashboard.getZone(  );
+        int nOrder = dashboard.getOrder(  );
 
-			if ( nOldColumn == 0 || nOldColumn != nColumn )
-			{
-				// was not in this column before, put to the end
-				dashboard.setOrder( nMaxOrder + 1 );
-			}
-			else
-			{
-				if ( nOrder < nOldOrder )
-				{
-					for ( IDashboardComponent dc : listColumnDashboards )
-					{
-						if ( !dc.equals( dashboard ) )
-						{
-							int nCurrentOrder = dc.getOrder(  );
-							if ( nCurrentOrder >= nOrder && nCurrentOrder < nOldOrder )
-							{
-								dc.setOrder( nCurrentOrder + 1 );
-								ViewHome.updateDashboard( strViewKey, dc, plugin );
-							}
-						}
-					}
-				}
-				else if ( nOrder > nOldOrder )
-				{
-					for ( IDashboardComponent dc : listColumnDashboards )
-					{
-						if ( !dc.equals( dashboard ) )
-						{
-							int nCurrentOrder = dc.getOrder(  );
-							if ( nCurrentOrder <= nOrder && nCurrentOrder > nOldOrder )
-							{
-								dc.setOrder( nCurrentOrder - 1 );
-								ViewHome.updateDashboard( strViewKey, dc, plugin );
-							}
-						}
-					}
-				}
+        // find the dashboard already with this order and column
+        DashboardFilter filter = new DashboardFilter(  );
+        filter.setFilterColumn( nColumn );
 
-				// dashboard are singletons, values are modified by getting it from database
-				dashboard.setOrder( nOrder );
-				dashboard.setZone( nColumn );
-			}
-		}
-		else
-		{
-			dashboard.setOrder( 1 );
-		}
+        List<IDashboardComponent> listColumnDashboards = ViewHome.findDashboardsByFilter( filter, strViewKey, plugin );
 
-		if ( bCreate )
-		{
-			// create dashboard
-			ViewHome.createDashboard( strViewKey, dashboard, plugin );
-		}
-		else
-		{
-			// update dashboard
-			ViewHome.updateDashboard( strViewKey, dashboard, plugin );
-		}
-	}
-	
-	/**
-	 * 
-	 * @param nColumn the column id
-	 * @return all dashboards for this column
-	 */
-	public List<IDashboardComponent> getDashboardComponents( String strViewKey, int nColumn, Plugin plugin )
-	{
-		DashboardFilter filter = new DashboardFilter(  );
-		filter.setFilterColumn( nColumn );
-		List<IDashboardComponent> dashboardComponents = ViewHome.findDashboardsByFilter( filter, strViewKey, plugin );
+        if ( ( listColumnDashboards != null ) && !listColumnDashboards.isEmpty(  ) )
+        {
+            if ( AppLogService.isDebugEnabled(  ) )
+            {
+                AppLogService.debug( "Reordering  dashboard column " + dashboard.getZone(  ) );
+            }
 
-		return dashboardComponents;
-	}
-	
-	/**
-	 * Reorders column's dashboard
-	 * @param nColumn the column to reorder
-	 */
-	public void doReorderColumn( String strViewKey, int nColumn, Plugin plugin )
-	{
-		int nOrder = ProfilesConstants.CONSTANTE_FIRST_ORDER;
-		for ( IDashboardComponent dc : getDashboardComponents( strViewKey, nColumn, plugin ) )
-		{
-			dc.setOrder( nOrder++ );
-			ViewHome.updateDashboard( strViewKey, dc, plugin );
-		}
-	}
+            // sort by order
+            Collections.sort( listColumnDashboards );
 
-	/**
-	 * Builds the map to with column id as key, and <code>true</code> as value if column is well ordered, <code>false</code> otherwise.
-	 * @return the map
-	 */
-	public Map<String, Boolean> getOrderedColumnsStatus( String strViewKey, Plugin plugin )
-	{
-		Map<String, Boolean> mapOrderedStatus = new HashMap<String, Boolean>(  );
-		List<Integer> listColumns = ViewHome.findColumns( plugin );
+            int nMaxOrder = listColumnDashboards.get( listColumnDashboards.size(  ) - 1 ).getOrder(  );
 
-		for ( Integer nIdColumn : listColumns )
-		{
-			mapOrderedStatus.put( nIdColumn.toString(  ), isWellOrdered( strViewKey, nIdColumn, plugin ) );
-		}
+            if ( ( nOldColumn == 0 ) || ( nOldColumn != nColumn ) )
+            {
+                // was not in this column before, put to the end
+                dashboard.setOrder( nMaxOrder + 1 );
+            }
+            else
+            {
+                if ( nOrder < nOldOrder )
+                {
+                    for ( IDashboardComponent dc : listColumnDashboards )
+                    {
+                        if ( !dc.equals( dashboard ) )
+                        {
+                            int nCurrentOrder = dc.getOrder(  );
 
-		return mapOrderedStatus;
-	}
-	
-	/**
-	 * Determines if the column is well ordered
-	 * @param nColumn the column id
-	 * @return true if well ordered, <code>false</code> otherwise.
-	 */
-	private boolean isWellOrdered( String strViewKey, int nColumn, Plugin plugin )
-	{
-		int nOrder = ProfilesConstants.CONSTANTE_FIRST_ORDER;
-		for ( IDashboardComponent dc : getDashboardComponents( strViewKey, nColumn, plugin ) )
-		{
-			if ( nOrder != dc.getOrder(  ) )
-			{
-				return false;
-			}
-			nOrder++;
-		}
+                            if ( ( nCurrentOrder >= nOrder ) && ( nCurrentOrder < nOldOrder ) )
+                            {
+                                dc.setOrder( nCurrentOrder + 1 );
+                                ViewHome.updateDashboard( strViewKey, dc, plugin );
+                            }
+                        }
+                    }
+                }
+                else if ( nOrder > nOldOrder )
+                {
+                    for ( IDashboardComponent dc : listColumnDashboards )
+                    {
+                        if ( !dc.equals( dashboard ) )
+                        {
+                            int nCurrentOrder = dc.getOrder(  );
 
-		return true;
-	}
+                            if ( ( nCurrentOrder <= nOrder ) && ( nCurrentOrder > nOldOrder ) )
+                            {
+                                dc.setOrder( nCurrentOrder - 1 );
+                                ViewHome.updateDashboard( strViewKey, dc, plugin );
+                            }
+                        }
+                    }
+                }
+
+                // dashboard are singletons, values are modified by getting it from database
+                dashboard.setOrder( nOrder );
+                dashboard.setZone( nColumn );
+            }
+        }
+        else
+        {
+            dashboard.setOrder( 1 );
+        }
+
+        if ( bCreate )
+        {
+            // create dashboard
+            ViewHome.createDashboard( strViewKey, dashboard, plugin );
+        }
+        else
+        {
+            // update dashboard
+            ViewHome.updateDashboard( strViewKey, dashboard, plugin );
+        }
+    }
+
+    /**
+     * Get the dashboard component
+     * @param strViewKey the view key
+     * @param nColumn the column id
+     * @param plugin the plugins
+     * @return all dashboards for this column
+     */
+    public List<IDashboardComponent> getDashboardComponents( String strViewKey, int nColumn, Plugin plugin )
+    {
+        DashboardFilter filter = new DashboardFilter(  );
+        filter.setFilterColumn( nColumn );
+
+        List<IDashboardComponent> dashboardComponents = ViewHome.findDashboardsByFilter( filter, strViewKey, plugin );
+
+        return dashboardComponents;
+    }
+
+    /**
+     * Reorders column's dashboard
+     * @param strViewKey the view key
+     * @param nColumn the column to reorder
+     * @param plugin the plugin
+     */
+    public void doReorderColumn( String strViewKey, int nColumn, Plugin plugin )
+    {
+        int nOrder = ProfilesConstants.CONSTANTE_FIRST_ORDER;
+
+        for ( IDashboardComponent dc : getDashboardComponents( strViewKey, nColumn, plugin ) )
+        {
+            dc.setOrder( nOrder++ );
+            ViewHome.updateDashboard( strViewKey, dc, plugin );
+        }
+    }
+
+    /**
+     * Builds the map to with column id as key, and <code>true</code> as value if column is well ordered, <code>false</code> otherwise.
+     * @param strViewKey the view key
+     * @param plugin the plugin
+     * @return the map
+     */
+    public Map<String, Boolean> getOrderedColumnsStatus( String strViewKey, Plugin plugin )
+    {
+        Map<String, Boolean> mapOrderedStatus = new HashMap<String, Boolean>(  );
+        List<Integer> listColumns = ViewHome.findColumns( plugin );
+
+        for ( Integer nIdColumn : listColumns )
+        {
+            mapOrderedStatus.put( nIdColumn.toString(  ), isWellOrdered( strViewKey, nIdColumn, plugin ) );
+        }
+
+        return mapOrderedStatus;
+    }
+
+    /**
+     * Determines if the column is well ordered
+     * @param strViewKey the view key
+     * @param nColumn the column id
+     * @param plugin the plugin
+     * @return true if well ordered, <code>false</code> otherwise.
+     */
+    private boolean isWellOrdered( String strViewKey, int nColumn, Plugin plugin )
+    {
+        int nOrder = ProfilesConstants.CONSTANTE_FIRST_ORDER;
+
+        for ( IDashboardComponent dc : getDashboardComponents( strViewKey, nColumn, plugin ) )
+        {
+            if ( nOrder != dc.getOrder(  ) )
+            {
+                return false;
+            }
+
+            nOrder++;
+        }
+
+        return true;
+    }
 }

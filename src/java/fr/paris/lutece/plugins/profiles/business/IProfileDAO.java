@@ -33,8 +33,6 @@
  */
 package fr.paris.lutece.plugins.profiles.business;
 
-import java.util.Collection;
-
 import fr.paris.lutece.plugins.profiles.business.views.View;
 import fr.paris.lutece.portal.business.rbac.AdminRole;
 import fr.paris.lutece.portal.business.right.Right;
@@ -43,14 +41,16 @@ import fr.paris.lutece.portal.business.workgroup.AdminWorkgroup;
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.util.ReferenceList;
 
+import java.util.Collection;
+
+
 /**
- * 
+ *
  * IProfileDAO
  *
  */
-public interface IProfileDAO 
+public interface IProfileDAO
 {
-	
     /**
      * Delete a record from the table
      * @param strProfileKey The profile key
@@ -86,38 +86,38 @@ public interface IProfileDAO
      * @param plugin Plugin
      */
     void store( Profile profile, Plugin plugin );
-	
+
     /**
      * Find profile by filter
      * @param pFilter the Filter
      * @param plugin Plugin
      * @return List of profiles
      */
-	Collection<Profile> selectProfilesByFilter( ProfileFilter pFilter, Plugin plugin );
-	
-	/**
-     * Check if a profile already exists or not
-     * @param strKey The profile key
-     * @param plugin Plugin
-     * @return true if it already exists
-     */
-	boolean checkExistProfile( String strKey, Plugin plugin );
+    Collection<Profile> selectProfilesByFilter( ProfileFilter pFilter, Plugin plugin );
 
-	/**
-     * Get the list of profiles
-     * @param plugin Plugin
-     * @return the list of profiles
-     */
-	ReferenceList getProfileList( Plugin plugin );
-	
-	/**
-     * Check if the profile is attributed to any user
-     * @param strProfileKey the profile key
-     * @param plugin Plugin
-     * @return true if it is attributed to at least one user, false otherwise
-     */
+    /**
+    * Check if a profile already exists or not
+    * @param strKey The profile key
+    * @param plugin Plugin
+    * @return true if it already exists
+    */
+    boolean checkExistProfile( String strKey, Plugin plugin );
+
+    /**
+    * Get the list of profiles
+    * @param plugin Plugin
+    * @return the list of profiles
+    */
+    ReferenceList getProfileList( Plugin plugin );
+
+    /**
+    * Check if the profile is attributed to any user
+    * @param strProfileKey the profile key
+    * @param plugin Plugin
+    * @return true if it is attributed to at least one user, false otherwise
+    */
     boolean checkProfileAttributed( String strProfileKey, Plugin plugin );
-	
+
     /**
      * Load the profiles by a given ID user
      * @param nIdUser the ID user
@@ -125,26 +125,26 @@ public interface IProfileDAO
      * @return a profile
      */
     Profile selectProfileByIdUser( int nIdUser, Plugin plugin );
-    
-	/* RIGHTS */
-	
-	/**
-     * Get the list of rights associated to the profile
-     * @param strProfileKey The profile Key
-     * @param plugin Plugin
-     * @return The list of Right
-     */
-	Collection<Right> selectRightsListForProfile( String strProfileKey, Plugin plugin );
-	
-	/**
-     * Check if a profile has the given right.
-     * @param strProfileKey The profile Key
-     * @param strIdRight The Right ID
-     * @param plugin Plugin
-     * @return true if the profile has the right, false otherwise
-     */
+
+    /* RIGHTS */
+
+    /**
+    * Get the list of rights associated to the profile
+    * @param strProfileKey The profile Key
+    * @param plugin Plugin
+    * @return The list of Right
+    */
+    Collection<Right> selectRightsListForProfile( String strProfileKey, Plugin plugin );
+
+    /**
+    * Check if a profile has the given right.
+    * @param strProfileKey The profile Key
+    * @param strIdRight The Right ID
+    * @param plugin Plugin
+    * @return true if the profile has the right, false otherwise
+    */
     boolean hasRight( String strProfileKey, String strIdRight, Plugin plugin );
-    
+
     /**
      * Add a right for a profile
      * @param strProfileKey The profile Key
@@ -152,7 +152,7 @@ public interface IProfileDAO
      * @param plugin Plugin
      */
     void insertRightForProfile( String strProfileKey, String strIdRight, Plugin plugin );
-    
+
     /**
      * Remove a right from a profile
      * @param strProfileKey The profile Key
@@ -169,22 +169,22 @@ public interface IProfileDAO
     void deleteRights( String strProfileKey, Plugin plugin );
 
     /* WORKGROUPS */
-    
+
     /**
      * Get the list of workgroups associated to the profile
      * @param strProfileKey The profile Key
      * @param plugin Plugin
      * @return The list of workgroups
      */
-	Collection<AdminWorkgroup> selectWorkgroupsListForProfile( String strProfileKey, Plugin plugin );
+    Collection<AdminWorkgroup> selectWorkgroupsListForProfile( String strProfileKey, Plugin plugin );
 
-	/**
-     * Check if a profile has the given workgroup.
-     * @param strProfileKey The profile Key
-     * @param strWorkgroupKey The Workgroup key
-     * @param plugin Plugin
-     * @return true if the profile has the workgroup, false otherwise
-     */
+    /**
+    * Check if a profile has the given workgroup.
+    * @param strProfileKey The profile Key
+    * @param strWorkgroupKey The Workgroup key
+    * @param plugin Plugin
+    * @return true if the profile has the workgroup, false otherwise
+    */
     boolean hasWorkgroup( String strProfileKey, String strWorkgroupKey, Plugin plugin );
 
     /**
@@ -202,7 +202,7 @@ public interface IProfileDAO
      * @param plugin Plugin
      */
     void deleteWorkgroupFromProfile( String strProfileKey, String strWorkgroupKey, Plugin plugin );
-    
+
     /**
      * Remove all workgroups from profile
      * @param strProfileKey The profile key
@@ -211,22 +211,22 @@ public interface IProfileDAO
     void deleteWorkgroups( String strProfileKey, Plugin plugin );
 
     /* ROLES */
-    
+
     /**
      * Get the list of roles associated to the profile
      * @param strProfileKey The profile Key
      * @param plugin Plugin
      * @return The list of roles
      */
-	Collection<AdminRole> selectRolesListForProfile( String strProfileKey, Plugin plugin );
+    Collection<AdminRole> selectRolesListForProfile( String strProfileKey, Plugin plugin );
 
-	/**
-     * Check if a profile has the given role.
-     * @param strProfileKey The profile Key
-     * @param strRoleKey The Role key
-     * @param plugin Plugin
-     * @return true if the profile has the workgroup, false otherwise
-     */
+    /**
+    * Check if a profile has the given role.
+    * @param strProfileKey The profile Key
+    * @param strRoleKey The Role key
+    * @param plugin Plugin
+    * @return true if the profile has the workgroup, false otherwise
+    */
     boolean hasRole( String strProfileKey, String strRoleKey, Plugin plugin );
 
     /**
@@ -244,7 +244,7 @@ public interface IProfileDAO
      * @param plugin Plugin
      */
     void deleteRoleFromProfile( String strProfileKey, String strRoleKey, Plugin plugin );
-    
+
     /**
      * Remove all roles from profile
      * @param strProfileKey The profile key
@@ -253,22 +253,22 @@ public interface IProfileDAO
     void deleteRoles( String strProfileKey, Plugin plugin );
 
     /* USERS */
-    
+
     /**
      * Get the list of users associated to the profile
      * @param strProfileKey The profile Key
      * @param plugin Plugin
      * @return The list of users
      */
-	Collection<AdminUser> selectUsersListForProfile( String strProfileKey, Plugin plugin );
+    Collection<AdminUser> selectUsersListForProfile( String strProfileKey, Plugin plugin );
 
-	/**
-     * Check if a profile has the given user.
-     * @param strProfileKey The profile Key
-     * @param nIdUser The User ID
-     * @param plugin Plugin
-     * @return true if the profile has the user, false otherwise
-     */
+    /**
+    * Check if a profile has the given user.
+    * @param strProfileKey The profile Key
+    * @param nIdUser The User ID
+    * @param plugin Plugin
+    * @return true if the profile has the user, false otherwise
+    */
     boolean hasUser( String strProfileKey, int nIdUser, Plugin plugin );
 
     /**
@@ -286,7 +286,7 @@ public interface IProfileDAO
      * @param plugin Plugin
      */
     void deleteUserFromProfile( String strProfileKey, int nIdUser, Plugin plugin );
-    
+
     /**
      * Remove all users from profile
      * @param strProfileKey The profile key
@@ -310,7 +310,7 @@ public interface IProfileDAO
     boolean hasProfile( int nIdUser, Plugin plugin );
 
     /* VIEW */
-    
+
     /**
      * Get the view associated to the profile
      * @param strProfileKey the profile key
@@ -318,10 +318,10 @@ public interface IProfileDAO
      * @return the view
      */
     View selectViewForProfile( String strProfileKey, Plugin plugin );
-    
+
     /**
      * Remove profile from a view
-     * @param strProfileKey the profile key 
+     * @param strProfileKey the profile key
      * @param plugin Plugin
      */
     void deleteView( String strProfileKey, Plugin plugin );

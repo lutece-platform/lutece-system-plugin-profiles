@@ -33,40 +33,42 @@
  */
 package fr.paris.lutece.plugins.profiles.business.views;
 
-import java.util.List;
-import java.util.Locale;
-
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 
+import java.util.List;
+import java.util.Locale;
+
+
 /**
- * 
+ *
  * ViewActionHome
  *
  */
-public final class ViewActionHome 
+public final class ViewActionHome
 {
-	// Static variable pointed at the DAO instance
-    private static IViewActionDAO _dao = ( IViewActionDAO ) SpringContextService.getPluginBean( "profiles", "profiles.viewActionDAO" );
-    
+    // Static variable pointed at the DAO instance
+    private static IViewActionDAO _dao = (IViewActionDAO) SpringContextService.getPluginBean( "profiles",
+            "profiles.viewActionDAO" );
+
     /**
      * Private constructor - this class need not be instantiated
      */
     private ViewActionHome(  )
     {
     }
-    
+
     /**
      * Select profile actions
      * @param locale Locale
-	 * @param plugin Plugin
+         * @param plugin Plugin
      * @return list of profile actions
      */
     public static List<ViewAction> selectActionsList( Locale locale, Plugin plugin )
     {
-    	List<ViewAction> listActions = _dao.selectActionsList( plugin );
-    	
-    	return ( List<ViewAction> ) I18nService.localizeCollection( listActions, locale );
+        List<ViewAction> listActions = _dao.selectActionsList( plugin );
+
+        return (List<ViewAction>) I18nService.localizeCollection( listActions, locale );
     }
 }

@@ -33,22 +33,24 @@
  */
 package fr.paris.lutece.plugins.profiles.business.views;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-
-import javax.servlet.http.HttpServletRequest;
-
 import fr.paris.lutece.plugins.profiles.utils.constants.ProfilesConstants;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.util.url.UrlItem;
 
+import java.io.UnsupportedEncodingException;
+
+import java.net.URLEncoder;
+
+import javax.servlet.http.HttpServletRequest;
+
+
 /**
- * 
+ *
  * ViewFilter
  *
  */
-public class ViewFilter 
+public class ViewFilter
 {
     private String _strKey;
     private String _strDescription;
@@ -59,16 +61,16 @@ public class ViewFilter
     public ViewFilter(  )
     {
     }
-    
+
     /**
      * Initialize each component of the object
      */
     public void init(  )
     {
-    	_strKey = ProfilesConstants.EMPTY_STRING;
-    	_strDescription = ProfilesConstants.EMPTY_STRING;
+        _strKey = ProfilesConstants.EMPTY_STRING;
+        _strDescription = ProfilesConstants.EMPTY_STRING;
     }
-    
+
     /**
      * Gets the view key
      * @return Returns the Key.
@@ -106,7 +108,7 @@ public class ViewFilter
     {
         _strDescription = strDescription;
     }
-    
+
     /**
      * Set the value of the ViewFilter
      * @param request HttpServletRequest
@@ -114,65 +116,69 @@ public class ViewFilter
      */
     public boolean setFilter( HttpServletRequest request )
     {
-    	boolean bIsSearch = false;
-    	String strIsSearch = request.getParameter( ProfilesConstants.PARAMETER_SEARCH_IS_SEARCH );
-        
-    	if ( strIsSearch != null )
+        boolean bIsSearch = false;
+        String strIsSearch = request.getParameter( ProfilesConstants.PARAMETER_SEARCH_IS_SEARCH );
+
+        if ( strIsSearch != null )
         {
-        	bIsSearch = true;
-        	_strKey = request.getParameter( ProfilesConstants.PARAMETER_SEARCH_KEY );
-        	_strDescription = request.getParameter( ProfilesConstants.PARAMETER_SEARCH_DESCRIPTION );
+            bIsSearch = true;
+            _strKey = request.getParameter( ProfilesConstants.PARAMETER_SEARCH_KEY );
+            _strDescription = request.getParameter( ProfilesConstants.PARAMETER_SEARCH_DESCRIPTION );
         }
-    	else
-    	{
-    		init(  );
-    	}
-    	
-    	return bIsSearch;
+        else
+        {
+            init(  );
+        }
+
+        return bIsSearch;
     }
-    
+
     /**
      * Build url attributes
      * @param url the url
      */
     public void setUrlAttributes( UrlItem url )
     {
-    	url.addParameter( ProfilesConstants.PARAMETER_SEARCH_IS_SEARCH, Boolean.TRUE.toString(  ) );
-    	
-    	try
-    	{
-    		url.addParameter( ProfilesConstants.PARAMETER_SEARCH_KEY, 
-    				URLEncoder.encode( _strKey, AppPropertiesService.getProperty( ProfilesConstants.PROPERTY_ENCODING_URL ) ) );
-    		url.addParameter( ProfilesConstants.PARAMETER_SEARCH_DESCRIPTION, 
-    				URLEncoder.encode( _strDescription, AppPropertiesService.getProperty( ProfilesConstants.PROPERTY_ENCODING_URL ) ) );
-    	}
-    	catch( UnsupportedEncodingException e )
-    	{
-    		AppLogService.error( e );
-    	}
+        url.addParameter( ProfilesConstants.PARAMETER_SEARCH_IS_SEARCH, Boolean.TRUE.toString(  ) );
+
+        try
+        {
+            url.addParameter( ProfilesConstants.PARAMETER_SEARCH_KEY,
+                URLEncoder.encode( _strKey, AppPropertiesService.getProperty( ProfilesConstants.PROPERTY_ENCODING_URL ) ) );
+            url.addParameter( ProfilesConstants.PARAMETER_SEARCH_DESCRIPTION,
+                URLEncoder.encode( _strDescription,
+                    AppPropertiesService.getProperty( ProfilesConstants.PROPERTY_ENCODING_URL ) ) );
+        }
+        catch ( UnsupportedEncodingException e )
+        {
+            AppLogService.error( e );
+        }
     }
-    
+
     /**
      * Build url attributes
      * @return the url attributes
      */
     public String getUrlAttributes(  )
     {
-    	StringBuilder sbUrlAttributes = new StringBuilder(  );
-    	sbUrlAttributes.append( ProfilesConstants.PARAMETER_SEARCH_IS_SEARCH + ProfilesConstants.EQUAL + Boolean.TRUE );
-    	
-    	try
-    	{
-    		sbUrlAttributes.append( ProfilesConstants.AMPERSAND + ProfilesConstants.PARAMETER_SEARCH_KEY + ProfilesConstants.EQUAL +
-    				URLEncoder.encode( _strKey, AppPropertiesService.getProperty( ProfilesConstants.PROPERTY_ENCODING_URL ) ) );
-    		sbUrlAttributes.append( ProfilesConstants.AMPERSAND + ProfilesConstants.PARAMETER_SEARCH_DESCRIPTION + ProfilesConstants.EQUAL +
-    				URLEncoder.encode( _strDescription, AppPropertiesService.getProperty( ProfilesConstants.PROPERTY_ENCODING_URL ) ) );
-    	}
-    	catch( UnsupportedEncodingException e )
-    	{
-    		AppLogService.error( e );
-    	}
-    	
-    	return sbUrlAttributes.toString(  );
+        StringBuilder sbUrlAttributes = new StringBuilder(  );
+        sbUrlAttributes.append( ProfilesConstants.PARAMETER_SEARCH_IS_SEARCH + ProfilesConstants.EQUAL + Boolean.TRUE );
+
+        try
+        {
+            sbUrlAttributes.append( ProfilesConstants.AMPERSAND + ProfilesConstants.PARAMETER_SEARCH_KEY +
+                ProfilesConstants.EQUAL +
+                URLEncoder.encode( _strKey, AppPropertiesService.getProperty( ProfilesConstants.PROPERTY_ENCODING_URL ) ) );
+            sbUrlAttributes.append( ProfilesConstants.AMPERSAND + ProfilesConstants.PARAMETER_SEARCH_DESCRIPTION +
+                ProfilesConstants.EQUAL +
+                URLEncoder.encode( _strDescription,
+                    AppPropertiesService.getProperty( ProfilesConstants.PROPERTY_ENCODING_URL ) ) );
+        }
+        catch ( UnsupportedEncodingException e )
+        {
+            AppLogService.error( e );
+        }
+
+        return sbUrlAttributes.toString(  );
     }
 }

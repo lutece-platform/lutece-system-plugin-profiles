@@ -33,23 +33,22 @@
  */
 package fr.paris.lutece.plugins.profiles.business;
 
-import java.util.List;
-
 import fr.paris.lutece.portal.service.plugin.Plugin;
+
+import java.util.List;
 
 
 /**
- * 
+ *
  * IProfileActionDAO
  *
  */
-public interface IProfileActionDAO 
+public interface IProfileActionDAO
 {
-	
-	/**
-	 * Select the list of actions
-	 * @param plugin Plugin
-	 * @return the list of actions
-	 */
-	List<ProfileAction> selectActionsList( Plugin plugin );
+    /**
+     * Select the list of actions
+     * @param plugin Plugin
+     * @return the list of actions
+     */
+    List<ProfileAction> selectActionsList( Plugin plugin );
 }

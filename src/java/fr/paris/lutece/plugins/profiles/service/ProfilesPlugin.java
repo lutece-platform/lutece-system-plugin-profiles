@@ -33,8 +33,9 @@
  */
 package fr.paris.lutece.plugins.profiles.service;
 
-import fr.paris.lutece.plugins.profiles.business.Profile;
-import fr.paris.lutece.plugins.profiles.business.views.View;
+import fr.paris.lutece.plugins.profiles.business.ProfilesAdminUserFieldListener;
+import fr.paris.lutece.plugins.profiles.business.views.ViewDashboardListener;
+import fr.paris.lutece.plugins.profiles.service.views.ViewDashboardListenerService;
 import fr.paris.lutece.portal.service.plugin.PluginDefaultImplementation;
 
 
@@ -50,7 +51,7 @@ public class ProfilesPlugin extends PluginDefaultImplementation
      */
     public void init(  )
     {
-        Profile.init(  );
-        View.init(  );
+        ProfilesAdminUserFieldListenerService.getService(  ).registerListener( new ProfilesAdminUserFieldListener(  ) );
+        ViewDashboardListenerService.getService(  ).registerListener( new ViewDashboardListener(  ) );
     }
 }
