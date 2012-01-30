@@ -33,10 +33,14 @@
  */
 package fr.paris.lutece.plugins.profiles.service;
 
+import fr.paris.lutece.plugins.profiles.business.ProfileRBACRemovalListener;
+import fr.paris.lutece.plugins.profiles.business.ProfileWorkgroupRemovalListener;
 import fr.paris.lutece.plugins.profiles.business.ProfilesAdminUserFieldListener;
 import fr.paris.lutece.plugins.profiles.business.views.ViewDashboardListener;
 import fr.paris.lutece.plugins.profiles.service.views.ViewDashboardListenerService;
 import fr.paris.lutece.portal.service.plugin.PluginDefaultImplementation;
+import fr.paris.lutece.portal.service.rbac.RBACRemovalListenerService;
+import fr.paris.lutece.portal.service.workgroup.WorkgroupRemovalListenerService;
 
 
 /**
@@ -51,7 +55,12 @@ public class ProfilesPlugin extends PluginDefaultImplementation
      */
     public void init(  )
     {
+        // Add dashboards
         ProfilesAdminUserFieldListenerService.getService(  ).registerListener( new ProfilesAdminUserFieldListener(  ) );
         ViewDashboardListenerService.getService(  ).registerListener( new ViewDashboardListener(  ) );
+
+        // Add removal listeners
+        WorkgroupRemovalListenerService.getService(  ).registerListener( new ProfileWorkgroupRemovalListener(  ) );
+        RBACRemovalListenerService.getService(  ).registerListener( new ProfileRBACRemovalListener(  ) );
     }
 }

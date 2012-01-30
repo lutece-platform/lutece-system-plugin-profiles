@@ -489,7 +489,8 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
             right = RightHome.findByPrimaryKey( right.getId(  ) );
 
             //Add right with higher level then connected user or add all rights if connected user is administrator
-            if ( ( right.getLevel(  ) > getUser(  ).getUserLevel(  ) ) || ( getUser(  ).isAdmin(  ) ) )
+            if ( ( right != null ) &&
+                    ( ( right.getLevel(  ) > getUser(  ).getUserLevel(  ) ) || ( getUser(  ).isAdmin(  ) ) ) )
             {
                 right.setLocale( getLocale(  ) );
                 listAssignedRights.add( right );
@@ -678,7 +679,11 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
         for ( AdminWorkgroup workgroup : ProfileHome.getWorkgroupsListForProfile( strProfileKey, getPlugin(  ) ) )
         {
             workgroup = AdminWorkgroupHome.findByPrimaryKey( workgroup.getKey(  ) );
-            listAssignedWorkgroups.add( workgroup );
+
+            if ( workgroup != null )
+            {
+                listAssignedWorkgroups.add( workgroup );
+            }
         }
 
         // FILTER
@@ -935,7 +940,11 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
         for ( AdminRole role : ProfileHome.getRolesListForProfile( strProfileKey, getPlugin(  ) ) )
         {
             role = AdminRoleHome.findByPrimaryKey( role.getKey(  ) );
-            listAssignedRoles.add( role );
+
+            if ( role != null )
+            {
+                listAssignedRoles.add( role );
+            }
         }
 
         // AVAILABLE ROLES
@@ -1155,7 +1164,8 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
             user = AdminUserHome.findByPrimaryKey( user.getUserId(  ) );
 
             //Add users with higher level then connected user or add all users if connected user is administrator
-            if ( ( user.getUserLevel(  ) > getUser(  ).getUserLevel(  ) ) || ( getUser(  ).isAdmin(  ) ) )
+            if ( ( user != null ) &&
+                    ( ( user.getUserLevel(  ) > getUser(  ).getUserLevel(  ) ) || ( getUser(  ).isAdmin(  ) ) ) )
             {
                 listAssignedUsers.add( user );
             }
