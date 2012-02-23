@@ -281,11 +281,10 @@ public interface IProfileDAO
 
     /**
      * Remove an user from a profile
-     * @param strProfileKey The profile Key
      * @param nIdUser The User ID
      * @param plugin Plugin
      */
-    void deleteUserFromProfile( String strProfileKey, int nIdUser, Plugin plugin );
+    void deleteUserFromProfile( int nIdUser, Plugin plugin );
 
     /**
      * Remove all users from profile

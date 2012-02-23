@@ -337,11 +337,10 @@ public interface IProfilesService
 
     /**
      * Remove a user from a profile
-     * @param strProfileKey The profile Key
      * @param nIdUser The User ID
      * @param plugin Plugin
      */
-    void removeUserFromProfile( String strProfileKey, int nIdUser, Plugin plugin );
+    void removeUserFromProfile( int nIdUser, Plugin plugin );
 
     /**
      * Remove all users from profile

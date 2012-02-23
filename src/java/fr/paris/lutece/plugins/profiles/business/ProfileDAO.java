@@ -82,7 +82,7 @@ public class ProfileDAO implements IProfileDAO
     private static final String SQL_QUERY_SELECT_USERS_LIST_FOR_PROFILE = " SELECT id_user FROM profile_user WHERE profile_key = ? ORDER BY id_user ASC ";
     private static final String SQL_QUERY_SELECT_PROFILE_USER = " SELECT profile_key, id_user FROM profile_user WHERE profile_key = ? AND id_user = ? ";
     private static final String SQL_QUERY_INSERT_PROFILE_USER = " INSERT INTO profile_user (profile_key, id_user) VALUES ( ?, ? ) ";
-    private static final String SQL_QUERY_DELETE_PROFILE_USER = " DELETE FROM profile_user WHERE profile_key = ? AND id_user = ? ";
+    private static final String SQL_QUERY_DELETE_PROFILE_USER = " DELETE FROM profile_user WHERE id_user = ? ";
     private static final String SQL_QUERY_DELETE_USERS = " DELETE FROM profile_user WHERE profile_key = ? ";
     private static final String SQL_QUERY_DELETE_PROFILES_FROM_USER = " DELETE FROM profile_user WHERE id_user = ? ";
     private static final String SQL_QUERY_SELECT_PROFILE_USER_FROM_ID_USER = " SELECT profile_key, id_user FROM profile_user WHERE id_user = ? LIMIT 1";
@@ -640,11 +640,10 @@ public class ProfileDAO implements IProfileDAO
      * {@inheritDoc}
      */
     @Override
-    public void deleteUserFromProfile( String strProfileKey, int nIdUser, Plugin plugin )
+    public void deleteUserFromProfile( int nIdUser, Plugin plugin )
     {
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_PROFILE_USER, plugin );
-        daoUtil.setString( 1, strProfileKey );
-        daoUtil.setInt( 2, nIdUser );
+        daoUtil.setInt( 1, nIdUser );
 
         daoUtil.executeUpdate(  );
         daoUtil.free(  );

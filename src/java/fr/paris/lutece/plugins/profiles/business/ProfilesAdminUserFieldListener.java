@@ -183,7 +183,7 @@ public class ProfilesAdminUserFieldListener implements AdminUserFieldListener
             String strKey = assignedProfile.getKey(  );
 
             // Remove all profiles from the user
-            ProfileHome.removeUserFromProfile( strKey, user.getUserId(  ), plugin );
+            ProfileHome.removeUserFromProfile( user.getUserId(  ), plugin );
 
             // Remove rights to the user
             for ( Right right : ProfileHome.getRightsListForProfile( strKey, plugin ) )

@@ -152,24 +152,16 @@ public class ProfilesService implements IProfilesService
         // Remove User Fields
         List<IAttribute> listAttributes = AttributeHome.findPluginAttributes( ProfilesPlugin.PLUGIN_NAME, locale );
         IAttribute attribute = listAttributes.get( 0 );
-        String strValue = request.getParameter( ProfilesConstants.PARAMETER_ATTRIBUTE + ProfilesConstants.UNDERSCORE +
-                attribute.getIdAttribute(  ) );
-        int nIdField = Integer.parseInt( strValue );
         List<AdminUserField> listUserFields = AdminUserFieldHome.selectUserFieldsByIdUserIdAttribute( user.getUserId(  ),
                 attribute.getIdAttribute(  ) );
 
         for ( AdminUserField userField : listUserFields )
         {
-            if ( userField.getAttributeField(  ).getIdField(  ) == nIdField )
-            {
-                AdminUserFieldHome.remove( userField );
-
-                break;
-            }
+            AdminUserFieldHome.remove( userField );
         }
 
         // Remove profile
-        removeUserFromProfile( strProfileKey, nIdUser, plugin );
+        removeUserFromProfile( nIdUser, plugin );
 
         // Remove rights to the user
         for ( Right right : getRightsListForProfile( strProfileKey, plugin ) )
@@ -557,14 +549,13 @@ public class ProfilesService implements IProfilesService
 
     /**
      * Remove a user from a profile
-     * @param strProfileKey The profile Key
      * @param nIdUser The User ID
      * @param plugin Plugin
      */
     @Override
-    public void removeUserFromProfile( String strProfileKey, int nIdUser, Plugin plugin )
+    public void removeUserFromProfile( int nIdUser, Plugin plugin )
     {
-        ProfileHome.removeUserFromProfile( strProfileKey, nIdUser, plugin );
+        ProfileHome.removeUserFromProfile( nIdUser, plugin );
     }
 
     /**

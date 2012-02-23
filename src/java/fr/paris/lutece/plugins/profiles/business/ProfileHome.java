@@ -385,13 +385,12 @@ public final class ProfileHome
 
     /**
      * Remove a user from a profile
-     * @param strProfileKey The profile Key
      * @param nIdUser The User ID
      * @param plugin Plugin
      */
-    public static void removeUserFromProfile( String strProfileKey, int nIdUser, Plugin plugin )
+    public static void removeUserFromProfile( int nIdUser, Plugin plugin )
     {
-        _dao.deleteUserFromProfile( strProfileKey, nIdUser, plugin );
+        _dao.deleteUserFromProfile( nIdUser, plugin );
     }
 
     /**
