@@ -53,6 +53,7 @@ public class ProfileActionDAO implements IProfileActionDAO
     /**
     * {@inheritDoc}
     */
+    @Override
     public List<ProfileAction> selectActionsList( Plugin plugin )
     {
         List<ProfileAction> listActions = new ArrayList<ProfileAction>(  );

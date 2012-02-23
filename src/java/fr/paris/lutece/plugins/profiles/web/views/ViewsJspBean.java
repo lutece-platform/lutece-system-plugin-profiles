@@ -35,23 +35,22 @@ package fr.paris.lutece.plugins.profiles.web.views;
 
 import fr.paris.lutece.plugins.profiles.business.Profile;
 import fr.paris.lutece.plugins.profiles.business.ProfileFilter;
-import fr.paris.lutece.plugins.profiles.business.ProfileHome;
 import fr.paris.lutece.plugins.profiles.business.views.View;
 import fr.paris.lutece.plugins.profiles.business.views.ViewAction;
-import fr.paris.lutece.plugins.profiles.business.views.ViewActionHome;
 import fr.paris.lutece.plugins.profiles.business.views.ViewFilter;
-import fr.paris.lutece.plugins.profiles.business.views.ViewHome;
-import fr.paris.lutece.plugins.profiles.service.ProfilesService;
+import fr.paris.lutece.plugins.profiles.service.IProfilesService;
+import fr.paris.lutece.plugins.profiles.service.action.IViewActionService;
+import fr.paris.lutece.plugins.profiles.service.views.IViewsService;
 import fr.paris.lutece.plugins.profiles.service.views.ViewsResourceIdService;
 import fr.paris.lutece.plugins.profiles.utils.constants.ProfilesConstants;
 import fr.paris.lutece.portal.business.dashboard.DashboardFactory;
 import fr.paris.lutece.portal.business.rbac.RBAC;
-import fr.paris.lutece.portal.service.admin.AccessDeniedException;
 import fr.paris.lutece.portal.service.dashboard.DashboardService;
 import fr.paris.lutece.portal.service.dashboard.IDashboardComponent;
 import fr.paris.lutece.portal.service.message.AdminMessage;
 import fr.paris.lutece.portal.service.message.AdminMessageService;
 import fr.paris.lutece.portal.service.rbac.RBACService;
+import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.util.AppPathService;
@@ -110,7 +109,9 @@ public class ViewsJspBean extends PluginAdminPageJspBean
     private int _nDefaultItemsPerPage;
     private String _strCurrentPageIndex;
     private Map<String, ItemNavigator> _itemNavigators = new HashMap<String, ItemNavigator>(  );
-    private ProfilesService _profilesService = ProfilesService.getInstance(  );
+    private IViewsService _viewsService = (IViewsService) SpringContextService.getBean( ProfilesConstants.BEAN_VIEWS_SERVICE );
+    private IViewActionService _viewActionService = (IViewActionService) SpringContextService.getBean( ProfilesConstants.BEAN_VIEW_ACTION_SERVICE );
+    private IProfilesService _profilesService = (IProfilesService) SpringContextService.getBean( ProfilesConstants.BEAN_PROFILES_SERVICE );
     private ViewFilter _vFilter;
 
     /**
@@ -130,7 +131,7 @@ public class ViewsJspBean extends PluginAdminPageJspBean
 
         boolean bIsSearch = _vFilter.setFilter( request );
 
-        List<View> filteredViews = (List<View>) ViewHome.findViewsByFilter( _vFilter, getPlugin(  ) );
+        List<View> filteredViews = (List<View>) _viewsService.findViewsByFilter( _vFilter, getPlugin(  ) );
 
         // SORT
         String strSortedAttributeName = request.getParameter( Parameters.SORTED_ATTRIBUTE_NAME );
@@ -163,7 +164,7 @@ public class ViewsJspBean extends PluginAdminPageJspBean
             url.addParameter( Parameters.SORTED_ASC, strAscSort );
         }
 
-        String strSortSearchAttribute = ProfilesConstants.EMPTY_STRING;
+        String strSortSearchAttribute = StringUtils.EMPTY;
 
         if ( bIsSearch )
         {
@@ -178,7 +179,7 @@ public class ViewsJspBean extends PluginAdminPageJspBean
         // PERMISSIONS
         for ( View view : filteredViews )
         {
-            List<ViewAction> listActions = ViewActionHome.selectActionsList( getLocale(  ), getPlugin(  ) );
+            List<ViewAction> listActions = _viewActionService.selectActionsList( getLocale(  ), getPlugin(  ) );
             listActions = (List<ViewAction>) RBACService.getAuthorizedActionsCollection( listActions, view, getUser(  ) );
             view.setActions( listActions );
         }
@@ -187,7 +188,7 @@ public class ViewsJspBean extends PluginAdminPageJspBean
                 ViewsResourceIdService.PERMISSION_CREATE_VIEW, getUser(  ) );
 
         Map<String, Object> model = new HashMap<String, Object>(  );
-        model.put( ProfilesConstants.MARK_NB_ITEMS_PER_PAGE, ProfilesConstants.EMPTY_STRING + _nItemsPerPage );
+        model.put( ProfilesConstants.MARK_NB_ITEMS_PER_PAGE, StringUtils.EMPTY + _nItemsPerPage );
         model.put( ProfilesConstants.MARK_PAGINATOR, paginator );
         model.put( ProfilesConstants.MARK_LIST_VIEWS, paginator.getPageItems(  ) );
         model.put( ProfilesConstants.MARK_SEARCH_FILTER, _vFilter );
@@ -223,33 +224,31 @@ public class ViewsJspBean extends PluginAdminPageJspBean
      * Process the data capture form of a new view
      *
      * @param request The HTTP Request
-     * @throws AccessDeniedException the {@link AccessDeniedException}
      * @return The Jsp URL of the process result
      */
     public String doCreateView( HttpServletRequest request )
-        throws AccessDeniedException
     {
         if ( !RBACService.isAuthorized( View.RESOURCE_TYPE, RBAC.WILDCARD_RESOURCES_ID,
                     ViewsResourceIdService.PERMISSION_CREATE_VIEW, getUser(  ) ) )
         {
-            throw new AccessDeniedException(  );
+            return AdminMessageService.getMessageUrl( request, Messages.USER_ACCESS_DENIED, AdminMessage.TYPE_STOP );
         }
 
         String strKey = request.getParameter( ProfilesConstants.PARAMETER_VIEW_KEY );
         String strDescription = request.getParameter( ProfilesConstants.PARAMETER_VIEW_DESCRIPTION );
 
-        if ( ( strKey == null ) || ( strKey.equals( ProfilesConstants.EMPTY_STRING ) ) )
+        if ( StringUtils.isBlank( strKey ) )
         {
             return AdminMessageService.getMessageUrl( request, Messages.MANDATORY_FIELDS, AdminMessage.TYPE_STOP );
         }
 
-        if ( ( strDescription == null ) || ( strDescription.equals( ProfilesConstants.EMPTY_STRING ) ) )
+        if ( StringUtils.isBlank( strDescription ) )
         {
             return AdminMessageService.getMessageUrl( request, Messages.MANDATORY_FIELDS, AdminMessage.TYPE_STOP );
         }
 
         // Check if the view already exists
-        if ( ViewHome.checkExistView( strKey, getPlugin(  ) ) )
+        if ( _viewsService.checkExistView( strKey, getPlugin(  ) ) )
         {
             return AdminMessageService.getMessageUrl( request, ProfilesConstants.MESSAGE_VIEW_ALREADY_EXISTS,
                 AdminMessage.TYPE_STOP );
@@ -265,7 +264,7 @@ public class ViewsJspBean extends PluginAdminPageJspBean
         View view = new View(  );
         view.setKey( strKey.trim(  ) );
         view.setDescription( strDescription );
-        ViewHome.create( view, getPlugin(  ) );
+        _viewsService.create( view, getPlugin(  ) );
 
         return JSP_MANAGE_VIEWS;
     }
@@ -293,23 +292,21 @@ public class ViewsJspBean extends PluginAdminPageJspBean
      * Remove a view
      *
      * @param request The Http request
-     * @throws AccessDeniedException the {@link AccessDeniedException}
      * @return Html form
      */
     public String doRemoveView( HttpServletRequest request )
-        throws AccessDeniedException
     {
         String strViewKey = request.getParameter( ProfilesConstants.PARAMETER_VIEW_KEY );
 
         if ( !RBACService.isAuthorized( View.RESOURCE_TYPE, strViewKey, ViewsResourceIdService.PERMISSION_DELETE_VIEW,
                     getUser(  ) ) )
         {
-            throw new AccessDeniedException(  );
+            return AdminMessageService.getMessageUrl( request, Messages.USER_ACCESS_DENIED, AdminMessage.TYPE_STOP );
         }
 
-        ViewHome.removeProfiles( strViewKey, getPlugin(  ) );
-        ViewHome.removeDashboards( strViewKey, getPlugin(  ) );
-        ViewHome.remove( strViewKey, getPlugin(  ) );
+        _viewsService.removeProfiles( strViewKey, getPlugin(  ) );
+        _viewsService.removeDashboards( strViewKey, getPlugin(  ) );
+        _viewsService.remove( strViewKey, getPlugin(  ) );
 
         return JSP_MANAGE_VIEWS;
     }
@@ -327,7 +324,7 @@ public class ViewsJspBean extends PluginAdminPageJspBean
         setPageTitleProperty( ProfilesConstants.PROPERTY_MODIFY_PROFILE_PAGETITLE );
 
         String strViewKey = request.getParameter( ProfilesConstants.PARAMETER_VIEW_KEY );
-        View view = ViewHome.findByPrimaryKey( strViewKey, getPlugin(  ) );
+        View view = _viewsService.findByPrimaryKey( strViewKey, getPlugin(  ) );
 
         String strPermission = ViewsResourceIdService.PERMISSION_MODIFY_VIEW;
         boolean bPermission = RBACService.isAuthorized( View.RESOURCE_TYPE, strViewKey, strPermission, getUser(  ) );
@@ -338,8 +335,7 @@ public class ViewsJspBean extends PluginAdminPageJspBean
         setItemNavigator( ProfilesConstants.PARAMETER_MODIFY_VIEW, view, url );
 
         // PERMISSIONS
-        List<ViewAction> listActions = ProfilesService.getInstance(  )
-                                                      .getListActions( getUser(  ), view, strPermission, getLocale(  ),
+        List<ViewAction> listActions = _viewsService.getListActions( getUser(  ), view, strPermission, getLocale(  ),
                 getPlugin(  ) );
         view.setActions( listActions );
 
@@ -357,23 +353,21 @@ public class ViewsJspBean extends PluginAdminPageJspBean
      * Update a view
      *
      * @param request The Http request
-     * @throws AccessDeniedException the {@link AccessDeniedException}
      * @return Html form
      */
     public String doModifyView( HttpServletRequest request )
-        throws AccessDeniedException
     {
         String strViewKey = request.getParameter( ProfilesConstants.PARAMETER_VIEW_KEY );
 
         if ( !RBACService.isAuthorized( View.RESOURCE_TYPE, strViewKey, ViewsResourceIdService.PERMISSION_MODIFY_VIEW,
                     getUser(  ) ) )
         {
-            throw new AccessDeniedException(  );
+            return AdminMessageService.getMessageUrl( request, Messages.USER_ACCESS_DENIED, AdminMessage.TYPE_STOP );
         }
 
         String strDescription = request.getParameter( ProfilesConstants.PARAMETER_VIEW_DESCRIPTION );
 
-        if ( ( strDescription == null ) || ( strDescription.equals( ProfilesConstants.EMPTY_STRING ) ) )
+        if ( StringUtils.isBlank( strDescription ) )
         {
             return AdminMessageService.getMessageUrl( request, Messages.MANDATORY_FIELDS, AdminMessage.TYPE_STOP );
         }
@@ -381,7 +375,7 @@ public class ViewsJspBean extends PluginAdminPageJspBean
         View view = new View(  );
         view.setKey( strViewKey.trim(  ) );
         view.setDescription( strDescription );
-        ViewHome.update( view, getPlugin(  ) );
+        _viewsService.update( view, getPlugin(  ) );
 
         return JSP_MANAGE_VIEWS;
     }
@@ -404,14 +398,14 @@ public class ViewsJspBean extends PluginAdminPageJspBean
 
         // VIEW
         String strViewKey = request.getParameter( ProfilesConstants.PARAMETER_VIEW_KEY );
-        View view = ViewHome.findByPrimaryKey( strViewKey, getPlugin(  ) );
+        View view = _viewsService.findByPrimaryKey( strViewKey, getPlugin(  ) );
 
         // ASSIGNED PROFILES
         List<Profile> listAssignedProfiles = new ArrayList<Profile>(  );
 
-        for ( Profile profile : ViewHome.getProfilesListForView( strViewKey, getPlugin(  ) ) )
+        for ( Profile profile : _viewsService.getProfilesListForView( strViewKey, getPlugin(  ) ) )
         {
-            profile = ProfileHome.findByPrimaryKey( profile.getKey(  ), getPlugin(  ) );
+            profile = _profilesService.findByPrimaryKey( profile.getKey(  ), getPlugin(  ) );
             listAssignedProfiles.add( profile );
         }
 
@@ -420,7 +414,7 @@ public class ViewsJspBean extends PluginAdminPageJspBean
         List<Profile> listFilteredProfiles = new ArrayList<Profile>(  );
         boolean bIsSearch = pFilter.setFilter( request );
 
-        for ( Profile filteredProfile : ProfileHome.findProfilesByFilter( pFilter, getPlugin(  ) ) )
+        for ( Profile filteredProfile : _profilesService.findProfilesByFilter( pFilter, getPlugin(  ) ) )
         {
             for ( Profile profile : listAssignedProfiles )
             {
@@ -431,7 +425,7 @@ public class ViewsJspBean extends PluginAdminPageJspBean
             }
         }
 
-        String strSortSearchAttribute = ProfilesConstants.EMPTY_STRING;
+        String strSortSearchAttribute = StringUtils.EMPTY;
 
         if ( bIsSearch )
         {
@@ -444,7 +438,7 @@ public class ViewsJspBean extends PluginAdminPageJspBean
         ReferenceItem itemProfile = null;
         boolean bAssigned;
 
-        for ( Profile profile : ProfileHome.findAll( getPlugin(  ) ) )
+        for ( Profile profile : _profilesService.findAll( getPlugin(  ) ) )
         {
             itemProfile = new ReferenceItem(  );
             itemProfile.setCode( profile.getKey(  ) );
@@ -508,8 +502,7 @@ public class ViewsJspBean extends PluginAdminPageJspBean
                 url.getUrl(  ), Paginator.PARAMETER_PAGE_INDEX, _strCurrentPageIndex, getLocale(  ) );
 
         // PERMISSIONS
-        List<ViewAction> listActions = ProfilesService.getInstance(  )
-                                                      .getListActions( getUser(  ), view, strPermission, getLocale(  ),
+        List<ViewAction> listActions = _viewsService.getListActions( getUser(  ), view, strPermission, getLocale(  ),
                 getPlugin(  ) );
         view.setActions( listActions );
 
@@ -519,7 +512,7 @@ public class ViewsJspBean extends PluginAdminPageJspBean
         model.put( ProfilesConstants.MARK_ASSIGNED_NUMBER, listAssignedProfiles.size(  ) );
         model.put( ProfilesConstants.MARK_ITEM_NAVIGATOR,
             _itemNavigators.get( ProfilesConstants.PARAMETER_ASSIGN_PROFILE ) );
-        model.put( ProfilesConstants.MARK_NB_ITEMS_PER_PAGE, ProfilesConstants.EMPTY_STRING + _nItemsPerPage );
+        model.put( ProfilesConstants.MARK_NB_ITEMS_PER_PAGE, StringUtils.EMPTY + _nItemsPerPage );
         model.put( ProfilesConstants.MARK_PAGINATOR, paginator );
         model.put( ProfilesConstants.MARK_PERMISSION, bPermission );
         model.put( ProfilesConstants.MARK_SEARCH_FILTER, pFilter );
@@ -536,11 +529,9 @@ public class ViewsJspBean extends PluginAdminPageJspBean
      * Process the data capture form for assign users to a profile
      *
      * @param request The HTTP Request
-     * @throws AccessDeniedException the {@link AccessDeniedException}
      * @return The Jsp URL of the process result
      */
     public String doAssignProfilesView( HttpServletRequest request )
-        throws AccessDeniedException
     {
         String strReturn;
 
@@ -557,7 +548,7 @@ public class ViewsJspBean extends PluginAdminPageJspBean
             if ( !RBACService.isAuthorized( View.RESOURCE_TYPE, strViewKey,
                         ViewsResourceIdService.PERMISSION_MANAGE_PROFILES_ASSIGNMENT, getUser(  ) ) )
             {
-                throw new AccessDeniedException(  );
+                return AdminMessageService.getMessageUrl( request, Messages.USER_ACCESS_DENIED, AdminMessage.TYPE_STOP );
             }
 
             //retrieve the selected portlets ids
@@ -568,11 +559,11 @@ public class ViewsJspBean extends PluginAdminPageJspBean
                 for ( int i = 0; i < arrayProfileKeys.length; i++ )
                 {
                     String strProfileKey = arrayProfileKeys[i];
-                    Profile profile = ProfileHome.findByPrimaryKey( strProfileKey, getPlugin(  ) );
+                    Profile profile = _profilesService.findByPrimaryKey( strProfileKey, getPlugin(  ) );
 
-                    if ( !ViewHome.hasView( strProfileKey, getPlugin(  ) ) )
+                    if ( !_viewsService.hasView( strProfileKey, getPlugin(  ) ) )
                     {
-                        ViewHome.addProfileForView( strViewKey, strProfileKey, getPlugin(  ) );
+                        _viewsService.addProfileForView( strViewKey, strProfileKey, getPlugin(  ) );
                     }
                     else
                     {
@@ -594,25 +585,23 @@ public class ViewsJspBean extends PluginAdminPageJspBean
     /**
      * unassigns users from profile
      * @param request The HttpRequest
-     * @throws AccessDeniedException the {@link AccessDeniedException}
      * @return the HTML code of list assignations
      */
     public String doUnassignProfileView( HttpServletRequest request )
-        throws AccessDeniedException
     {
         String strViewKey = request.getParameter( ProfilesConstants.PARAMETER_VIEW_KEY );
 
         if ( !RBACService.isAuthorized( View.RESOURCE_TYPE, strViewKey,
                     ViewsResourceIdService.PERMISSION_MANAGE_PROFILES_ASSIGNMENT, getUser(  ) ) )
         {
-            throw new AccessDeniedException(  );
+            return AdminMessageService.getMessageUrl( request, Messages.USER_ACCESS_DENIED, AdminMessage.TYPE_STOP );
         }
 
         String strProfileKey = request.getParameter( ProfilesConstants.PARAMETER_PROFILE_KEY );
         String strAnchor = request.getParameter( ProfilesConstants.PARAMETER_ANCHOR );
 
         // Remove profile
-        ViewHome.removeProfileFromView( strViewKey, strProfileKey, getPlugin(  ) );
+        _viewsService.removeProfileFromView( strViewKey, strProfileKey, getPlugin(  ) );
 
         return JSP_ASSIGN_PROFILES_VIEW + ProfilesConstants.INTERROGATION_MARK + ProfilesConstants.PARAMETER_VIEW_KEY +
         ProfilesConstants.EQUAL + strViewKey + ProfilesConstants.SHARP + strAnchor;
@@ -628,7 +617,7 @@ public class ViewsJspBean extends PluginAdminPageJspBean
     public String getManageDashboards( HttpServletRequest request )
     {
         String strViewKey = request.getParameter( ProfilesConstants.PARAMETER_VIEW_KEY );
-        View view = ViewHome.findByPrimaryKey( strViewKey, getPlugin(  ) );
+        View view = _viewsService.findByPrimaryKey( strViewKey, getPlugin(  ) );
 
         Map<String, Object> model = new HashMap<String, Object>(  );
 
@@ -642,28 +631,23 @@ public class ViewsJspBean extends PluginAdminPageJspBean
         setItemNavigator( ProfilesConstants.PARAMETER_ASSIGN_DASHBOARD, view, url );
 
         // PERMISSIONS
-        List<ViewAction> listActions = ProfilesService.getInstance(  )
-                                                      .getListActions( getUser(  ), view, strPermission, getLocale(  ),
+        List<ViewAction> listActions = _viewsService.getListActions( getUser(  ), view, strPermission, getLocale(  ),
                 getPlugin(  ) );
         view.setActions( listActions );
 
-        Map<String, List<IDashboardComponent>> mapDashboards = ProfilesService.getInstance(  )
-                                                                              .getAllSetDashboards( strViewKey,
+        Map<String, List<IDashboardComponent>> mapDashboards = _viewsService.getAllSetDashboards( strViewKey,
                 getUser(  ), getPlugin(  ) );
         model.put( ProfilesConstants.MARK_MAP_DASHBOARDS, mapDashboards );
 
-        List<IDashboardComponent> listNotSetDashboards = ProfilesService.getInstance(  )
-                                                                        .getNotSetDashboards( strViewKey, getUser(  ),
+        List<IDashboardComponent> listNotSetDashboards = _viewsService.getNotSetDashboards( strViewKey, getUser(  ),
                 getPlugin(  ) );
         model.put( ProfilesConstants.MARK_NOT_SET_DASHBOARDS, listNotSetDashboards );
 
         model.put( ProfilesConstants.MARK_COLUMN_COUNT, DashboardService.getInstance(  ).getColumnCount(  ) );
-        model.put( ProfilesConstants.MARK_MAP_AVAILABLE_ORDERS,
-            ProfilesService.getInstance(  ).getMapAvailableOrders( getPlugin(  ) ) );
-        model.put( ProfilesConstants.MARK_LIST_AVAILABLE_COLUMNS,
-            ProfilesService.getInstance(  ).getListAvailableColumns(  ) );
+        model.put( ProfilesConstants.MARK_MAP_AVAILABLE_ORDERS, _viewsService.getMapAvailableOrders( getPlugin(  ) ) );
+        model.put( ProfilesConstants.MARK_LIST_AVAILABLE_COLUMNS, _viewsService.getListAvailableColumns(  ) );
         model.put( ProfilesConstants.MARK_MAP_COLUMN_ORDER_STATUS,
-            ProfilesService.getInstance(  ).getOrderedColumnsStatus( strViewKey, getPlugin(  ) ) );
+            _viewsService.getOrderedColumnsStatus( strViewKey, getPlugin(  ) ) );
 
         model.put( ProfilesConstants.MARK_VIEW, view );
         model.put( ProfilesConstants.MARK_PERMISSION, bPermission );
@@ -676,20 +660,18 @@ public class ViewsJspBean extends PluginAdminPageJspBean
     }
 
     /**
-         * Reorders columns
-         * @param request the request
-         * @throws AccessDeniedException the {@link AccessDeniedException}
-         * @return url
-         */
+     * Reorders columns
+     * @param request the request
+     * @return url
+     */
     public String doReorderColumn( HttpServletRequest request )
-        throws AccessDeniedException
     {
         String strViewKey = request.getParameter( ProfilesConstants.PARAMETER_VIEW_KEY );
 
         if ( !RBACService.isAuthorized( View.RESOURCE_TYPE, strViewKey,
                     ViewsResourceIdService.PERMISSION_MANAGE_DASHBOARDS, getUser(  ) ) )
         {
-            throw new AccessDeniedException(  );
+            return AdminMessageService.getMessageUrl( request, Messages.USER_ACCESS_DENIED, AdminMessage.TYPE_STOP );
         }
 
         String strColumnName = request.getParameter( ProfilesConstants.PARAMETER_COLUMN );
@@ -712,27 +694,25 @@ public class ViewsJspBean extends PluginAdminPageJspBean
             return AdminMessageService.getMessageUrl( request, Messages.MANDATORY_FIELDS, AdminMessage.TYPE_STOP );
         }
 
-        ProfilesService.getInstance(  ).doReorderColumn( strViewKey, nColumn, getPlugin(  ) );
+        _viewsService.doReorderColumn( strViewKey, nColumn, getPlugin(  ) );
 
         return JSP_MANAGE_DASHBOARDS + ProfilesConstants.INTERROGATION_MARK + ProfilesConstants.PARAMETER_VIEW_KEY +
         ProfilesConstants.EQUAL + strViewKey;
     }
 
     /**
-         * Moves the dashboard
-         * @param request the request
-         * @throws AccessDeniedException the {@link AccessDeniedException}
-         * @return url
-         */
+     * Moves the dashboard
+     * @param request the request
+     * @return url
+     */
     public String doMoveDashboard( HttpServletRequest request )
-        throws AccessDeniedException
     {
         String strViewKey = request.getParameter( ProfilesConstants.PARAMETER_VIEW_KEY );
 
         if ( !RBACService.isAuthorized( View.RESOURCE_TYPE, strViewKey,
                     ViewsResourceIdService.PERMISSION_MANAGE_DASHBOARDS, getUser(  ) ) )
         {
-            throw new AccessDeniedException(  );
+            return AdminMessageService.getMessageUrl( request, Messages.USER_ACCESS_DENIED, AdminMessage.TYPE_STOP );
         }
 
         String strDashboardName = request.getParameter( ProfilesConstants.PARAMETER_DASHBOARD_NAME );
@@ -744,7 +724,7 @@ public class ViewsJspBean extends PluginAdminPageJspBean
         }
 
         // retrieve dashboard from database. If not found, will use Spring.
-        IDashboardComponent dashboard = ViewHome.findDashboard( strDashboardName, strViewKey, getPlugin(  ) );
+        IDashboardComponent dashboard = _viewsService.findDashboard( strDashboardName, strViewKey, getPlugin(  ) );
         int nOldOrder = 0;
         int nOldColumn = 0;
         boolean bCreate = false;
@@ -793,8 +773,7 @@ public class ViewsJspBean extends PluginAdminPageJspBean
         dashboard.setOrder( nOrder );
         dashboard.setZone( nColumn );
 
-        ProfilesService.getInstance(  )
-                       .doMoveDashboard( dashboard, nOldColumn, nOldOrder, bCreate, strViewKey, getPlugin(  ) );
+        _viewsService.doMoveDashboard( dashboard, nOldColumn, nOldOrder, bCreate, strViewKey, getPlugin(  ) );
 
         return JSP_MANAGE_DASHBOARDS + ProfilesConstants.INTERROGATION_MARK + ProfilesConstants.PARAMETER_VIEW_KEY +
         ProfilesConstants.EQUAL + strViewKey;
@@ -803,23 +782,21 @@ public class ViewsJspBean extends PluginAdminPageJspBean
     /**
      * Unset the column
      * @param request the request
-     * @throws AccessDeniedException the {@link AccessDeniedException}
      * @return url
      */
     public String doUnsetColumn( HttpServletRequest request )
-        throws AccessDeniedException
     {
         String strViewKey = request.getParameter( ProfilesConstants.PARAMETER_VIEW_KEY );
 
         if ( !RBACService.isAuthorized( View.RESOURCE_TYPE, strViewKey, ViewsResourceIdService.PERMISSION_DELETE_VIEW,
                     getUser(  ) ) )
         {
-            throw new AccessDeniedException(  );
+            return AdminMessageService.getMessageUrl( request, Messages.USER_ACCESS_DENIED, AdminMessage.TYPE_STOP );
         }
 
         String strDashboardName = request.getParameter( ProfilesConstants.PARAMETER_DASHBOARD_NAME );
 
-        ViewHome.removeDashboard( strViewKey, strDashboardName, getPlugin(  ) );
+        _viewsService.removeDashboard( strViewKey, strDashboardName, getPlugin(  ) );
 
         return JSP_MANAGE_DASHBOARDS + ProfilesConstants.INTERROGATION_MARK + ProfilesConstants.PARAMETER_VIEW_KEY +
         ProfilesConstants.EQUAL + strViewKey;
@@ -842,7 +819,7 @@ public class ViewsJspBean extends PluginAdminPageJspBean
                 _vFilter = new ViewFilter(  );
             }
 
-            itemNavigator = _profilesService.getItemNavigator( _vFilter, view, url );
+            itemNavigator = _viewsService.getItemNavigator( _vFilter, view, url );
         }
         else
         {

@@ -38,6 +38,8 @@ import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.util.url.UrlItem;
 
+import org.apache.commons.lang.StringUtils;
+
 import java.io.UnsupportedEncodingException;
 
 import java.net.URLEncoder;
@@ -67,8 +69,8 @@ public class ViewFilter
      */
     public void init(  )
     {
-        _strKey = ProfilesConstants.EMPTY_STRING;
-        _strDescription = ProfilesConstants.EMPTY_STRING;
+        _strKey = StringUtils.EMPTY;
+        _strDescription = StringUtils.EMPTY;
     }
 
     /**

@@ -42,7 +42,6 @@ package fr.paris.lutece.plugins.profiles.utils.constants;
 public final class ProfilesConstants
 {
     // Constants
-    public static final String EMPTY_STRING = "";
     public static final String EQUAL = "=";
     public static final String AMPERSAND = "&";
     public static final String PERCENT = "%";
@@ -55,6 +54,12 @@ public final class ProfilesConstants
     public static final String LAST_NAME = "last_name";
     public static final String ALL = "ALL";
     public static final int CONSTANTE_FIRST_ORDER = 1;
+
+    // BEANS
+    public static final String BEAN_PROFILES_SERVICE = "profiles.profilesService";
+    public static final String BEAN_PROFILE_ACTION_SERVICE = "profiles.profileActionService";
+    public static final String BEAN_VIEWS_SERVICE = "profiles.viewsService";
+    public static final String BEAN_VIEW_ACTION_SERVICE = "profiles.viewActionService";
 
     // PROPERTIES
     public static final String PROPERTY_ENCODING_URL = "lutece.encoding.url";

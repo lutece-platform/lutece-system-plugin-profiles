@@ -39,7 +39,6 @@ import fr.paris.lutece.portal.service.dashboard.IDashboardComponent;
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.util.ReferenceList;
 
-import java.util.Collection;
 import java.util.List;
 
 
@@ -75,9 +74,9 @@ public interface IViewDAO
     /**
      * Load the list of views
      * @param plugin Plugin
-     * @return The Collection of the views
+     * @return The List of the views
      */
-    Collection<View> selectViewsList( Plugin plugin );
+    List<View> selectViewsList( Plugin plugin );
 
     /**
      * Update the record identified by the given view key with the given view in the table
@@ -92,7 +91,7 @@ public interface IViewDAO
      * @param plugin Plugin
      * @return List of views
      */
-    Collection<View> selectViewsByFilter( ViewFilter vFilter, Plugin plugin );
+    List<View> selectViewsByFilter( ViewFilter vFilter, Plugin plugin );
 
     /**
     * Check if a view already exists or not
@@ -117,7 +116,7 @@ public interface IViewDAO
      * @param plugin Plugin
      * @return The list of users
      */
-    Collection<Profile> selectProfilesListForView( String strViewKey, Plugin plugin );
+    List<Profile> selectProfilesListForView( String strViewKey, Plugin plugin );
 
     /**
     * Get the view from a profile

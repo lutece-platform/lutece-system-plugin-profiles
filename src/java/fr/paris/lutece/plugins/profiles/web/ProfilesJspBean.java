@@ -35,14 +35,13 @@ package fr.paris.lutece.plugins.profiles.web;
 
 import fr.paris.lutece.plugins.profiles.business.Profile;
 import fr.paris.lutece.plugins.profiles.business.ProfileAction;
-import fr.paris.lutece.plugins.profiles.business.ProfileActionHome;
 import fr.paris.lutece.plugins.profiles.business.ProfileFilter;
-import fr.paris.lutece.plugins.profiles.business.ProfileHome;
 import fr.paris.lutece.plugins.profiles.business.views.View;
-import fr.paris.lutece.plugins.profiles.business.views.ViewHome;
+import fr.paris.lutece.plugins.profiles.service.IProfilesService;
 import fr.paris.lutece.plugins.profiles.service.ProfilesPlugin;
 import fr.paris.lutece.plugins.profiles.service.ProfilesResourceIdService;
-import fr.paris.lutece.plugins.profiles.service.ProfilesService;
+import fr.paris.lutece.plugins.profiles.service.action.IProfileActionService;
+import fr.paris.lutece.plugins.profiles.service.views.IViewsService;
 import fr.paris.lutece.plugins.profiles.utils.constants.ProfilesConstants;
 import fr.paris.lutece.portal.business.rbac.AdminRole;
 import fr.paris.lutece.portal.business.rbac.AdminRoleHome;
@@ -53,8 +52,6 @@ import fr.paris.lutece.portal.business.right.Right;
 import fr.paris.lutece.portal.business.right.RightHome;
 import fr.paris.lutece.portal.business.user.AdminUser;
 import fr.paris.lutece.portal.business.user.AdminUserHome;
-import fr.paris.lutece.portal.business.user.attribute.AdminUserField;
-import fr.paris.lutece.portal.business.user.attribute.AdminUserFieldHome;
 import fr.paris.lutece.portal.business.user.attribute.AttributeField;
 import fr.paris.lutece.portal.business.user.attribute.AttributeFieldHome;
 import fr.paris.lutece.portal.business.user.attribute.AttributeHome;
@@ -62,7 +59,6 @@ import fr.paris.lutece.portal.business.user.attribute.IAttribute;
 import fr.paris.lutece.portal.business.workgroup.AdminWorkgroup;
 import fr.paris.lutece.portal.business.workgroup.AdminWorkgroupFilter;
 import fr.paris.lutece.portal.business.workgroup.AdminWorkgroupHome;
-import fr.paris.lutece.portal.service.admin.AccessDeniedException;
 import fr.paris.lutece.portal.service.admin.AdminUserService;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.message.AdminMessage;
@@ -70,7 +66,6 @@ import fr.paris.lutece.portal.service.message.AdminMessageService;
 import fr.paris.lutece.portal.service.rbac.RBACService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
-import fr.paris.lutece.portal.service.user.attribute.AdminUserFieldListenerService;
 import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.portal.service.workgroup.AdminWorkgroupResource;
@@ -87,6 +82,8 @@ import fr.paris.lutece.util.html.Paginator;
 import fr.paris.lutece.util.sort.AttributeComparator;
 import fr.paris.lutece.util.string.StringUtil;
 import fr.paris.lutece.util.url.UrlItem;
+
+import org.apache.commons.lang.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -106,7 +103,6 @@ import javax.servlet.http.HttpServletRequest;
 public class ProfilesJspBean extends PluginAdminPageJspBean
 {
     public static final String RIGHT_MANAGE_PROFILES = "PROFILES_MANAGEMENT";
-    private static final String BEAN_PROFILES_ADMIN_USER_FIELD_LISTENER_SERVICE = "profiles.profilesAdminUserFieldListenerService";
 
     // TEMPLATES
     private static final String TEMPLATE_MANAGE_PROFILES = "admin/plugins/profiles/manage_profiles.html";
@@ -138,7 +134,9 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
     private int _nDefaultItemsPerPage;
     private String _strCurrentPageIndex;
     private Map<String, ItemNavigator> _itemNavigators = new HashMap<String, ItemNavigator>(  );
-    private ProfilesService _profilesService = ProfilesService.getInstance(  );
+    private IProfilesService _profilesService = (IProfilesService) SpringContextService.getBean( ProfilesConstants.BEAN_PROFILES_SERVICE );
+    private IProfileActionService _profileActionService = (IProfileActionService) SpringContextService.getBean( ProfilesConstants.BEAN_PROFILE_ACTION_SERVICE );
+    private IViewsService _viewsService = (IViewsService) SpringContextService.getBean( ProfilesConstants.BEAN_VIEWS_SERVICE );
     private ProfileFilter _pFilter;
 
     /**
@@ -158,7 +156,7 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
 
         boolean bIsSearch = _pFilter.setFilter( request );
 
-        List<Profile> filteredProfiles = (List<Profile>) ProfileHome.findProfilesByFilter( _pFilter, getPlugin(  ) );
+        List<Profile> filteredProfiles = _profilesService.findProfilesByFilter( _pFilter, getPlugin(  ) );
 
         // SORT
         String strSortedAttributeName = request.getParameter( Parameters.SORTED_ATTRIBUTE_NAME );
@@ -191,7 +189,7 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
             url.addParameter( Parameters.SORTED_ASC, strAscSort );
         }
 
-        String strSortSearchAttribute = ProfilesConstants.EMPTY_STRING;
+        String strSortSearchAttribute = StringUtils.EMPTY;
 
         if ( bIsSearch )
         {
@@ -206,7 +204,7 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
         // PERMISSIONS
         for ( Profile profile : filteredProfiles )
         {
-            List<ProfileAction> listActions = ProfileActionHome.selectActionsList( getLocale(  ), getPlugin(  ) );
+            List<ProfileAction> listActions = _profileActionService.selectActionsList( getLocale(  ), getPlugin(  ) );
             listActions = (List<ProfileAction>) RBACService.getAuthorizedActionsCollection( listActions, profile,
                     getUser(  ) );
             profile.setActions( listActions );
@@ -216,7 +214,7 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
                 ProfilesResourceIdService.PERMISSION_CREATE_PROFILE, getUser(  ) );
 
         Map<String, Object> model = new HashMap<String, Object>(  );
-        model.put( ProfilesConstants.MARK_NB_ITEMS_PER_PAGE, ProfilesConstants.EMPTY_STRING + _nItemsPerPage );
+        model.put( ProfilesConstants.MARK_NB_ITEMS_PER_PAGE, StringUtils.EMPTY + _nItemsPerPage );
         model.put( ProfilesConstants.MARK_PAGINATOR, paginator );
         model.put( ProfilesConstants.MARK_LIST_PROFILES, paginator.getPageItems(  ) );
         model.put( ProfilesConstants.MARK_SEARCH_FILTER, _pFilter );
@@ -252,33 +250,31 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
      * Process the data capture form of a new profile
      *
      * @param request The HTTP Request
-     * @throws AccessDeniedException the {@link AccessDeniedException}
      * @return The Jsp URL of the process result
      */
     public String doCreateProfile( HttpServletRequest request )
-        throws AccessDeniedException
     {
         if ( !RBACService.isAuthorized( Profile.RESOURCE_TYPE, RBAC.WILDCARD_RESOURCES_ID,
                     ProfilesResourceIdService.PERMISSION_CREATE_PROFILE, getUser(  ) ) )
         {
-            throw new AccessDeniedException(  );
+            return AdminMessageService.getMessageUrl( request, Messages.USER_ACCESS_DENIED, AdminMessage.TYPE_STOP );
         }
 
         String strKey = request.getParameter( ProfilesConstants.PARAMETER_PROFILE_KEY );
         String strDescription = request.getParameter( ProfilesConstants.PARAMETER_PROFILE_DESCRIPTION );
 
-        if ( ( strKey == null ) || ( strKey.equals( ProfilesConstants.EMPTY_STRING ) ) )
+        if ( StringUtils.isBlank( strKey ) )
         {
             return AdminMessageService.getMessageUrl( request, Messages.MANDATORY_FIELDS, AdminMessage.TYPE_STOP );
         }
 
-        if ( ( strDescription == null ) || ( strDescription.equals( ProfilesConstants.EMPTY_STRING ) ) )
+        if ( StringUtils.isBlank( strDescription ) )
         {
             return AdminMessageService.getMessageUrl( request, Messages.MANDATORY_FIELDS, AdminMessage.TYPE_STOP );
         }
 
         // Check if profile already exist
-        if ( ProfileHome.checkExistProfile( strKey, getPlugin(  ) ) )
+        if ( _profilesService.checkExistProfile( strKey, getPlugin(  ) ) )
         {
             return AdminMessageService.getMessageUrl( request, ProfilesConstants.MESSAGE_PROFILE_ALREADY_EXISTS,
                 AdminMessage.TYPE_STOP );
@@ -294,7 +290,7 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
         Profile profile = new Profile(  );
         profile.setKey( strKey.trim(  ) );
         profile.setDescription( strDescription );
-        ProfileHome.create( profile, getPlugin(  ) );
+        _profilesService.create( profile, getPlugin(  ) );
 
         // Create user field
         List<IAttribute> listAttributes = AttributeHome.findPluginAttributes( ProfilesPlugin.PLUGIN_NAME, getLocale(  ) );
@@ -331,32 +327,30 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
      * Remove a profile
      *
      * @param request The Http request
-     * @throws AccessDeniedException the {@link AccessDeniedException}
      * @return Html form
      */
     public String doRemoveProfile( HttpServletRequest request )
-        throws AccessDeniedException
     {
         String strProfileKey = request.getParameter( ProfilesConstants.PARAMETER_PROFILE_KEY );
 
         if ( !RBACService.isAuthorized( Profile.RESOURCE_TYPE, strProfileKey,
                     ProfilesResourceIdService.PERMISSION_DELETE_PROFILE, getUser(  ) ) )
         {
-            throw new AccessDeniedException(  );
+            return AdminMessageService.getMessageUrl( request, Messages.USER_ACCESS_DENIED, AdminMessage.TYPE_STOP );
         }
 
         // check that no user has this profile 
-        if ( ProfileHome.checkProfileAttributed( strProfileKey, getPlugin(  ) ) )
+        if ( _profilesService.checkProfileAttributed( strProfileKey, getPlugin(  ) ) )
         {
             return AdminMessageService.getMessageUrl( request, ProfilesConstants.PROPERTY_PROFILE_ATTRIBUTED,
                 AdminMessage.TYPE_STOP );
         }
 
-        ProfileHome.removeRights( strProfileKey, getPlugin(  ) );
-        ProfileHome.removeWorkgroups( strProfileKey, getPlugin(  ) );
-        ProfileHome.removeRoles( strProfileKey, getPlugin(  ) );
-        ProfileHome.removeView( strProfileKey, getPlugin(  ) );
-        ProfileHome.remove( strProfileKey, getPlugin(  ) );
+        _profilesService.removeRights( strProfileKey, getPlugin(  ) );
+        _profilesService.removeWorkgroups( strProfileKey, getPlugin(  ) );
+        _profilesService.removeRoles( strProfileKey, getPlugin(  ) );
+        _profilesService.removeView( strProfileKey, getPlugin(  ) );
+        _profilesService.remove( strProfileKey, getPlugin(  ) );
 
         // Remove user field
         List<IAttribute> listAttributes = AttributeHome.findPluginAttributes( ProfilesPlugin.PLUGIN_NAME, getLocale(  ) );
@@ -389,7 +383,7 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
         setPageTitleProperty( ProfilesConstants.PROPERTY_MODIFY_PROFILE_PAGETITLE );
 
         String strProfileKey = request.getParameter( ProfilesConstants.PARAMETER_PROFILE_KEY );
-        Profile profile = ProfileHome.findByPrimaryKey( strProfileKey, getPlugin(  ) );
+        Profile profile = _profilesService.findByPrimaryKey( strProfileKey, getPlugin(  ) );
 
         String strPermission = ProfilesResourceIdService.PERMISSION_MODIFY_PROFILE;
         boolean bPermission = RBACService.isAuthorized( Profile.RESOURCE_TYPE, strProfileKey, strPermission, getUser(  ) );
@@ -400,8 +394,7 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
         setItemNavigator( ProfilesConstants.PARAMETER_MODIFY_PROFILE, profile, url );
 
         // PERMISSIONS
-        List<ProfileAction> listActions = ProfilesService.getInstance(  )
-                                                         .getListActions( getUser(  ), profile, strPermission,
+        List<ProfileAction> listActions = _profilesService.getListActions( getUser(  ), profile, strPermission,
                 getLocale(  ), getPlugin(  ) );
         profile.setActions( listActions );
 
@@ -419,23 +412,21 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
     /**
      * Update a profile
      * @param request The Http request
-     * @throws AccessDeniedException the {@link AccessDeniedException}
      * @return Html form
      */
     public String doModifyProfile( HttpServletRequest request )
-        throws AccessDeniedException
     {
         String strProfileKey = request.getParameter( ProfilesConstants.PARAMETER_PROFILE_KEY );
 
         if ( !RBACService.isAuthorized( Profile.RESOURCE_TYPE, strProfileKey,
                     ProfilesResourceIdService.PERMISSION_MODIFY_PROFILE, getUser(  ) ) )
         {
-            throw new AccessDeniedException(  );
+            return AdminMessageService.getMessageUrl( request, Messages.USER_ACCESS_DENIED, AdminMessage.TYPE_STOP );
         }
 
         String strDescription = request.getParameter( ProfilesConstants.PARAMETER_PROFILE_DESCRIPTION );
 
-        if ( ( strDescription == null ) || ( strDescription.equals( ProfilesConstants.EMPTY_STRING ) ) )
+        if ( StringUtils.isBlank( strDescription ) )
         {
             return AdminMessageService.getMessageUrl( request, Messages.MANDATORY_FIELDS, AdminMessage.TYPE_STOP );
         }
@@ -443,7 +434,7 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
         Profile profile = new Profile(  );
         profile.setKey( strProfileKey.trim(  ) );
         profile.setDescription( strDescription );
-        ProfileHome.update( profile, getPlugin(  ) );
+        _profilesService.update( profile, getPlugin(  ) );
 
         // Modify user field
         List<IAttribute> listAttributes = AttributeHome.findPluginAttributes( ProfilesPlugin.PLUGIN_NAME, getLocale(  ) );
@@ -479,12 +470,12 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
 
         // PROFILE
         String strProfileKey = request.getParameter( ProfilesConstants.PARAMETER_PROFILE_KEY );
-        Profile profile = ProfileHome.findByPrimaryKey( strProfileKey, getPlugin(  ) );
+        Profile profile = _profilesService.findByPrimaryKey( strProfileKey, getPlugin(  ) );
 
         // ASSIGNED RIGHTS
         List<Right> listAssignedRights = new ArrayList<Right>(  );
 
-        for ( Right right : ProfileHome.getRightsListForProfile( strProfileKey, getPlugin(  ) ) )
+        for ( Right right : _profilesService.getRightsListForProfile( strProfileKey, getPlugin(  ) ) )
         {
             right = RightHome.findByPrimaryKey( right.getId(  ) );
 
@@ -538,8 +529,7 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
         setItemNavigator( ProfilesConstants.PARAMETER_ASSIGN_RIGHT, profile, url );
 
         // PERMISSIONS
-        List<ProfileAction> listActions = ProfilesService.getInstance(  )
-                                                         .getListActions( getUser(  ), profile, strPermission,
+        List<ProfileAction> listActions = _profilesService.getListActions( getUser(  ), profile, strPermission,
                 getLocale(  ), getPlugin(  ) );
         profile.setActions( listActions );
 
@@ -560,11 +550,9 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
      * Process the data capture form for assign rights to a profile
      *
      * @param request The HTTP Request
-     * @throws AccessDeniedException the {@link AccessDeniedException}
      * @return The Jsp URL of the process result
      */
     public String doAssignRightsProfile( HttpServletRequest request )
-        throws AccessDeniedException
     {
         String strReturn;
 
@@ -581,7 +569,7 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
             if ( !RBACService.isAuthorized( Profile.RESOURCE_TYPE, strProfileKey,
                         ProfilesResourceIdService.PERMISSION_MANAGE_RIGHTS_ASSIGNMENT, getUser(  ) ) )
             {
-                throw new AccessDeniedException(  );
+                return AdminMessageService.getMessageUrl( request, Messages.USER_ACCESS_DENIED, AdminMessage.TYPE_STOP );
             }
 
             //retrieve the selected portlets ids
@@ -591,14 +579,14 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
             {
                 for ( int i = 0; i < arrayRightsIds.length; i++ )
                 {
-                    if ( !ProfileHome.hasRight( strProfileKey, arrayRightsIds[i], getPlugin(  ) ) )
+                    if ( !_profilesService.hasRight( strProfileKey, arrayRightsIds[i], getPlugin(  ) ) )
                     {
-                        ProfileHome.addRightForProfile( strProfileKey, arrayRightsIds[i], getPlugin(  ) );
+                        _profilesService.addRightForProfile( strProfileKey, arrayRightsIds[i], getPlugin(  ) );
 
                         // Update users rights
                         Right right = RightHome.findByPrimaryKey( arrayRightsIds[i] );
 
-                        for ( AdminUser user : ProfileHome.getUsersListForProfile( strProfileKey, getPlugin(  ) ) )
+                        for ( AdminUser user : _profilesService.getUsersListForProfile( strProfileKey, getPlugin(  ) ) )
                         {
                             if ( !AdminUserHome.hasRight( user, right.getId(  ) ) &&
                                     ( user.getUserLevel(  ) <= right.getLevel(  ) ) )
@@ -620,29 +608,27 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
     /**
      * unassigns right from profile
      * @param request The HttpRequest
-     * @throws AccessDeniedException the {@link AccessDeniedException}
      * @return the HTML code of list assignations
      */
     public String doUnassignRightProfile( HttpServletRequest request )
-        throws AccessDeniedException
     {
         String strProfileKey = request.getParameter( ProfilesConstants.PARAMETER_PROFILE_KEY );
 
         if ( !RBACService.isAuthorized( Profile.RESOURCE_TYPE, strProfileKey,
                     ProfilesResourceIdService.PERMISSION_MANAGE_RIGHTS_ASSIGNMENT, getUser(  ) ) )
         {
-            throw new AccessDeniedException(  );
+            return AdminMessageService.getMessageUrl( request, Messages.USER_ACCESS_DENIED, AdminMessage.TYPE_STOP );
         }
 
         String strIdRight = request.getParameter( ProfilesConstants.PARAMETER_ID_RIGHT );
         String strAnchor = request.getParameter( ProfilesConstants.PARAMETER_ANCHOR );
 
-        ProfileHome.removeRightFromProfile( strProfileKey, strIdRight, getPlugin(  ) );
+        _profilesService.removeRightFromProfile( strProfileKey, strIdRight, getPlugin(  ) );
 
         // Update users rights
         Right right = RightHome.findByPrimaryKey( strIdRight );
 
-        for ( AdminUser user : ProfileHome.getUsersListForProfile( strProfileKey, getPlugin(  ) ) )
+        for ( AdminUser user : _profilesService.getUsersListForProfile( strProfileKey, getPlugin(  ) ) )
         {
             if ( AdminUserHome.hasRight( user, right.getId(  ) ) &&
                     ( ( user.getUserLevel(  ) > getUser(  ).getUserLevel(  ) ) || getUser(  ).isAdmin(  ) ) )
@@ -671,12 +657,12 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
 
         // PROFILE
         String strProfileKey = request.getParameter( ProfilesConstants.PARAMETER_PROFILE_KEY );
-        Profile profile = ProfileHome.findByPrimaryKey( strProfileKey, getPlugin(  ) );
+        Profile profile = _profilesService.findByPrimaryKey( strProfileKey, getPlugin(  ) );
 
         // ASSIGNED WORKGROUPS
         List<AdminWorkgroup> listAssignedWorkgroups = new ArrayList<AdminWorkgroup>(  );
 
-        for ( AdminWorkgroup workgroup : ProfileHome.getWorkgroupsListForProfile( strProfileKey, getPlugin(  ) ) )
+        for ( AdminWorkgroup workgroup : _profilesService.getWorkgroupsListForProfile( strProfileKey, getPlugin(  ) ) )
         {
             workgroup = AdminWorkgroupHome.findByPrimaryKey( workgroup.getKey(  ) );
 
@@ -775,7 +761,7 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
             url.addParameter( Parameters.SORTED_ASC, strAscSort );
         }
 
-        String strSortSearchAttribute = ProfilesConstants.EMPTY_STRING;
+        String strSortSearchAttribute = StringUtils.EMPTY;
 
         if ( bIsSearch )
         {
@@ -796,8 +782,7 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
                 _nItemsPerPage, url.getUrl(  ), Paginator.PARAMETER_PAGE_INDEX, _strCurrentPageIndex, getLocale(  ) );
 
         // PERMISSIONS
-        List<ProfileAction> listActions = ProfilesService.getInstance(  )
-                                                         .getListActions( getUser(  ), profile, strPermission,
+        List<ProfileAction> listActions = _profilesService.getListActions( getUser(  ), profile, strPermission,
                 getLocale(  ), getPlugin(  ) );
         profile.setActions( listActions );
 
@@ -807,7 +792,7 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
         model.put( ProfilesConstants.MARK_ASSIGNED_NUMBER, listAssignedWorkgroups.size(  ) );
         model.put( ProfilesConstants.MARK_ITEM_NAVIGATOR,
             _itemNavigators.get( ProfilesConstants.PARAMETER_ASSIGN_WORKGROUP ) );
-        model.put( ProfilesConstants.MARK_NB_ITEMS_PER_PAGE, ProfilesConstants.EMPTY_STRING + _nItemsPerPage );
+        model.put( ProfilesConstants.MARK_NB_ITEMS_PER_PAGE, StringUtils.EMPTY + _nItemsPerPage );
         model.put( ProfilesConstants.MARK_PAGINATOR, paginator );
         model.put( ProfilesConstants.MARK_SEARCH_IS_SEARCH, bIsSearch );
         model.put( ProfilesConstants.MARK_SEARCH_FILTER, awFilter );
@@ -823,11 +808,9 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
      * Process the data capture form for assign workgroups to a profile
      *
      * @param request The HTTP Request
-     * @throws AccessDeniedException the {@link AccessDeniedException}
      * @return The Jsp URL of the process result
      */
     public String doAssignWorkgroupsProfile( HttpServletRequest request )
-        throws AccessDeniedException
     {
         String strReturn;
 
@@ -844,7 +827,7 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
             if ( !RBACService.isAuthorized( Profile.RESOURCE_TYPE, strProfileKey,
                         ProfilesResourceIdService.PERMISSION_MANAGE_WORKGROUPS_ASSIGNMENT, getUser(  ) ) )
             {
-                throw new AccessDeniedException(  );
+                return AdminMessageService.getMessageUrl( request, Messages.USER_ACCESS_DENIED, AdminMessage.TYPE_STOP );
             }
 
             //retrieve the selected portlets ids
@@ -854,14 +837,14 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
             {
                 for ( int i = 0; i < arrayWorkgroupsIds.length; i++ )
                 {
-                    if ( !ProfileHome.hasWorkgroup( strProfileKey, arrayWorkgroupsIds[i], getPlugin(  ) ) )
+                    if ( !_profilesService.hasWorkgroup( strProfileKey, arrayWorkgroupsIds[i], getPlugin(  ) ) )
                     {
-                        ProfileHome.addWorkgroupForProfile( strProfileKey, arrayWorkgroupsIds[i], getPlugin(  ) );
+                        _profilesService.addWorkgroupForProfile( strProfileKey, arrayWorkgroupsIds[i], getPlugin(  ) );
 
                         // Update users workgroups
                         AdminWorkgroup workgroup = AdminWorkgroupHome.findByPrimaryKey( arrayWorkgroupsIds[i] );
 
-                        for ( AdminUser user : ProfileHome.getUsersListForProfile( strProfileKey, getPlugin(  ) ) )
+                        for ( AdminUser user : _profilesService.getUsersListForProfile( strProfileKey, getPlugin(  ) ) )
                         {
                             if ( !AdminWorkgroupHome.isUserInWorkgroup( user, workgroup.getKey(  ) ) )
                             {
@@ -882,29 +865,27 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
     /**
      * unassigns workgroup from profile
      * @param request The HttpRequest
-     * @throws AccessDeniedException the {@link AccessDeniedException}
      * @return the HTML code of list assignations
      */
     public String doUnassignWorkgroupProfile( HttpServletRequest request )
-        throws AccessDeniedException
     {
         String strProfileKey = request.getParameter( ProfilesConstants.PARAMETER_PROFILE_KEY );
 
         if ( !RBACService.isAuthorized( Profile.RESOURCE_TYPE, strProfileKey,
                     ProfilesResourceIdService.PERMISSION_MANAGE_WORKGROUPS_ASSIGNMENT, getUser(  ) ) )
         {
-            throw new AccessDeniedException(  );
+            return AdminMessageService.getMessageUrl( request, Messages.USER_ACCESS_DENIED, AdminMessage.TYPE_STOP );
         }
 
         String strWorkgroupKey = request.getParameter( ProfilesConstants.PARAMETER_WORKGROUP_KEY );
         String strAnchor = request.getParameter( ProfilesConstants.PARAMETER_ANCHOR );
 
-        ProfileHome.removeWorkgroupFromProfile( strProfileKey, strWorkgroupKey, getPlugin(  ) );
+        _profilesService.removeWorkgroupFromProfile( strProfileKey, strWorkgroupKey, getPlugin(  ) );
 
         // Update users workgroups
         AdminWorkgroup workgroup = AdminWorkgroupHome.findByPrimaryKey( strWorkgroupKey );
 
-        for ( AdminUser user : ProfileHome.getUsersListForProfile( strProfileKey, getPlugin(  ) ) )
+        for ( AdminUser user : _profilesService.getUsersListForProfile( strProfileKey, getPlugin(  ) ) )
         {
             if ( AdminWorkgroupHome.isUserInWorkgroup( user, workgroup.getKey(  ) ) )
             {
@@ -932,12 +913,12 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
 
         // PROFILE
         String strProfileKey = request.getParameter( ProfilesConstants.PARAMETER_PROFILE_KEY );
-        Profile profile = ProfileHome.findByPrimaryKey( strProfileKey, getPlugin(  ) );
+        Profile profile = _profilesService.findByPrimaryKey( strProfileKey, getPlugin(  ) );
 
         // ASSIGNED ROLES
         List<AdminRole> listAssignedRoles = new ArrayList<AdminRole>(  );
 
-        for ( AdminRole role : ProfileHome.getRolesListForProfile( strProfileKey, getPlugin(  ) ) )
+        for ( AdminRole role : _profilesService.getRolesListForProfile( strProfileKey, getPlugin(  ) ) )
         {
             role = AdminRoleHome.findByPrimaryKey( role.getKey(  ) );
 
@@ -1019,8 +1000,7 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
                 url.getUrl(  ), Paginator.PARAMETER_PAGE_INDEX, _strCurrentPageIndex, getLocale(  ) );
 
         // PERMISSIONS
-        List<ProfileAction> listActions = ProfilesService.getInstance(  )
-                                                         .getListActions( getUser(  ), profile, strPermission,
+        List<ProfileAction> listActions = _profilesService.getListActions( getUser(  ), profile, strPermission,
                 getLocale(  ), getPlugin(  ) );
         profile.setActions( listActions );
 
@@ -1029,7 +1009,7 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
         model.put( ProfilesConstants.MARK_ASSIGNED_LIST, paginator.getPageItems(  ) );
         model.put( ProfilesConstants.MARK_ASSIGNED_NUMBER, listAssignedRoles.size(  ) );
         model.put( ProfilesConstants.MARK_ITEM_NAVIGATOR, _itemNavigators.get( ProfilesConstants.PARAMETER_ASSIGN_ROLE ) );
-        model.put( ProfilesConstants.MARK_NB_ITEMS_PER_PAGE, ProfilesConstants.EMPTY_STRING + _nItemsPerPage );
+        model.put( ProfilesConstants.MARK_NB_ITEMS_PER_PAGE, StringUtils.EMPTY + _nItemsPerPage );
         model.put( ProfilesConstants.MARK_PAGINATOR, paginator );
         model.put( ProfilesConstants.MARK_PERMISSION, bPermission );
 
@@ -1042,11 +1022,9 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
      * Process the data capture form for assign roles to a profile
      *
      * @param request The HTTP Request
-     * @throws AccessDeniedException the {@link AccessDeniedException}
      * @return The Jsp URL of the process result
      */
     public String doAssignRolesProfile( HttpServletRequest request )
-        throws AccessDeniedException
     {
         String strReturn;
 
@@ -1063,7 +1041,7 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
             if ( !RBACService.isAuthorized( Profile.RESOURCE_TYPE, strProfileKey,
                         ProfilesResourceIdService.PERMISSION_MANAGE_ROLES_ASSIGNMENT, getUser(  ) ) )
             {
-                throw new AccessDeniedException(  );
+                return AdminMessageService.getMessageUrl( request, Messages.USER_ACCESS_DENIED, AdminMessage.TYPE_STOP );
             }
 
             //retrieve the selected portlets ids
@@ -1073,14 +1051,14 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
             {
                 for ( int i = 0; i < arrayRoleIds.length; i++ )
                 {
-                    if ( !ProfileHome.hasRole( strProfileKey, arrayRoleIds[i], getPlugin(  ) ) )
+                    if ( !_profilesService.hasRole( strProfileKey, arrayRoleIds[i], getPlugin(  ) ) )
                     {
-                        ProfileHome.addRoleForProfile( strProfileKey, arrayRoleIds[i], getPlugin(  ) );
+                        _profilesService.addRoleForProfile( strProfileKey, arrayRoleIds[i], getPlugin(  ) );
 
                         // Update users roles
                         AdminRole role = AdminRoleHome.findByPrimaryKey( arrayRoleIds[i] );
 
-                        for ( AdminUser user : ProfileHome.getUsersListForProfile( strProfileKey, getPlugin(  ) ) )
+                        for ( AdminUser user : _profilesService.getUsersListForProfile( strProfileKey, getPlugin(  ) ) )
                         {
                             if ( !AdminUserHome.hasRole( user, role.getKey(  ) ) )
                             {
@@ -1101,29 +1079,27 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
     /**
      * unassigns roles from profile
      * @param request The HttpRequest
-     * @throws AccessDeniedException the {@link AccessDeniedException}
      * @return the HTML code of list assignations
      */
     public String doUnassignRoleProfile( HttpServletRequest request )
-        throws AccessDeniedException
     {
         String strProfileKey = request.getParameter( ProfilesConstants.PARAMETER_PROFILE_KEY );
 
         if ( !RBACService.isAuthorized( Profile.RESOURCE_TYPE, strProfileKey,
                     ProfilesResourceIdService.PERMISSION_MANAGE_ROLES_ASSIGNMENT, getUser(  ) ) )
         {
-            throw new AccessDeniedException(  );
+            return AdminMessageService.getMessageUrl( request, Messages.USER_ACCESS_DENIED, AdminMessage.TYPE_STOP );
         }
 
         String strRoleKey = request.getParameter( ProfilesConstants.PARAMETER_ROLE_KEY );
         String strAnchor = request.getParameter( ProfilesConstants.PARAMETER_ANCHOR );
 
-        ProfileHome.removeRoleFromProfile( strProfileKey, strRoleKey, getPlugin(  ) );
+        _profilesService.removeRoleFromProfile( strProfileKey, strRoleKey, getPlugin(  ) );
 
         // Update users roles
         AdminRole role = AdminRoleHome.findByPrimaryKey( strRoleKey );
 
-        for ( AdminUser user : ProfileHome.getUsersListForProfile( strProfileKey, getPlugin(  ) ) )
+        for ( AdminUser user : _profilesService.getUsersListForProfile( strProfileKey, getPlugin(  ) ) )
         {
             if ( AdminUserHome.hasRole( user, role.getKey(  ) ) )
             {
@@ -1154,12 +1130,12 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
 
         // PROFILE
         String strProfileKey = request.getParameter( ProfilesConstants.PARAMETER_PROFILE_KEY );
-        Profile profile = ProfileHome.findByPrimaryKey( strProfileKey, getPlugin(  ) );
+        Profile profile = _profilesService.findByPrimaryKey( strProfileKey, getPlugin(  ) );
 
         // ASSIGNED USERS
         List<AdminUser> listAssignedUsers = new ArrayList<AdminUser>(  );
 
-        for ( AdminUser user : ProfileHome.getUsersListForProfile( strProfileKey, getPlugin(  ) ) )
+        for ( AdminUser user : _profilesService.getUsersListForProfile( strProfileKey, getPlugin(  ) ) )
         {
             user = AdminUserHome.findByPrimaryKey( user.getUserId(  ) );
 
@@ -1260,8 +1236,7 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
         }
 
         // PERMISSIONS
-        List<ProfileAction> listActions = ProfilesService.getInstance(  )
-                                                         .getListActions( getUser(  ), profile, strPermission,
+        List<ProfileAction> listActions = _profilesService.getListActions( getUser(  ), profile, strPermission,
                 getLocale(  ), getPlugin(  ) );
         profile.setActions( listActions );
 
@@ -1292,7 +1267,7 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
         model.put( ProfilesConstants.MARK_ASSIGNED_LIST, paginator.getPageItems(  ) );
         model.put( ProfilesConstants.MARK_ASSIGNED_NUMBER, listAssignedUsers.size(  ) );
         model.put( ProfilesConstants.MARK_ITEM_NAVIGATOR, _itemNavigators.get( ProfilesConstants.PARAMETER_ASSIGN_USER ) );
-        model.put( ProfilesConstants.MARK_NB_ITEMS_PER_PAGE, ProfilesConstants.EMPTY_STRING + _nItemsPerPage );
+        model.put( ProfilesConstants.MARK_NB_ITEMS_PER_PAGE, StringUtils.EMPTY + _nItemsPerPage );
         model.put( ProfilesConstants.MARK_PAGINATOR, paginator );
         model.put( ProfilesConstants.MARK_PERMISSION, bPermission );
         model.put( ProfilesConstants.MARK_ATTRIBUTE, attribute );
@@ -1307,11 +1282,9 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
      * Process the data capture form for assign users to a profile
      *
      * @param request The HTTP Request
-     * @throws AccessDeniedException the {@link AccessDeniedException}
      * @return The Jsp URL of the process result
      */
     public String doAssignUsersProfile( HttpServletRequest request )
-        throws AccessDeniedException
     {
         String strReturn;
 
@@ -1328,10 +1301,10 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
             if ( !RBACService.isAuthorized( Profile.RESOURCE_TYPE, strProfileKey,
                         ProfilesResourceIdService.PERMISSION_MANAGE_USERS_ASSIGNMENT, getUser(  ) ) )
             {
-                throw new AccessDeniedException(  );
+                return AdminMessageService.getMessageUrl( request, Messages.USER_ACCESS_DENIED, AdminMessage.TYPE_STOP );
             }
 
-            //retrieve the selected portlets ids
+            //retrieve the selected user ids
             String[] arrayUserIds = request.getParameterValues( ProfilesConstants.PARAMETER_USERS_LIST );
 
             if ( ( arrayUserIds != null ) )
@@ -1340,21 +1313,23 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
                 {
                     int nIdUser = Integer.parseInt( arrayUserIds[i] );
 
-                    if ( !ProfileHome.hasProfile( nIdUser, getPlugin(  ) ) )
+                    if ( !_profilesService.hasProfile( nIdUser, getPlugin(  ) ) )
                     {
-                        AdminUser user = AdminUserHome.findByPrimaryKey( nIdUser );
-                        AdminUserFieldListenerService listenerService = (AdminUserFieldListenerService) SpringContextService.getBean( BEAN_PROFILES_ADMIN_USER_FIELD_LISTENER_SERVICE );
-                        listenerService.doCreateUserFields( user, request, getLocale(  ) );
+                        _profilesService.doAssignUserToProfile( nIdUser, request, getLocale(  ) );
                     }
                     else
                     {
                         AdminUser user = AdminUserHome.findByPrimaryKey( nIdUser );
-                        Object[] args = 
-                            {
-                                user.getLastName(  ) + ProfilesConstants.SPACE + user.getFirstName(  ) +
+                        String strErrorMessage = StringUtils.EMPTY;
+
+                        if ( user != null )
+                        {
+                            strErrorMessage = user.getLastName(  ) + ProfilesConstants.SPACE + user.getFirstName(  ) +
                                 ProfilesConstants.SPACE + ProfilesConstants.OPEN_BRACKET + user.getAccessCode(  ) +
-                                ProfilesConstants.CLOSED_BRACKET,
-                            };
+                                ProfilesConstants.CLOSED_BRACKET;
+                        }
+
+                        Object[] args = { strErrorMessage };
 
                         return AdminMessageService.getMessageUrl( request,
                             ProfilesConstants.PROPERTY_NO_MULTIPLE_PROFILES, args, AdminMessage.TYPE_STOP );
@@ -1372,75 +1347,24 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
     /**
      * unassigns users from profile
      * @param request The HttpRequest
-     * @throws AccessDeniedException the {@link AccessDeniedException}
      * @return the HTML code of list assignations
      */
     public String doUnassignUserProfile( HttpServletRequest request )
-        throws AccessDeniedException
     {
         String strProfileKey = request.getParameter( ProfilesConstants.PARAMETER_PROFILE_KEY );
 
         if ( !RBACService.isAuthorized( Profile.RESOURCE_TYPE, strProfileKey,
                     ProfilesResourceIdService.PERMISSION_MANAGE_USERS_ASSIGNMENT, getUser(  ) ) )
         {
-            throw new AccessDeniedException(  );
+            return AdminMessageService.getMessageUrl( request, Messages.USER_ACCESS_DENIED, AdminMessage.TYPE_STOP );
         }
 
         String strIdUser = request.getParameter( ProfilesConstants.PARAMETER_ID_USER );
         int nIdUser = Integer.parseInt( strIdUser );
         String strAnchor = request.getParameter( ProfilesConstants.PARAMETER_ANCHOR );
 
-        AdminUser user = AdminUserHome.findByPrimaryKey( nIdUser );
-
-        // Remove User Fields
-        List<IAttribute> listAttributes = AttributeHome.findPluginAttributes( ProfilesPlugin.PLUGIN_NAME, getLocale(  ) );
-        IAttribute attribute = listAttributes.get( 0 );
-        String strValue = request.getParameter( ProfilesConstants.PARAMETER_ATTRIBUTE + ProfilesConstants.UNDERSCORE +
-                attribute.getIdAttribute(  ) );
-        int nIdField = Integer.parseInt( strValue );
-        List<AdminUserField> listUserFields = AdminUserFieldHome.selectUserFieldsByIdUserIdAttribute( user.getUserId(  ),
-                attribute.getIdAttribute(  ) );
-
-        for ( AdminUserField userField : listUserFields )
-        {
-            if ( userField.getAttributeField(  ).getIdField(  ) == nIdField )
-            {
-                AdminUserFieldHome.remove( userField );
-
-                break;
-            }
-        }
-
-        // Remove profile
-        ProfileHome.removeUserFromProfile( strProfileKey, nIdUser, getPlugin(  ) );
-
-        // Remove rights to the user
-        for ( Right right : ProfileHome.getRightsListForProfile( strProfileKey, getPlugin(  ) ) )
-        {
-            if ( AdminUserHome.hasRight( user, right.getId(  ) ) &&
-                    ( ( user.getUserLevel(  ) > getUser(  ).getUserLevel(  ) ) || getUser(  ).isAdmin(  ) ) )
-            {
-                AdminUserHome.removeRightForUser( nIdUser, right.getId(  ) );
-            }
-        }
-
-        // Remove roles to the user
-        for ( AdminRole role : ProfileHome.getRolesListForProfile( strProfileKey, getPlugin(  ) ) )
-        {
-            if ( AdminUserHome.hasRole( user, role.getKey(  ) ) )
-            {
-                AdminUserHome.removeRoleForUser( nIdUser, role.getKey(  ) );
-            }
-        }
-
-        // Remove workgroups to the user
-        for ( AdminWorkgroup workgroup : ProfileHome.getWorkgroupsListForProfile( strProfileKey, getPlugin(  ) ) )
-        {
-            if ( AdminWorkgroupHome.isUserInWorkgroup( user, workgroup.getKey(  ) ) )
-            {
-                AdminWorkgroupHome.removeUserFromWorkgroup( user, workgroup.getKey(  ) );
-            }
-        }
+        _profilesService.doUnassignUserFromProfile( nIdUser, strProfileKey, getUser(  ), request, getLocale(  ),
+            getPlugin(  ) );
 
         return JSP_ASSIGN_USERS_PROFILE + ProfilesConstants.INTERROGATION_MARK +
         ProfilesConstants.PARAMETER_PROFILE_KEY + ProfilesConstants.EQUAL + strProfileKey + ProfilesConstants.SHARP +
@@ -1462,12 +1386,12 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
 
         // PROFILE
         String strProfileKey = request.getParameter( ProfilesConstants.PARAMETER_PROFILE_KEY );
-        Profile profile = ProfileHome.findByPrimaryKey( strProfileKey, getPlugin(  ) );
+        Profile profile = _profilesService.findByPrimaryKey( strProfileKey, getPlugin(  ) );
 
         // ASSIGNED VIEW
-        View assignedView = ProfileHome.getViewForProfile( strProfileKey, getPlugin(  ) );
+        View assignedView = _profilesService.getViewForProfile( strProfileKey, getPlugin(  ) );
 
-        ReferenceList listViews = ViewHome.getViewsList( getPlugin(  ) );
+        ReferenceList listViews = _viewsService.getViewsList( getPlugin(  ) );
 
         String strPermission = ProfilesResourceIdService.PERMISSION_MANAGE_VIEW_ASSIGNMENT;
         boolean bPermission = RBACService.isAuthorized( Profile.RESOURCE_TYPE, strProfileKey, strPermission, getUser(  ) );
@@ -1479,8 +1403,7 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
         setItemNavigator( ProfilesConstants.PARAMETER_ASSIGN_VIEW, profile, url );
 
         // PERMISSIONS
-        List<ProfileAction> listActions = ProfilesService.getInstance(  )
-                                                         .getListActions( getUser(  ), profile, strPermission,
+        List<ProfileAction> listActions = _profilesService.getListActions( getUser(  ), profile, strPermission,
                 getLocale(  ), getPlugin(  ) );
         profile.setActions( listActions );
 
@@ -1499,11 +1422,9 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
      * Process the data capture form for assign a view to a profile
      *
      * @param request HttpServletRequest
-     * @throws AccessDeniedException the {@link AccessDeniedException}
      * @return The Jsp URL of the process result
      */
     public String doAssignViewProfile( HttpServletRequest request )
-        throws AccessDeniedException
     {
         String strReturn;
 
@@ -1520,21 +1441,21 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
             if ( !RBACService.isAuthorized( Profile.RESOURCE_TYPE, strProfileKey,
                         ProfilesResourceIdService.PERMISSION_MANAGE_VIEW_ASSIGNMENT, getUser(  ) ) )
             {
-                throw new AccessDeniedException(  );
+                return AdminMessageService.getMessageUrl( request, Messages.USER_ACCESS_DENIED, AdminMessage.TYPE_STOP );
             }
 
             String strViewKey = request.getParameter( ProfilesConstants.PARAMETER_VIEW_KEY );
 
             if ( strViewKey != null )
             {
-                if ( strViewKey.equals( ProfilesConstants.EMPTY_STRING ) )
+                if ( StringUtils.isBlank( strViewKey ) )
                 {
-                    ProfileHome.removeView( strProfileKey, getPlugin(  ) );
+                    _profilesService.removeView( strProfileKey, getPlugin(  ) );
                 }
                 else
                 {
-                    ProfileHome.removeView( strProfileKey, getPlugin(  ) );
-                    ViewHome.addProfileForView( strViewKey, strProfileKey, getPlugin(  ) );
+                    _profilesService.removeView( strProfileKey, getPlugin(  ) );
+                    _viewsService.addProfileForView( strViewKey, strProfileKey, getPlugin(  ) );
                 }
             }
 

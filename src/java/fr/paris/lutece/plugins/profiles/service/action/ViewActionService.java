@@ -31,10 +31,12 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.profiles.business;
+package fr.paris.lutece.plugins.profiles.service.action;
 
+import fr.paris.lutece.plugins.profiles.business.views.ViewAction;
+import fr.paris.lutece.plugins.profiles.business.views.ViewActionHome;
+import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.plugin.Plugin;
-import fr.paris.lutece.portal.service.spring.SpringContextService;
 
 import java.util.List;
 import java.util.Locale;
@@ -42,29 +44,19 @@ import java.util.Locale;
 
 /**
  *
- * ProfileActionHome
+ * ViewActionService
  *
  */
-public final class ProfileActionHome
+public class ViewActionService implements IViewActionService
 {
-    private static final String BEAN_PROFILE_ACTION_DAO = "profiles.profileActionDAO";
-    private static IProfileActionDAO _dao = (IProfileActionDAO) SpringContextService.getBean( BEAN_PROFILE_ACTION_DAO );
-
     /**
-     * Private constructor - this class need not be instantiated
+     * {@inheritDoc}
      */
-    private ProfileActionHome(  )
+    @Override
+    public List<ViewAction> selectActionsList( Locale locale, Plugin plugin )
     {
-    }
+        List<ViewAction> listActions = ViewActionHome.selectActionsList( locale, plugin );
 
-    /**
-     * Select profile actions
-     * @param locale Locale
-         * @param plugin Plugin
-     * @return list of profile actions
-     */
-    public static List<ProfileAction> selectActionsList( Locale locale, Plugin plugin )
-    {
-        return _dao.selectActionsList( plugin );
+        return (List<ViewAction>) I18nService.localizeCollection( listActions, locale );
     }
 }

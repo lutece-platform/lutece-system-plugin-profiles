@@ -51,8 +51,9 @@ public class ViewActionDAO implements IViewActionDAO
         " FROM profile_view_action ";
 
     /**
-    * {@inheritDoc}
-    */
+     * {@inheritDoc}
+     */
+    @Override
     public List<ViewAction> selectActionsList( Plugin plugin )
     {
         List<ViewAction> listActions = new ArrayList<ViewAction>(  );

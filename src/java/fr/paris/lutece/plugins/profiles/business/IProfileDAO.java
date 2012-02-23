@@ -41,7 +41,7 @@ import fr.paris.lutece.portal.business.workgroup.AdminWorkgroup;
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.util.ReferenceList;
 
-import java.util.Collection;
+import java.util.List;
 
 
 /**
@@ -76,9 +76,9 @@ public interface IProfileDAO
     /**
      * Load the list of profiles
      * @param plugin Plugin
-     * @return The Collection of the profiles
+     * @return The List of the profiles
      */
-    Collection<Profile> selectProfileList( Plugin plugin );
+    List<Profile> selectProfileList( Plugin plugin );
 
     /**
      * Update the record identified by the given profile key with the given profile in the table
@@ -93,7 +93,7 @@ public interface IProfileDAO
      * @param plugin Plugin
      * @return List of profiles
      */
-    Collection<Profile> selectProfilesByFilter( ProfileFilter pFilter, Plugin plugin );
+    List<Profile> selectProfilesByFilter( ProfileFilter pFilter, Plugin plugin );
 
     /**
     * Check if a profile already exists or not
@@ -134,7 +134,7 @@ public interface IProfileDAO
     * @param plugin Plugin
     * @return The list of Right
     */
-    Collection<Right> selectRightsListForProfile( String strProfileKey, Plugin plugin );
+    List<Right> selectRightsListForProfile( String strProfileKey, Plugin plugin );
 
     /**
     * Check if a profile has the given right.
@@ -176,7 +176,7 @@ public interface IProfileDAO
      * @param plugin Plugin
      * @return The list of workgroups
      */
-    Collection<AdminWorkgroup> selectWorkgroupsListForProfile( String strProfileKey, Plugin plugin );
+    List<AdminWorkgroup> selectWorkgroupsListForProfile( String strProfileKey, Plugin plugin );
 
     /**
     * Check if a profile has the given workgroup.
@@ -218,7 +218,7 @@ public interface IProfileDAO
      * @param plugin Plugin
      * @return The list of roles
      */
-    Collection<AdminRole> selectRolesListForProfile( String strProfileKey, Plugin plugin );
+    List<AdminRole> selectRolesListForProfile( String strProfileKey, Plugin plugin );
 
     /**
     * Check if a profile has the given role.
@@ -260,7 +260,7 @@ public interface IProfileDAO
      * @param plugin Plugin
      * @return The list of users
      */
-    Collection<AdminUser> selectUsersListForProfile( String strProfileKey, Plugin plugin );
+    List<AdminUser> selectUsersListForProfile( String strProfileKey, Plugin plugin );
 
     /**
     * Check if a profile has the given user.

@@ -44,7 +44,7 @@ import fr.paris.lutece.util.ReferenceList;
 import fr.paris.lutece.util.sql.DAOUtil;
 
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 
 
 /**
@@ -92,6 +92,7 @@ public class ProfileDAO implements IProfileDAO
     /**
     * {@inheritDoc}
     */
+    @Override
     public void insert( Profile profile, Plugin plugin )
     {
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, plugin );
@@ -105,6 +106,7 @@ public class ProfileDAO implements IProfileDAO
     /**
      * {@inheritDoc}
      */
+    @Override
     public Profile load( String strProfileKey, Plugin plugin )
     {
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT, plugin );
@@ -128,6 +130,7 @@ public class ProfileDAO implements IProfileDAO
     /**
      * {@inheritDoc}
      */
+    @Override
     public void delete( String strProfileKey, Plugin plugin )
     {
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE, plugin );
@@ -140,6 +143,7 @@ public class ProfileDAO implements IProfileDAO
     /**
      * {@inheritDoc}
      */
+    @Override
     public void store( Profile profile, Plugin plugin )
     {
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE, plugin );
@@ -153,9 +157,10 @@ public class ProfileDAO implements IProfileDAO
     /**
      * {@inheritDoc}
      */
-    public Collection<Profile> selectProfileList( Plugin plugin )
+    @Override
+    public List<Profile> selectProfileList( Plugin plugin )
     {
-        Collection<Profile> listProfiles = new ArrayList<Profile>(  );
+        List<Profile> listProfiles = new ArrayList<Profile>(  );
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECTALL, plugin );
         daoUtil.executeQuery(  );
 
@@ -176,9 +181,10 @@ public class ProfileDAO implements IProfileDAO
     /**
      * {@inheritDoc}
      */
-    public Collection<Profile> selectProfilesByFilter( ProfileFilter pFilter, Plugin plugin )
+    @Override
+    public List<Profile> selectProfilesByFilter( ProfileFilter pFilter, Plugin plugin )
     {
-        Collection<Profile> listFilteredProfiles = new ArrayList<Profile>(  );
+        List<Profile> listFilteredProfiles = new ArrayList<Profile>(  );
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_PROFILES_FROM_SEARCH, plugin );
 
         daoUtil.setString( 1, ProfilesConstants.PERCENT + pFilter.getKey(  ) + ProfilesConstants.PERCENT );
@@ -203,6 +209,7 @@ public class ProfileDAO implements IProfileDAO
     /**
     * {@inheritDoc}
     */
+    @Override
     public boolean checkExistProfile( String strProfileKey, Plugin plugin )
     {
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT, plugin );
@@ -226,6 +233,7 @@ public class ProfileDAO implements IProfileDAO
     /**
     * {@inheritDoc}
     */
+    @Override
     public ReferenceList getProfileList( Plugin plugin )
     {
         ReferenceList listProfiles = new ReferenceList(  );
@@ -249,6 +257,7 @@ public class ProfileDAO implements IProfileDAO
     /**
     * {@inheritDoc}
     */
+    @Override
     public boolean checkProfileAttributed( String strProfileKey, Plugin plugin )
     {
         boolean bInUse = false;
@@ -270,6 +279,7 @@ public class ProfileDAO implements IProfileDAO
     /**
     * {@inheritDoc}
     */
+    @Override
     public Profile selectProfileByIdUser( int nIdUser, Plugin plugin )
     {
         Profile profile = null;
@@ -294,9 +304,10 @@ public class ProfileDAO implements IProfileDAO
     /**
     * {@inheritDoc}
     */
-    public Collection<Right> selectRightsListForProfile( String strProfileKey, Plugin plugin )
+    @Override
+    public List<Right> selectRightsListForProfile( String strProfileKey, Plugin plugin )
     {
-        Collection<Right> listRights = new ArrayList<Right>(  );
+        List<Right> listRights = new ArrayList<Right>(  );
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_RIGHTS_LIST_FOR_PROFILE, plugin );
 
         daoUtil.setString( 1, strProfileKey );
@@ -319,6 +330,7 @@ public class ProfileDAO implements IProfileDAO
     /**
     * {@inheritDoc}
     */
+    @Override
     public boolean hasRight( String strProfileKey, String strIdRight, Plugin plugin )
     {
         boolean bHasRight = false;
@@ -340,6 +352,7 @@ public class ProfileDAO implements IProfileDAO
     /**
      * {@inheritDoc}
      */
+    @Override
     public void insertRightForProfile( String strProfileKey, String strIdRight, Plugin plugin )
     {
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT_PROFILE_RIGHT, plugin );
@@ -353,6 +366,7 @@ public class ProfileDAO implements IProfileDAO
     /**
      * {@inheritDoc}
      */
+    @Override
     public void deleteRightFromProfile( String strProfileKey, String strIdRight, Plugin plugin )
     {
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_PROFILE_RIGHT, plugin );
@@ -366,6 +380,7 @@ public class ProfileDAO implements IProfileDAO
     /**
      * {@inheritDoc}
      */
+    @Override
     public void deleteRights( String strProfileKey, Plugin plugin )
     {
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_RIGHTS, plugin );
@@ -380,9 +395,10 @@ public class ProfileDAO implements IProfileDAO
     /**
      * {@inheritDoc}
      */
-    public Collection<AdminWorkgroup> selectWorkgroupsListForProfile( String strProfileKey, Plugin plugin )
+    @Override
+    public List<AdminWorkgroup> selectWorkgroupsListForProfile( String strProfileKey, Plugin plugin )
     {
-        Collection<AdminWorkgroup> listWorkgroups = new ArrayList<AdminWorkgroup>(  );
+        List<AdminWorkgroup> listWorkgroups = new ArrayList<AdminWorkgroup>(  );
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_WORKGROUPS_LIST_FOR_PROFILE, plugin );
 
         daoUtil.setString( 1, strProfileKey );
@@ -405,6 +421,7 @@ public class ProfileDAO implements IProfileDAO
     /**
     * {@inheritDoc}
     */
+    @Override
     public boolean hasWorkgroup( String strProfileKey, String strWorkgroupKey, Plugin plugin )
     {
         boolean bHasWorkgroup = false;
@@ -426,6 +443,7 @@ public class ProfileDAO implements IProfileDAO
     /**
      * {@inheritDoc}
      */
+    @Override
     public void insertWorkgroupForProfile( String strProfileKey, String strWorkgroupKey, Plugin plugin )
     {
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT_PROFILE_WORKGROUP, plugin );
@@ -439,6 +457,7 @@ public class ProfileDAO implements IProfileDAO
     /**
      * {@inheritDoc}
      */
+    @Override
     public void deleteWorkgroupFromProfile( String strProfileKey, String strWorkgroupKey, Plugin plugin )
     {
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_PROFILE_WORKGROUP, plugin );
@@ -452,6 +471,7 @@ public class ProfileDAO implements IProfileDAO
     /**
      * {@inheritDoc}
      */
+    @Override
     public void deleteWorkgroups( String strProfileKey, Plugin plugin )
     {
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_WORKGROUPS, plugin );
@@ -466,9 +486,10 @@ public class ProfileDAO implements IProfileDAO
     /**
      * {@inheritDoc}
      */
-    public Collection<AdminRole> selectRolesListForProfile( String strProfileKey, Plugin plugin )
+    @Override
+    public List<AdminRole> selectRolesListForProfile( String strProfileKey, Plugin plugin )
     {
-        Collection<AdminRole> listRoles = new ArrayList<AdminRole>(  );
+        List<AdminRole> listRoles = new ArrayList<AdminRole>(  );
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_ROLES_LIST_FOR_PROFILE, plugin );
 
         daoUtil.setString( 1, strProfileKey );
@@ -491,6 +512,7 @@ public class ProfileDAO implements IProfileDAO
     /**
     * {@inheritDoc}
     */
+    @Override
     public boolean hasRole( String strProfileKey, String strRoleKey, Plugin plugin )
     {
         boolean bHasRole = false;
@@ -512,6 +534,7 @@ public class ProfileDAO implements IProfileDAO
     /**
      * {@inheritDoc}
      */
+    @Override
     public void insertRoleForProfile( String strProfileKey, String strRoleKey, Plugin plugin )
     {
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT_PROFILE_ROLE, plugin );
@@ -525,6 +548,7 @@ public class ProfileDAO implements IProfileDAO
     /**
      * {@inheritDoc}
      */
+    @Override
     public void deleteRoleFromProfile( String strProfileKey, String strRoleKey, Plugin plugin )
     {
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_PROFILE_ROLE, plugin );
@@ -538,6 +562,7 @@ public class ProfileDAO implements IProfileDAO
     /**
      * {@inheritDoc}
      */
+    @Override
     public void deleteRoles( String strProfileKey, Plugin plugin )
     {
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_ROLES, plugin );
@@ -552,9 +577,10 @@ public class ProfileDAO implements IProfileDAO
     /**
      * {@inheritDoc}
      */
-    public Collection<AdminUser> selectUsersListForProfile( String strProfileKey, Plugin plugin )
+    @Override
+    public List<AdminUser> selectUsersListForProfile( String strProfileKey, Plugin plugin )
     {
-        Collection<AdminUser> listUsers = new ArrayList<AdminUser>(  );
+        List<AdminUser> listUsers = new ArrayList<AdminUser>(  );
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_USERS_LIST_FOR_PROFILE, plugin );
 
         daoUtil.setString( 1, strProfileKey );
@@ -577,6 +603,7 @@ public class ProfileDAO implements IProfileDAO
     /**
     * {@inheritDoc}
     */
+    @Override
     public boolean hasUser( String strProfileKey, int nIdUser, Plugin plugin )
     {
         boolean bHasUser = false;
@@ -598,6 +625,7 @@ public class ProfileDAO implements IProfileDAO
     /**
      * {@inheritDoc}
      */
+    @Override
     public void insertUserForProfile( String strProfileKey, int nIdUser, Plugin plugin )
     {
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT_PROFILE_USER, plugin );
@@ -611,6 +639,7 @@ public class ProfileDAO implements IProfileDAO
     /**
      * {@inheritDoc}
      */
+    @Override
     public void deleteUserFromProfile( String strProfileKey, int nIdUser, Plugin plugin )
     {
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_PROFILE_USER, plugin );
@@ -624,6 +653,7 @@ public class ProfileDAO implements IProfileDAO
     /**
      * {@inheritDoc}
      */
+    @Override
     public void deleteUsers( String strProfileKey, Plugin plugin )
     {
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_USERS, plugin );
@@ -636,6 +666,7 @@ public class ProfileDAO implements IProfileDAO
     /**
      * {@inheritDoc}
      */
+    @Override
     public void deleteProfilesFromUser( int nIdUser, Plugin plugin )
     {
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_PROFILES_FROM_USER, plugin );
@@ -648,6 +679,7 @@ public class ProfileDAO implements IProfileDAO
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean hasProfile( int nIdUser, Plugin plugin )
     {
         boolean bHasProfile = false;
@@ -670,6 +702,7 @@ public class ProfileDAO implements IProfileDAO
     /**
      * {@inheritDoc}
      */
+    @Override
     public View selectViewForProfile( String strProfileKey, Plugin plugin )
     {
         View view = null;
@@ -693,6 +726,7 @@ public class ProfileDAO implements IProfileDAO
     /**
      * {@inheritDoc}
      */
+    @Override
     public void deleteView( String strProfileKey, Plugin plugin )
     {
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_VIEW, plugin );

@@ -31,36 +31,76 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.profiles.business;
+package fr.paris.lutece.plugins.profiles.service;
 
+import fr.paris.lutece.plugins.profiles.business.Profile;
+import fr.paris.lutece.plugins.profiles.business.ProfileAction;
+import fr.paris.lutece.plugins.profiles.business.ProfileFilter;
 import fr.paris.lutece.plugins.profiles.business.views.View;
 import fr.paris.lutece.portal.business.rbac.AdminRole;
 import fr.paris.lutece.portal.business.right.Right;
 import fr.paris.lutece.portal.business.user.AdminUser;
 import fr.paris.lutece.portal.business.workgroup.AdminWorkgroup;
 import fr.paris.lutece.portal.service.plugin.Plugin;
-import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.util.ReferenceList;
+import fr.paris.lutece.util.html.ItemNavigator;
+import fr.paris.lutece.util.url.UrlItem;
 
 import java.util.List;
+import java.util.Locale;
+
+import javax.servlet.http.HttpServletRequest;
 
 
 /**
  *
- * ProfileHome
+ * IProfilesService
  *
  */
-public final class ProfileHome
+public interface IProfilesService
 {
-    private static final String BEAN_PROFILE_HOME = "profiles.profileDAO";
-    private static IProfileDAO _dao = (IProfileDAO) SpringContextService.getBean( BEAN_PROFILE_HOME );
+    // GET
 
     /**
-     * Private constructor - this class need not be instantiated
+    * Get the item navigator
+    * @param pFilter the profile filter
+    * @param profile the profile
+    * @param url the url
+    * @return the item navigator
+    */
+    ItemNavigator getItemNavigator( ProfileFilter pFilter, Profile profile, UrlItem url );
+
+    /**
+     * Get the list of actions
+     * @param user the current user
+     * @param profile the profile
+     * @param strPermission the permission name
+     * @param locale Locale
+     * @param plugin Plugin
+     * @return the list of actions
      */
-    private ProfileHome(  )
-    {
-    }
+    List<ProfileAction> getListActions( AdminUser user, Profile profile, String strPermission, Locale locale,
+        Plugin plugin );
+
+    /**
+     * Do assign user to a profile
+     * @param nIdUser the id suer
+     * @param request the HTTP request
+     * @param locale the Locale
+     */
+    void doAssignUserToProfile( int nIdUser, HttpServletRequest request, Locale locale );
+
+    /**
+     * Do unassign user from profile
+     * @param nIdUser the id user
+     * @param strProfileKey the profile key
+     * @param currentUser the current user
+     * @param request the HTTP request
+     * @param locale the locale
+     * @param plugin the plugin
+     */
+    void doUnassignUserFromProfile( int nIdUser, String strProfileKey, AdminUser currentUser,
+        HttpServletRequest request, Locale locale, Plugin plugin );
 
     /**
      * Creation of an instance of profile
@@ -68,12 +108,7 @@ public final class ProfileHome
      * @param plugin Plugin
      * @return The instance of profile which has been created with its primary key.
      */
-    public static Profile create( Profile profile, Plugin plugin )
-    {
-        _dao.insert( profile, plugin );
-
-        return profile;
-    }
+    Profile create( Profile profile, Plugin plugin );
 
     /**
      * Update of the profile which is specified in parameter
@@ -81,22 +116,14 @@ public final class ProfileHome
      * @param plugin Plugin
      * @return The instance of the profile which has been updated
      */
-    public static Profile update( Profile profile, Plugin plugin )
-    {
-        _dao.store( profile, plugin );
-
-        return profile;
-    }
+    Profile update( Profile profile, Plugin plugin );
 
     /**
      * Remove the Profile whose identifier is specified in parameter
      * @param strProfileKey The Profile object to remove
      * @param plugin Plugin
      */
-    public static void remove( String strProfileKey, Plugin plugin )
-    {
-        _dao.delete( strProfileKey, plugin );
-    }
+    void remove( String strProfileKey, Plugin plugin );
 
     ///////////////////////////////////////////////////////////////////////////
     // Finders
@@ -107,20 +134,14 @@ public final class ProfileHome
      * @param plugin Plugin
      * @return An instance of profile
      */
-    public static Profile findByPrimaryKey( String strProfileKey, Plugin plugin )
-    {
-        return _dao.load( strProfileKey, plugin );
-    }
+    Profile findByPrimaryKey( String strProfileKey, Plugin plugin );
 
     /**
      * Returns a collection of profiles objects
      * @param plugin Plugin
      * @return A collection of profiles
      */
-    public static List<Profile> findAll( Plugin plugin )
-    {
-        return _dao.selectProfileList( plugin );
-    }
+    List<Profile> findAll( Plugin plugin );
 
     /**
      * Find profile by filter
@@ -128,10 +149,7 @@ public final class ProfileHome
      * @param plugin Plugin
      * @return List of profiles
      */
-    public static List<Profile> findProfilesByFilter( ProfileFilter pFilter, Plugin plugin )
-    {
-        return _dao.selectProfilesByFilter( pFilter, plugin );
-    }
+    List<Profile> findProfilesByFilter( ProfileFilter pFilter, Plugin plugin );
 
     /**
      * Check if a profile already exists or not
@@ -139,20 +157,14 @@ public final class ProfileHome
      * @param plugin Plugin
      * @return true if it already exists
      */
-    public static boolean checkExistProfile( String strProfileKey, Plugin plugin )
-    {
-        return _dao.checkExistProfile( strProfileKey, plugin );
-    }
+    boolean checkExistProfile( String strProfileKey, Plugin plugin );
 
     /**
      * Get the list of profiles
      * @param plugin Plugin
      * @return the list of profiles
      */
-    public static ReferenceList getProfilesList( Plugin plugin )
-    {
-        return _dao.getProfileList( plugin );
-    }
+    ReferenceList getProfilesList( Plugin plugin );
 
     /**
      * Check if the profile is attributed to any user
@@ -160,10 +172,7 @@ public final class ProfileHome
      * @param plugin Plugin
      * @return true if it is attributed to at least one user, false otherwise
      */
-    public static boolean checkProfileAttributed( String strProfileKey, Plugin plugin )
-    {
-        return _dao.checkProfileAttributed( strProfileKey, plugin );
-    }
+    boolean checkProfileAttributed( String strProfileKey, Plugin plugin );
 
     /**
      * Load the profile by a given ID user
@@ -171,10 +180,7 @@ public final class ProfileHome
      * @param plugin Plugin
      * @return a profile
      */
-    public static Profile findProfileByIdUser( int nIdUser, Plugin plugin )
-    {
-        return _dao.selectProfileByIdUser( nIdUser, plugin );
-    }
+    Profile findProfileByIdUser( int nIdUser, Plugin plugin );
 
     /* RIGHTS */
 
@@ -184,10 +190,7 @@ public final class ProfileHome
      * @param plugin Plugin
      * @return The list of Right
      */
-    public static List<Right> getRightsListForProfile( String strProfileKey, Plugin plugin )
-    {
-        return _dao.selectRightsListForProfile( strProfileKey, plugin );
-    }
+    List<Right> getRightsListForProfile( String strProfileKey, Plugin plugin );
 
     /**
      * Check if a profile has the given right.
@@ -196,10 +199,7 @@ public final class ProfileHome
      * @param plugin Plugin
      * @return true if the profile has the right, false otherwise
      */
-    public static boolean hasRight( String strProfileKey, String strIdRight, Plugin plugin )
-    {
-        return _dao.hasRight( strProfileKey, strIdRight, plugin );
-    }
+    boolean hasRight( String strProfileKey, String strIdRight, Plugin plugin );
 
     /**
      * Add a right for a profile
@@ -207,10 +207,7 @@ public final class ProfileHome
      * @param strIdRight The Right ID
      * @param plugin Plugin
      */
-    public static void addRightForProfile( String strProfileKey, String strIdRight, Plugin plugin )
-    {
-        _dao.insertRightForProfile( strProfileKey, strIdRight, plugin );
-    }
+    void addRightForProfile( String strProfileKey, String strIdRight, Plugin plugin );
 
     /**
      * Remove a right from a profile
@@ -218,20 +215,14 @@ public final class ProfileHome
      * @param strIdRight The Right ID
      * @param plugin Plugin
      */
-    public static void removeRightFromProfile( String strProfileKey, String strIdRight, Plugin plugin )
-    {
-        _dao.deleteRightFromProfile( strProfileKey, strIdRight, plugin );
-    }
+    void removeRightFromProfile( String strProfileKey, String strIdRight, Plugin plugin );
 
     /**
      * Remove all rights from profile
      * @param strProfileKey The profile key
      * @param plugin Plugin
      */
-    public static void removeRights( String strProfileKey, Plugin plugin )
-    {
-        _dao.deleteRights( strProfileKey, plugin );
-    }
+    void removeRights( String strProfileKey, Plugin plugin );
 
     /* WORKGROUPS */
 
@@ -241,10 +232,7 @@ public final class ProfileHome
      * @param plugin Plugin
      * @return The list of workgroups
      */
-    public static List<AdminWorkgroup> getWorkgroupsListForProfile( String strProfileKey, Plugin plugin )
-    {
-        return _dao.selectWorkgroupsListForProfile( strProfileKey, plugin );
-    }
+    List<AdminWorkgroup> getWorkgroupsListForProfile( String strProfileKey, Plugin plugin );
 
     /**
      * Check if a profile has the given workgroup.
@@ -253,10 +241,7 @@ public final class ProfileHome
      * @param plugin Plugin
      * @return true if the profile has the workgroup, false otherwise
      */
-    public static boolean hasWorkgroup( String strProfileKey, String strWorkgroupKey, Plugin plugin )
-    {
-        return _dao.hasWorkgroup( strProfileKey, strWorkgroupKey, plugin );
-    }
+    boolean hasWorkgroup( String strProfileKey, String strWorkgroupKey, Plugin plugin );
 
     /**
      * Add a workgroup for a profile
@@ -264,10 +249,7 @@ public final class ProfileHome
      * @param strWorkgroupKey The WorkgroupKey
      * @param plugin Plugin
      */
-    public static void addWorkgroupForProfile( String strProfileKey, String strWorkgroupKey, Plugin plugin )
-    {
-        _dao.insertWorkgroupForProfile( strProfileKey, strWorkgroupKey, plugin );
-    }
+    void addWorkgroupForProfile( String strProfileKey, String strWorkgroupKey, Plugin plugin );
 
     /**
      * Remove a workgroup from a profile
@@ -275,20 +257,14 @@ public final class ProfileHome
      * @param strWorkgroupKey The Workgroup key
      * @param plugin Plugin
      */
-    public static void removeWorkgroupFromProfile( String strProfileKey, String strWorkgroupKey, Plugin plugin )
-    {
-        _dao.deleteWorkgroupFromProfile( strProfileKey, strWorkgroupKey, plugin );
-    }
+    void removeWorkgroupFromProfile( String strProfileKey, String strWorkgroupKey, Plugin plugin );
 
     /**
      * Remove all workgroups from profile
      * @param strProfileKey The profile key
      * @param plugin Plugin
      */
-    public static void removeWorkgroups( String strProfileKey, Plugin plugin )
-    {
-        _dao.deleteWorkgroups( strProfileKey, plugin );
-    }
+    void removeWorkgroups( String strProfileKey, Plugin plugin );
 
     /* ROLES */
 
@@ -298,10 +274,7 @@ public final class ProfileHome
      * @param plugin Plugin
      * @return The list of roles
      */
-    public static List<AdminRole> getRolesListForProfile( String strProfileKey, Plugin plugin )
-    {
-        return _dao.selectRolesListForProfile( strProfileKey, plugin );
-    }
+    List<AdminRole> getRolesListForProfile( String strProfileKey, Plugin plugin );
 
     /**
      * Check if a profile has the given role.
@@ -310,10 +283,7 @@ public final class ProfileHome
      * @param plugin Plugin
      * @return true if the profile has the role, false otherwise
      */
-    public static boolean hasRole( String strProfileKey, String strRoleKey, Plugin plugin )
-    {
-        return _dao.hasRole( strProfileKey, strRoleKey, plugin );
-    }
+    boolean hasRole( String strProfileKey, String strRoleKey, Plugin plugin );
 
     /**
      * Add a role for a profile
@@ -321,10 +291,7 @@ public final class ProfileHome
      * @param strRoleKey The RoleKey
      * @param plugin Plugin
      */
-    public static void addRoleForProfile( String strProfileKey, String strRoleKey, Plugin plugin )
-    {
-        _dao.insertRoleForProfile( strProfileKey, strRoleKey, plugin );
-    }
+    void addRoleForProfile( String strProfileKey, String strRoleKey, Plugin plugin );
 
     /**
      * Remove a role from a profile
@@ -332,20 +299,14 @@ public final class ProfileHome
      * @param strRoleKey The role key
      * @param plugin Plugin
      */
-    public static void removeRoleFromProfile( String strProfileKey, String strRoleKey, Plugin plugin )
-    {
-        _dao.deleteRoleFromProfile( strProfileKey, strRoleKey, plugin );
-    }
+    void removeRoleFromProfile( String strProfileKey, String strRoleKey, Plugin plugin );
 
     /**
      * Remove all roles from profile
      * @param strProfileKey The profile key
      * @param plugin Plugin
      */
-    public static void removeRoles( String strProfileKey, Plugin plugin )
-    {
-        _dao.deleteRoles( strProfileKey, plugin );
-    }
+    void removeRoles( String strProfileKey, Plugin plugin );
 
     /* USERS */
 
@@ -355,10 +316,7 @@ public final class ProfileHome
      * @param plugin Plugin
      * @return The list of users
      */
-    public static List<AdminUser> getUsersListForProfile( String strProfileKey, Plugin plugin )
-    {
-        return _dao.selectUsersListForProfile( strProfileKey, plugin );
-    }
+    List<AdminUser> getUsersListForProfile( String strProfileKey, Plugin plugin );
 
     /**
      * Check if a profile has the given user.
@@ -367,10 +325,7 @@ public final class ProfileHome
      * @param plugin Plugin
      * @return true if the profile has the user, false otherwise
      */
-    public static boolean hasUser( String strProfileKey, int nIdUser, Plugin plugin )
-    {
-        return _dao.hasUser( strProfileKey, nIdUser, plugin );
-    }
+    boolean hasUser( String strProfileKey, int nIdUser, Plugin plugin );
 
     /**
      * Add an user for a profile
@@ -378,10 +333,7 @@ public final class ProfileHome
      * @param nIdUser The User ID
      * @param plugin Plugin
      */
-    public static void addUserForProfile( String strProfileKey, int nIdUser, Plugin plugin )
-    {
-        _dao.insertUserForProfile( strProfileKey, nIdUser, plugin );
-    }
+    void addUserForProfile( String strProfileKey, int nIdUser, Plugin plugin );
 
     /**
      * Remove a user from a profile
@@ -389,30 +341,21 @@ public final class ProfileHome
      * @param nIdUser The User ID
      * @param plugin Plugin
      */
-    public static void removeUserFromProfile( String strProfileKey, int nIdUser, Plugin plugin )
-    {
-        _dao.deleteUserFromProfile( strProfileKey, nIdUser, plugin );
-    }
+    void removeUserFromProfile( String strProfileKey, int nIdUser, Plugin plugin );
 
     /**
      * Remove all users from profile
      * @param strProfileKey The profile key
      * @param plugin Plugin
      */
-    public static void removeUsers( String strProfileKey, Plugin plugin )
-    {
-        _dao.deleteUsers( strProfileKey, plugin );
-    }
+    void removeUsers( String strProfileKey, Plugin plugin );
 
     /**
      * Remove all profiles associated to an user
      * @param nIdUser The User ID
      * @param plugin Plugin
      */
-    public static void removeProfilesFromUser( int nIdUser, Plugin plugin )
-    {
-        _dao.deleteProfilesFromUser( nIdUser, plugin );
-    }
+    void removeProfilesFromUser( int nIdUser, Plugin plugin );
 
     /**
      * Check if the given user has a profile or not
@@ -420,10 +363,7 @@ public final class ProfileHome
      * @param plugin Plugin
      * @return true if the user has the profile, false otherwise
      */
-    public static boolean hasProfile( int nIdUser, Plugin plugin )
-    {
-        return _dao.hasProfile( nIdUser, plugin );
-    }
+    boolean hasProfile( int nIdUser, Plugin plugin );
 
     /* VIEW */
 
@@ -433,18 +373,12 @@ public final class ProfileHome
      * @param plugin Plugin
      * @return the view
      */
-    public static View getViewForProfile( String strProfileKey, Plugin plugin )
-    {
-        return _dao.selectViewForProfile( strProfileKey, plugin );
-    }
+    View getViewForProfile( String strProfileKey, Plugin plugin );
 
     /**
      * Remove profile from a view
      * @param strProfileKey the profile key
      * @param plugin Plugin
      */
-    public static void removeView( String strProfileKey, Plugin plugin )
-    {
-        _dao.deleteView( strProfileKey, plugin );
-    }
+    void removeView( String strProfileKey, Plugin plugin );
 }

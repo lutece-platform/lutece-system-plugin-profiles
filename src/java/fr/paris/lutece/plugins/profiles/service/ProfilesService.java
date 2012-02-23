@@ -35,35 +35,36 @@ package fr.paris.lutece.plugins.profiles.service;
 
 import fr.paris.lutece.plugins.profiles.business.Profile;
 import fr.paris.lutece.plugins.profiles.business.ProfileAction;
-import fr.paris.lutece.plugins.profiles.business.ProfileActionHome;
 import fr.paris.lutece.plugins.profiles.business.ProfileFilter;
 import fr.paris.lutece.plugins.profiles.business.ProfileHome;
 import fr.paris.lutece.plugins.profiles.business.views.View;
-import fr.paris.lutece.plugins.profiles.business.views.ViewAction;
-import fr.paris.lutece.plugins.profiles.business.views.ViewActionHome;
-import fr.paris.lutece.plugins.profiles.business.views.ViewFilter;
-import fr.paris.lutece.plugins.profiles.business.views.ViewHome;
+import fr.paris.lutece.plugins.profiles.service.action.IProfileActionService;
 import fr.paris.lutece.plugins.profiles.utils.constants.ProfilesConstants;
-import fr.paris.lutece.portal.business.dashboard.DashboardFilter;
-import fr.paris.lutece.portal.business.dashboard.DashboardHome;
+import fr.paris.lutece.portal.business.rbac.AdminRole;
+import fr.paris.lutece.portal.business.right.Right;
 import fr.paris.lutece.portal.business.user.AdminUser;
-import fr.paris.lutece.portal.service.dashboard.DashboardService;
-import fr.paris.lutece.portal.service.dashboard.IDashboardComponent;
+import fr.paris.lutece.portal.business.user.AdminUserHome;
+import fr.paris.lutece.portal.business.user.attribute.AdminUserField;
+import fr.paris.lutece.portal.business.user.attribute.AdminUserFieldHome;
+import fr.paris.lutece.portal.business.user.attribute.AttributeHome;
+import fr.paris.lutece.portal.business.user.attribute.IAttribute;
+import fr.paris.lutece.portal.business.workgroup.AdminWorkgroup;
+import fr.paris.lutece.portal.business.workgroup.AdminWorkgroupHome;
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.portal.service.plugin.PluginService;
 import fr.paris.lutece.portal.service.rbac.RBACService;
-import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.util.ReferenceList;
 import fr.paris.lutece.util.html.ItemNavigator;
 import fr.paris.lutece.util.url.UrlItem;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
+
+import javax.inject.Inject;
+
+import javax.servlet.http.HttpServletRequest;
 
 
 /**
@@ -71,40 +72,15 @@ import java.util.Map;
  * ProfilesService
  *
  */
-public class ProfilesService
+public class ProfilesService implements IProfilesService
 {
-    private static ProfilesService _singleton;
+    @Inject
+    private IProfileActionService _profileActionService;
 
     /**
-    * Initialize the profiles service
-    *
-    */
-    public void init(  )
-    {
-    }
-
-    /**
-     * Returns the instance of the singleton
-     *
-     * @return The instance of the singleton
+     * {@inheritDoc}
      */
-    public static ProfilesService getInstance(  )
-    {
-        if ( _singleton == null )
-        {
-            _singleton = new ProfilesService(  );
-        }
-
-        return _singleton;
-    }
-
-    /**
-     * Get the item navigator
-     * @param pFilter the profile filter
-     * @param profile the profile
-     * @param url the url
-     * @return the item navigator
-     */
+    @Override
     public ItemNavigator getItemNavigator( ProfileFilter pFilter, Profile profile, UrlItem url )
     {
         Plugin plugin = PluginService.getPlugin( ProfilesPlugin.PLUGIN_NAME );
@@ -129,20 +105,15 @@ public class ProfilesService
     }
 
     /**
-     * Get the list of actions
-     * @param user the current user
-     * @param profile the profile
-     * @param strPermission the permission name
-     * @param locale Locale
-     * @param plugin Plugin
-     * @return the list of actions
+     * {@inheritDoc}
      */
+    @Override
     public List<ProfileAction> getListActions( AdminUser user, Profile profile, String strPermission, Locale locale,
         Plugin plugin )
     {
         List<ProfileAction> listActions = new ArrayList<ProfileAction>(  );
 
-        for ( ProfileAction action : ProfileActionHome.selectActionsList( locale, plugin ) )
+        for ( ProfileAction action : _profileActionService.selectActionsList( locale, plugin ) )
         {
             if ( !action.getPermission(  ).equals( strPermission ) )
             {
@@ -156,365 +127,502 @@ public class ProfilesService
     }
 
     /**
-     * Get the item navigator
-     * @param vFilter the view filter
-     * @param view the view
-     * @param url the url
-     * @return the item navigator
+     * {@inheritDoc}
      */
-    public ItemNavigator getItemNavigator( ViewFilter vFilter, View view, UrlItem url )
+    @Override
+    public void doAssignUserToProfile( int nIdUser, HttpServletRequest request, Locale locale )
     {
-        Plugin plugin = PluginService.getPlugin( ProfilesPlugin.PLUGIN_NAME );
-        List<String> listItem = new ArrayList<String>(  );
-        Collection<View> listAllViews = ViewHome.findViewsByFilter( vFilter, plugin );
-        int nIndex = 0;
-        int nCurrentItemId = 0;
+        AdminUser user = AdminUserHome.findByPrimaryKey( nIdUser );
 
-        for ( View allView : listAllViews )
+        if ( user != null )
         {
-            listItem.add( allView.getKey(  ) );
-
-            if ( allView.getKey(  ).equals( view.getKey(  ) ) )
-            {
-                nCurrentItemId = nIndex;
-            }
-
-            nIndex++;
+            ProfilesAdminUserFieldListenerService.getService(  ).doCreateUserFields( user, request, locale );
         }
-
-        return new ItemNavigator( listItem, nCurrentItemId, url.getUrl(  ), ProfilesConstants.PARAMETER_VIEW_KEY );
     }
 
     /**
-     * Get the list of actions
-     * @param user the current user
-     * @param view the view
-     * @param strPermission the permission name
-     * @param locale Locale
+     * {@inheritDoc}
+     */
+    @Override
+    public void doUnassignUserFromProfile( int nIdUser, String strProfileKey, AdminUser currentUser,
+        HttpServletRequest request, Locale locale, Plugin plugin )
+    {
+        AdminUser user = AdminUserHome.findByPrimaryKey( nIdUser );
+
+        // Remove User Fields
+        List<IAttribute> listAttributes = AttributeHome.findPluginAttributes( ProfilesPlugin.PLUGIN_NAME, locale );
+        IAttribute attribute = listAttributes.get( 0 );
+        String strValue = request.getParameter( ProfilesConstants.PARAMETER_ATTRIBUTE + ProfilesConstants.UNDERSCORE +
+                attribute.getIdAttribute(  ) );
+        int nIdField = Integer.parseInt( strValue );
+        List<AdminUserField> listUserFields = AdminUserFieldHome.selectUserFieldsByIdUserIdAttribute( user.getUserId(  ),
+                attribute.getIdAttribute(  ) );
+
+        for ( AdminUserField userField : listUserFields )
+        {
+            if ( userField.getAttributeField(  ).getIdField(  ) == nIdField )
+            {
+                AdminUserFieldHome.remove( userField );
+
+                break;
+            }
+        }
+
+        // Remove profile
+        removeUserFromProfile( strProfileKey, nIdUser, plugin );
+
+        // Remove rights to the user
+        for ( Right right : getRightsListForProfile( strProfileKey, plugin ) )
+        {
+            if ( AdminUserHome.hasRight( user, right.getId(  ) ) &&
+                    ( ( user.getUserLevel(  ) > currentUser.getUserLevel(  ) ) || currentUser.isAdmin(  ) ) )
+            {
+                AdminUserHome.removeRightForUser( nIdUser, right.getId(  ) );
+            }
+        }
+
+        // Remove roles to the user
+        for ( AdminRole role : getRolesListForProfile( strProfileKey, plugin ) )
+        {
+            if ( AdminUserHome.hasRole( user, role.getKey(  ) ) )
+            {
+                AdminUserHome.removeRoleForUser( nIdUser, role.getKey(  ) );
+            }
+        }
+
+        // Remove workgroups to the user
+        for ( AdminWorkgroup workgroup : getWorkgroupsListForProfile( strProfileKey, plugin ) )
+        {
+            if ( AdminWorkgroupHome.isUserInWorkgroup( user, workgroup.getKey(  ) ) )
+            {
+                AdminWorkgroupHome.removeUserFromWorkgroup( user, workgroup.getKey(  ) );
+            }
+        }
+    }
+
+    /**
+    * Creation of an instance of profile
+    * @param profile The instance of the profile which contains the informations to store
+    * @param plugin Plugin
+    * @return The instance of profile which has been created with its primary key.
+    */
+    @Override
+    public Profile create( Profile profile, Plugin plugin )
+    {
+        if ( profile != null )
+        {
+            ProfileHome.create( profile, plugin );
+        }
+
+        return profile;
+    }
+
+    /**
+     * Update of the profile which is specified in parameter
+     * @param profile The instance of the profile which contains the new data to store
      * @param plugin Plugin
-     * @return the list of actions
+     * @return The instance of the profile which has been updated
      */
-    public List<ViewAction> getListActions( AdminUser user, View view, String strPermission, Locale locale,
-        Plugin plugin )
+    @Override
+    public Profile update( Profile profile, Plugin plugin )
     {
-        List<ViewAction> listActions = new ArrayList<ViewAction>(  );
-
-        for ( ViewAction action : ViewActionHome.selectActionsList( locale, plugin ) )
+        if ( profile != null )
         {
-            if ( !action.getPermission(  ).equals( strPermission ) )
-            {
-                listActions.add( action );
-            }
+            ProfileHome.update( profile, plugin );
         }
 
-        listActions = (List<ViewAction>) RBACService.getAuthorizedActionsCollection( listActions, view, user );
-
-        return listActions;
+        return profile;
     }
 
     /**
-     * Get the list of dashboards of the given view
-     * @param strViewKey the view key
-     * @param user the current user
+     * Remove the Profile whose identifier is specified in parameter
+     * @param strProfileKey The Profile object to remove
      * @param plugin Plugin
-     * @return the list of dashboards
      */
-    public Map<String, List<IDashboardComponent>> getAllSetDashboards( String strViewKey, AdminUser user, Plugin plugin )
+    @Override
+    public void remove( String strProfileKey, Plugin plugin )
     {
-        Map<String, List<IDashboardComponent>> mapDashboardComponents = new HashMap<String, List<IDashboardComponent>>(  );
-
-        // Personnalized dashboard positions
-        List<IDashboardComponent> listDashboards = ViewHome.findDashboards( strViewKey, plugin );
-
-        for ( IDashboardComponent dashboard : listDashboards )
-        {
-            int nColumn = dashboard.getZone(  );
-            boolean bRight = user.checkRight( dashboard.getRight(  ) ) ||
-                dashboard.getRight(  ).equalsIgnoreCase( ProfilesConstants.ALL );
-
-            if ( !bRight )
-            {
-                continue;
-            }
-
-            String strColumn = Integer.toString( nColumn );
-
-            // find this column list
-            List<IDashboardComponent> listDashboardsColumn = mapDashboardComponents.get( strColumn );
-
-            if ( listDashboardsColumn == null )
-            {
-                // the list does not exist, create it
-                listDashboardsColumn = new ArrayList<IDashboardComponent>(  );
-                mapDashboardComponents.put( strColumn, listDashboardsColumn );
-            }
-
-            // add dashboard to the list
-            listDashboardsColumn.add( dashboard );
-        }
-
-        return mapDashboardComponents;
+        ProfileHome.remove( strProfileKey, plugin );
     }
 
+    ///////////////////////////////////////////////////////////////////////////
+    // Finders
+
     /**
-     * Get the list of dashboards that are not set
-     * @param strViewKey the view key
-     * @param user the admin user
+     * Returns an instance of a profile whose identifier is specified in parameter
+     * @param strProfileKey The key of the profile
      * @param plugin Plugin
-     * @return the list of dashboards
+     * @return An instance of profile
      */
-    public List<IDashboardComponent> getNotSetDashboards( String strViewKey, AdminUser user, Plugin plugin )
+    @Override
+    public Profile findByPrimaryKey( String strProfileKey, Plugin plugin )
     {
-        List<IDashboardComponent> listDashboards = DashboardHome.findAll(  );
-        List<IDashboardComponent> listPersonnalizedDashboards = ViewHome.findDashboards( strViewKey, plugin );
-        List<IDashboardComponent> listNotSetDashboards = new ArrayList<IDashboardComponent>(  );
-
-        for ( IDashboardComponent dashboard : listDashboards )
-        {
-            boolean bRight = user.checkRight( dashboard.getRight(  ) ) ||
-                dashboard.getRight(  ).equalsIgnoreCase( ProfilesConstants.ALL );
-
-            if ( !listPersonnalizedDashboards.contains( dashboard ) && bRight &&
-                    ( dashboard.getZone(  ) <= DashboardService.getInstance(  ).getColumnCount(  ) ) )
-            {
-                listNotSetDashboards.add( dashboard );
-            }
-        }
-
-        return listNotSetDashboards;
+        return ProfileHome.findByPrimaryKey( strProfileKey, plugin );
     }
 
     /**
-         * Builds all refList order for all columns
-         * @param plugin Plugin
-         * @return the map with column id as key
-         */
-    public Map<String, ReferenceList> getMapAvailableOrders( Plugin plugin )
-    {
-        Map<String, ReferenceList> mapAvailableOrders = new HashMap<String, ReferenceList>(  );
-
-        // get columns
-        for ( Integer nColumn : ViewHome.findColumns( plugin ) )
-        {
-            // get orders
-            mapAvailableOrders.put( nColumn.toString(  ), getListAvailableOrders( nColumn, plugin ) );
-        }
-
-        return mapAvailableOrders;
-    }
-
-    /**
-     * Orders reference list for the given column
-     * @param nColumn column
+     * Returns a collection of profiles objects
      * @param plugin Plugin
-     * @return the refList
+     * @return A collection of profiles
      */
-    public ReferenceList getListAvailableOrders( int nColumn, Plugin plugin )
+    @Override
+    public List<Profile> findAll( Plugin plugin )
     {
-        ReferenceList refList = new ReferenceList(  );
-
-        // add empty item
-        refList.addItem( ProfilesConstants.EMPTY_STRING, ProfilesConstants.EMPTY_STRING );
-
-        int nMaxOrder = ViewHome.findMaxOrder( nColumn, plugin );
-
-        for ( int nOrder = 1; nOrder <= nMaxOrder; nOrder++ )
-        {
-            refList.addItem( nOrder, Integer.toString( nOrder ) );
-        }
-
-        return refList;
+        return ProfileHome.findAll( plugin );
     }
 
     /**
-     * Returns list with available column
-     * @return all available columns
+     * Find profile by filter
+     * @param pFilter the Filter
+     * @param plugin Plugin
+     * @return List of profiles
      */
-    public ReferenceList getListAvailableColumns(  )
+    @Override
+    public List<Profile> findProfilesByFilter( ProfileFilter pFilter, Plugin plugin )
     {
-        ReferenceList refList = new ReferenceList(  );
-
-        // add empty item
-        refList.addItem( ProfilesConstants.EMPTY_STRING, ProfilesConstants.EMPTY_STRING );
-
-        for ( int nColumnIndex = 1; nColumnIndex <= DashboardService.getInstance(  ).getColumnCount(  );
-                nColumnIndex++ )
-        {
-            refList.addItem( nColumnIndex, Integer.toString( nColumnIndex ) );
-        }
-
-        return refList;
+        return ProfileHome.findProfilesByFilter( pFilter, plugin );
     }
 
     /**
-     * Moves the dashboard.
-     * @param dashboard to move, with new values
-     * @param nOldColumn previous column id
-     * @param nOldOrder previous order
-     * @param bCreate <code>true</code> if this is a new dashboard, <code>false</code> otherwise.
-     * @param strViewKey the view key
-     * @param plugin the plugin
+     * Check if a profile already exists or not
+     * @param strProfileKey The profile key
+     * @param plugin Plugin
+     * @return true if it already exists
      */
-    public void doMoveDashboard( IDashboardComponent dashboard, int nOldColumn, int nOldOrder, boolean bCreate,
-        String strViewKey, Plugin plugin )
+    @Override
+    public boolean checkExistProfile( String strProfileKey, Plugin plugin )
     {
-        int nColumn = dashboard.getZone(  );
-        int nOrder = dashboard.getOrder(  );
-
-        // find the dashboard already with this order and column
-        DashboardFilter filter = new DashboardFilter(  );
-        filter.setFilterColumn( nColumn );
-
-        List<IDashboardComponent> listColumnDashboards = ViewHome.findDashboardsByFilter( filter, strViewKey, plugin );
-
-        if ( ( listColumnDashboards != null ) && !listColumnDashboards.isEmpty(  ) )
-        {
-            if ( AppLogService.isDebugEnabled(  ) )
-            {
-                AppLogService.debug( "Reordering  dashboard column " + dashboard.getZone(  ) );
-            }
-
-            // sort by order
-            Collections.sort( listColumnDashboards );
-
-            int nMaxOrder = listColumnDashboards.get( listColumnDashboards.size(  ) - 1 ).getOrder(  );
-
-            if ( ( nOldColumn == 0 ) || ( nOldColumn != nColumn ) )
-            {
-                // was not in this column before, put to the end
-                dashboard.setOrder( nMaxOrder + 1 );
-            }
-            else
-            {
-                if ( nOrder < nOldOrder )
-                {
-                    for ( IDashboardComponent dc : listColumnDashboards )
-                    {
-                        if ( !dc.equals( dashboard ) )
-                        {
-                            int nCurrentOrder = dc.getOrder(  );
-
-                            if ( ( nCurrentOrder >= nOrder ) && ( nCurrentOrder < nOldOrder ) )
-                            {
-                                dc.setOrder( nCurrentOrder + 1 );
-                                ViewHome.updateDashboard( strViewKey, dc, plugin );
-                            }
-                        }
-                    }
-                }
-                else if ( nOrder > nOldOrder )
-                {
-                    for ( IDashboardComponent dc : listColumnDashboards )
-                    {
-                        if ( !dc.equals( dashboard ) )
-                        {
-                            int nCurrentOrder = dc.getOrder(  );
-
-                            if ( ( nCurrentOrder <= nOrder ) && ( nCurrentOrder > nOldOrder ) )
-                            {
-                                dc.setOrder( nCurrentOrder - 1 );
-                                ViewHome.updateDashboard( strViewKey, dc, plugin );
-                            }
-                        }
-                    }
-                }
-
-                // dashboard are singletons, values are modified by getting it from database
-                dashboard.setOrder( nOrder );
-                dashboard.setZone( nColumn );
-            }
-        }
-        else
-        {
-            dashboard.setOrder( 1 );
-        }
-
-        if ( bCreate )
-        {
-            // create dashboard
-            ViewHome.createDashboard( strViewKey, dashboard, plugin );
-        }
-        else
-        {
-            // update dashboard
-            ViewHome.updateDashboard( strViewKey, dashboard, plugin );
-        }
+        return ProfileHome.checkExistProfile( strProfileKey, plugin );
     }
 
     /**
-     * Get the dashboard component
-     * @param strViewKey the view key
-     * @param nColumn the column id
-     * @param plugin the plugins
-     * @return all dashboards for this column
+     * Get the list of profiles
+     * @param plugin Plugin
+     * @return the list of profiles
      */
-    public List<IDashboardComponent> getDashboardComponents( String strViewKey, int nColumn, Plugin plugin )
+    @Override
+    public ReferenceList getProfilesList( Plugin plugin )
     {
-        DashboardFilter filter = new DashboardFilter(  );
-        filter.setFilterColumn( nColumn );
-
-        List<IDashboardComponent> dashboardComponents = ViewHome.findDashboardsByFilter( filter, strViewKey, plugin );
-
-        return dashboardComponents;
+        return ProfileHome.getProfilesList( plugin );
     }
 
     /**
-     * Reorders column's dashboard
-     * @param strViewKey the view key
-     * @param nColumn the column to reorder
-     * @param plugin the plugin
+     * Check if the profile is attributed to any user
+     * @param strProfileKey the profile key
+     * @param plugin Plugin
+     * @return true if it is attributed to at least one user, false otherwise
      */
-    public void doReorderColumn( String strViewKey, int nColumn, Plugin plugin )
+    @Override
+    public boolean checkProfileAttributed( String strProfileKey, Plugin plugin )
     {
-        int nOrder = ProfilesConstants.CONSTANTE_FIRST_ORDER;
-
-        for ( IDashboardComponent dc : getDashboardComponents( strViewKey, nColumn, plugin ) )
-        {
-            dc.setOrder( nOrder++ );
-            ViewHome.updateDashboard( strViewKey, dc, plugin );
-        }
+        return ProfileHome.checkProfileAttributed( strProfileKey, plugin );
     }
 
     /**
-     * Builds the map to with column id as key, and <code>true</code> as value if column is well ordered, <code>false</code> otherwise.
-     * @param strViewKey the view key
-     * @param plugin the plugin
-     * @return the map
+     * Load the profile by a given ID user
+     * @param nIdUser the ID user
+     * @param plugin Plugin
+     * @return a profile
      */
-    public Map<String, Boolean> getOrderedColumnsStatus( String strViewKey, Plugin plugin )
+    @Override
+    public Profile findProfileByIdUser( int nIdUser, Plugin plugin )
     {
-        Map<String, Boolean> mapOrderedStatus = new HashMap<String, Boolean>(  );
-        List<Integer> listColumns = ViewHome.findColumns( plugin );
+        return ProfileHome.findProfileByIdUser( nIdUser, plugin );
+    }
 
-        for ( Integer nIdColumn : listColumns )
-        {
-            mapOrderedStatus.put( nIdColumn.toString(  ), isWellOrdered( strViewKey, nIdColumn, plugin ) );
-        }
+    /* RIGHTS */
 
-        return mapOrderedStatus;
+    /**
+     * Get the list of rights associated to the profile
+     * @param strProfileKey The profile Key
+     * @param plugin Plugin
+     * @return The list of Right
+     */
+    @Override
+    public List<Right> getRightsListForProfile( String strProfileKey, Plugin plugin )
+    {
+        return ProfileHome.getRightsListForProfile( strProfileKey, plugin );
     }
 
     /**
-     * Determines if the column is well ordered
-     * @param strViewKey the view key
-     * @param nColumn the column id
-     * @param plugin the plugin
-     * @return true if well ordered, <code>false</code> otherwise.
+     * Check if a profile has the given right.
+     * @param strProfileKey The profile Key
+     * @param strIdRight The Right ID
+     * @param plugin Plugin
+     * @return true if the profile has the right, false otherwise
      */
-    private boolean isWellOrdered( String strViewKey, int nColumn, Plugin plugin )
+    @Override
+    public boolean hasRight( String strProfileKey, String strIdRight, Plugin plugin )
     {
-        int nOrder = ProfilesConstants.CONSTANTE_FIRST_ORDER;
+        return ProfileHome.hasRight( strProfileKey, strIdRight, plugin );
+    }
 
-        for ( IDashboardComponent dc : getDashboardComponents( strViewKey, nColumn, plugin ) )
-        {
-            if ( nOrder != dc.getOrder(  ) )
-            {
-                return false;
-            }
+    /**
+     * Add a right for a profile
+     * @param strProfileKey The profile Key
+     * @param strIdRight The Right ID
+     * @param plugin Plugin
+     */
+    @Override
+    public void addRightForProfile( String strProfileKey, String strIdRight, Plugin plugin )
+    {
+        ProfileHome.addRightForProfile( strProfileKey, strIdRight, plugin );
+    }
 
-            nOrder++;
-        }
+    /**
+     * Remove a right from a profile
+     * @param strProfileKey The profile Key
+     * @param strIdRight The Right ID
+     * @param plugin Plugin
+     */
+    @Override
+    public void removeRightFromProfile( String strProfileKey, String strIdRight, Plugin plugin )
+    {
+        ProfileHome.removeRightFromProfile( strProfileKey, strIdRight, plugin );
+    }
 
-        return true;
+    /**
+     * Remove all rights from profile
+     * @param strProfileKey The profile key
+     * @param plugin Plugin
+     */
+    @Override
+    public void removeRights( String strProfileKey, Plugin plugin )
+    {
+        ProfileHome.removeRights( strProfileKey, plugin );
+    }
+
+    /* WORKGROUPS */
+
+    /**
+     * Get the list of workgroups associated to the profile
+     * @param strProfileKey The profile Key
+     * @param plugin Plugin
+     * @return The list of workgroups
+     */
+    @Override
+    public List<AdminWorkgroup> getWorkgroupsListForProfile( String strProfileKey, Plugin plugin )
+    {
+        return ProfileHome.getWorkgroupsListForProfile( strProfileKey, plugin );
+    }
+
+    /**
+     * Check if a profile has the given workgroup.
+     * @param strProfileKey The profile Key
+     * @param strWorkgroupKey The Workgroup key
+     * @param plugin Plugin
+     * @return true if the profile has the workgroup, false otherwise
+     */
+    @Override
+    public boolean hasWorkgroup( String strProfileKey, String strWorkgroupKey, Plugin plugin )
+    {
+        return ProfileHome.hasWorkgroup( strProfileKey, strWorkgroupKey, plugin );
+    }
+
+    /**
+     * Add a workgroup for a profile
+     * @param strProfileKey The profile Key
+     * @param strWorkgroupKey The WorkgroupKey
+     * @param plugin Plugin
+     */
+    @Override
+    public void addWorkgroupForProfile( String strProfileKey, String strWorkgroupKey, Plugin plugin )
+    {
+        ProfileHome.addWorkgroupForProfile( strProfileKey, strWorkgroupKey, plugin );
+    }
+
+    /**
+     * Remove a workgroup from a profile
+     * @param strProfileKey The profile Key
+     * @param strWorkgroupKey The Workgroup key
+     * @param plugin Plugin
+     */
+    @Override
+    public void removeWorkgroupFromProfile( String strProfileKey, String strWorkgroupKey, Plugin plugin )
+    {
+        ProfileHome.removeWorkgroupFromProfile( strProfileKey, strWorkgroupKey, plugin );
+    }
+
+    /**
+     * Remove all workgroups from profile
+     * @param strProfileKey The profile key
+     * @param plugin Plugin
+     */
+    @Override
+    public void removeWorkgroups( String strProfileKey, Plugin plugin )
+    {
+        ProfileHome.removeWorkgroups( strProfileKey, plugin );
+    }
+
+    /* ROLES */
+
+    /**
+     * Get the list of roles associated to the profile
+     * @param strProfileKey The profile Key
+     * @param plugin Plugin
+     * @return The list of roles
+     */
+    @Override
+    public List<AdminRole> getRolesListForProfile( String strProfileKey, Plugin plugin )
+    {
+        return ProfileHome.getRolesListForProfile( strProfileKey, plugin );
+    }
+
+    /**
+     * Check if a profile has the given role.
+     * @param strProfileKey The profile Key
+     * @param strRoleKey The Role key
+     * @param plugin Plugin
+     * @return true if the profile has the role, false otherwise
+     */
+    @Override
+    public boolean hasRole( String strProfileKey, String strRoleKey, Plugin plugin )
+    {
+        return ProfileHome.hasRole( strProfileKey, strRoleKey, plugin );
+    }
+
+    /**
+     * Add a role for a profile
+     * @param strProfileKey The profile Key
+     * @param strRoleKey The RoleKey
+     * @param plugin Plugin
+     */
+    @Override
+    public void addRoleForProfile( String strProfileKey, String strRoleKey, Plugin plugin )
+    {
+        ProfileHome.addRoleForProfile( strProfileKey, strRoleKey, plugin );
+    }
+
+    /**
+     * Remove a role from a profile
+     * @param strProfileKey The profile Key
+     * @param strRoleKey The role key
+     * @param plugin Plugin
+     */
+    @Override
+    public void removeRoleFromProfile( String strProfileKey, String strRoleKey, Plugin plugin )
+    {
+        ProfileHome.removeRoleFromProfile( strProfileKey, strRoleKey, plugin );
+    }
+
+    /**
+     * Remove all roles from profile
+     * @param strProfileKey The profile key
+     * @param plugin Plugin
+     */
+    @Override
+    public void removeRoles( String strProfileKey, Plugin plugin )
+    {
+        ProfileHome.removeRoles( strProfileKey, plugin );
+    }
+
+    /* USERS */
+
+    /**
+     * Get the list of users associated to the profile
+     * @param strProfileKey The profile Key
+     * @param plugin Plugin
+     * @return The list of users
+     */
+    @Override
+    public List<AdminUser> getUsersListForProfile( String strProfileKey, Plugin plugin )
+    {
+        return ProfileHome.getUsersListForProfile( strProfileKey, plugin );
+    }
+
+    /**
+     * Check if a profile has the given user.
+     * @param strProfileKey The profile Key
+     * @param nIdUser The User ID
+     * @param plugin Plugin
+     * @return true if the profile has the user, false otherwise
+     */
+    @Override
+    public boolean hasUser( String strProfileKey, int nIdUser, Plugin plugin )
+    {
+        return ProfileHome.hasUser( strProfileKey, nIdUser, plugin );
+    }
+
+    /**
+     * Add an user for a profile
+     * @param strProfileKey The profile Key
+     * @param nIdUser The User ID
+     * @param plugin Plugin
+     */
+    @Override
+    public void addUserForProfile( String strProfileKey, int nIdUser, Plugin plugin )
+    {
+        ProfileHome.addUserForProfile( strProfileKey, nIdUser, plugin );
+    }
+
+    /**
+     * Remove a user from a profile
+     * @param strProfileKey The profile Key
+     * @param nIdUser The User ID
+     * @param plugin Plugin
+     */
+    @Override
+    public void removeUserFromProfile( String strProfileKey, int nIdUser, Plugin plugin )
+    {
+        ProfileHome.removeUserFromProfile( strProfileKey, nIdUser, plugin );
+    }
+
+    /**
+     * Remove all users from profile
+     * @param strProfileKey The profile key
+     * @param plugin Plugin
+     */
+    @Override
+    public void removeUsers( String strProfileKey, Plugin plugin )
+    {
+        ProfileHome.removeUsers( strProfileKey, plugin );
+    }
+
+    /**
+     * Remove all profiles associated to an user
+     * @param nIdUser The User ID
+     * @param plugin Plugin
+     */
+    @Override
+    public void removeProfilesFromUser( int nIdUser, Plugin plugin )
+    {
+        ProfileHome.removeProfilesFromUser( nIdUser, plugin );
+    }
+
+    /**
+     * Check if the given user has a profile or not
+     * @param nIdUser the ID user
+     * @param plugin Plugin
+     * @return true if the user has the profile, false otherwise
+     */
+    @Override
+    public boolean hasProfile( int nIdUser, Plugin plugin )
+    {
+        return ProfileHome.hasProfile( nIdUser, plugin );
+    }
+
+    /* VIEW */
+
+    /**
+     * Get the view associated to the profile
+     * @param strProfileKey the profile key
+     * @param plugin Plugin
+     * @return the view
+     */
+    @Override
+    public View getViewForProfile( String strProfileKey, Plugin plugin )
+    {
+        return ProfileHome.getViewForProfile( strProfileKey, plugin );
+    }
+
+    /**
+     * Remove profile from a view
+     * @param strProfileKey the profile key
+     * @param plugin Plugin
+     */
+    @Override
+    public void removeView( String strProfileKey, Plugin plugin )
+    {
+        ProfileHome.removeView( strProfileKey, plugin );
     }
 }

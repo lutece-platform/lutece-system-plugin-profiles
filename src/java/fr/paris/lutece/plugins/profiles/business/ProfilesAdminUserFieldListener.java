@@ -34,7 +34,6 @@
 package fr.paris.lutece.plugins.profiles.business;
 
 import fr.paris.lutece.plugins.profiles.service.ProfilesPlugin;
-import fr.paris.lutece.plugins.profiles.utils.constants.ProfilesConstants;
 import fr.paris.lutece.portal.business.rbac.AdminRole;
 import fr.paris.lutece.portal.business.rbac.AdminRoleHome;
 import fr.paris.lutece.portal.business.right.Right;
@@ -50,6 +49,8 @@ import fr.paris.lutece.portal.business.workgroup.AdminWorkgroup;
 import fr.paris.lutece.portal.business.workgroup.AdminWorkgroupHome;
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.portal.service.plugin.PluginService;
+
+import org.apache.commons.lang.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -83,7 +84,7 @@ public class ProfilesAdminUserFieldListener implements AdminUserFieldListener
 
             for ( AdminUserField userField : userFields )
             {
-                if ( ( userField != null ) && !userField.getValue(  ).equals( ProfilesConstants.EMPTY_STRING ) )
+                if ( ( userField != null ) && StringUtils.isNotBlank( userField.getValue(  ) ) )
                 {
                     // Change the value of the user field
                     // Instead of having the ID of the attribute field, we put the attribute field title
@@ -161,7 +162,7 @@ public class ProfilesAdminUserFieldListener implements AdminUserFieldListener
 
             for ( AdminUserField userField : userFields )
             {
-                if ( ( userField != null ) && !userField.getValue(  ).equals( ProfilesConstants.EMPTY_STRING ) )
+                if ( ( userField != null ) && StringUtils.isNotBlank( userField.getValue(  ) ) )
                 {
                     // Change the value of the user field
                     // Instead of having the ID of the attribute field, we put the attribute field title

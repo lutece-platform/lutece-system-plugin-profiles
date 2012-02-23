@@ -44,7 +44,6 @@ import fr.paris.lutece.util.ReferenceList;
 import fr.paris.lutece.util.sql.DAOUtil;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 
@@ -91,6 +90,7 @@ public class ViewDAO implements IViewDAO
     /**
     * {@inheritDoc}
     */
+    @Override
     public void insert( View view, Plugin plugin )
     {
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, plugin );
@@ -104,6 +104,7 @@ public class ViewDAO implements IViewDAO
     /**
      * {@inheritDoc}
      */
+    @Override
     public View load( String strViewKey, Plugin plugin )
     {
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT, plugin );
@@ -127,6 +128,7 @@ public class ViewDAO implements IViewDAO
     /**
      * {@inheritDoc}
      */
+    @Override
     public void delete( String strViewKey, Plugin plugin )
     {
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE, plugin );
@@ -139,6 +141,7 @@ public class ViewDAO implements IViewDAO
     /**
      * {@inheritDoc}
      */
+    @Override
     public void store( View view, Plugin plugin )
     {
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE, plugin );
@@ -152,9 +155,10 @@ public class ViewDAO implements IViewDAO
     /**
      * {@inheritDoc}
      */
-    public Collection<View> selectViewsList( Plugin plugin )
+    @Override
+    public List<View> selectViewsList( Plugin plugin )
     {
-        Collection<View> listViews = new ArrayList<View>(  );
+        List<View> listViews = new ArrayList<View>(  );
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECTALL, plugin );
         daoUtil.executeQuery(  );
 
@@ -175,9 +179,10 @@ public class ViewDAO implements IViewDAO
     /**
      * {@inheritDoc}
      */
-    public Collection<View> selectViewsByFilter( ViewFilter vFilter, Plugin plugin )
+    @Override
+    public List<View> selectViewsByFilter( ViewFilter vFilter, Plugin plugin )
     {
-        Collection<View> listFilteredViews = new ArrayList<View>(  );
+        List<View> listFilteredViews = new ArrayList<View>(  );
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_VIEWS_FROM_SEARCH, plugin );
 
         daoUtil.setString( 1, ProfilesConstants.PERCENT + vFilter.getKey(  ) + ProfilesConstants.PERCENT );
@@ -200,8 +205,9 @@ public class ViewDAO implements IViewDAO
     }
 
     /**
-    * {@inheritDoc}
-    */
+     * {@inheritDoc}
+     */
+    @Override
     public boolean checkExistView( String strViewKey, Plugin plugin )
     {
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT, plugin );
@@ -223,8 +229,9 @@ public class ViewDAO implements IViewDAO
     }
 
     /**
-    * {@inheritDoc}
-    */
+     * {@inheritDoc}
+     */
+    @Override
     public ReferenceList getViewsList( Plugin plugin )
     {
         ReferenceList listProfiles = new ReferenceList(  );
@@ -248,11 +255,12 @@ public class ViewDAO implements IViewDAO
     /* PROFILES */
 
     /**
-    * {@inheritDoc}
-    */
-    public Collection<Profile> selectProfilesListForView( String strViewKey, Plugin plugin )
+     * {@inheritDoc}
+     */
+    @Override
+    public List<Profile> selectProfilesListForView( String strViewKey, Plugin plugin )
     {
-        Collection<Profile> listProfiles = new ArrayList<Profile>(  );
+        List<Profile> listProfiles = new ArrayList<Profile>(  );
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_PROFILES_LIST_FOR_VIEW, plugin );
 
         daoUtil.setString( 1, strViewKey );
@@ -273,8 +281,9 @@ public class ViewDAO implements IViewDAO
     }
 
     /**
-    * {@inheritDoc}
-    */
+     * {@inheritDoc}
+     */
+    @Override
     public View selectViewForProfile( String strProfileKey, Plugin plugin )
     {
         View view = null;
@@ -296,8 +305,9 @@ public class ViewDAO implements IViewDAO
     }
 
     /**
-    * {@inheritDoc}
-    */
+     * {@inheritDoc}
+     */
+    @Override
     public boolean hasView( String strProfileKey, Plugin plugin )
     {
         boolean bHasView = false;
@@ -318,6 +328,7 @@ public class ViewDAO implements IViewDAO
     /**
      * {@inheritDoc}
      */
+    @Override
     public void insertProfileForView( String strViewKey, String strProfileKey, Plugin plugin )
     {
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT_VIEW_PROFILE, plugin );
@@ -331,6 +342,7 @@ public class ViewDAO implements IViewDAO
     /**
      * {@inheritDoc}
      */
+    @Override
     public void deleteProfiles( String strViewKey, Plugin plugin )
     {
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_PROFILES, plugin );
@@ -343,6 +355,7 @@ public class ViewDAO implements IViewDAO
     /**
      * {@inheritDoc}
      */
+    @Override
     public void deleteProfileFromView( String strViewKey, String strProfileKey, Plugin plugin )
     {
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_PROFILE_FROM_VIEW, plugin );
@@ -358,6 +371,7 @@ public class ViewDAO implements IViewDAO
     /**
      * {@inheritDoc}
      */
+    @Override
     public List<IDashboardComponent> selectDashboards( String strViewKey, Plugin plugin )
     {
         List<IDashboardComponent> listDashboards = new ArrayList<IDashboardComponent>(  );
@@ -399,6 +413,7 @@ public class ViewDAO implements IViewDAO
      * @param plugin Plugin
      * @return the dashboard
      */
+    @Override
     public IDashboardComponent selectDashboard( String strDashboardName, String strViewKey, Plugin plugin )
     {
         IDashboardComponent dashboardComponent = null;
@@ -431,6 +446,7 @@ public class ViewDAO implements IViewDAO
     /**
      * {@inheritDoc}
      */
+    @Override
     public void deleteDashboard( String strViewKey, String strDashboardName, Plugin plugin )
     {
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_DASHBOARD, plugin );
@@ -442,8 +458,9 @@ public class ViewDAO implements IViewDAO
     }
 
     /**
-    * {@inheritDoc}
-    */
+     * {@inheritDoc}
+     */
+    @Override
     public void deleteDashboards( String strViewKey, Plugin plugin )
     {
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_DASHBOARDS, plugin );
@@ -454,8 +471,9 @@ public class ViewDAO implements IViewDAO
     }
 
     /**
-    * {@inheritDoc}
-    */
+     * {@inheritDoc}
+     */
+    @Override
     public void insertDashboard( String strViewKey, IDashboardComponent dashboard, Plugin plugin )
     {
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT_DASHBOARD, plugin );
@@ -469,8 +487,9 @@ public class ViewDAO implements IViewDAO
     }
 
     /**
-    * {@inheritDoc}
-    */
+     * {@inheritDoc}
+     */
+    @Override
     public void storeDashboard( String strViewKey, IDashboardComponent dashboard, Plugin plugin )
     {
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_STORE_DASHBOARD, plugin );
@@ -487,6 +506,7 @@ public class ViewDAO implements IViewDAO
     /**
      * {@inheritDoc}
      */
+    @Override
     public int selectMaxOrder( Plugin plugin )
     {
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_MAX_ORDER, plugin );
@@ -508,6 +528,7 @@ public class ViewDAO implements IViewDAO
     /**
      * {@inheritDoc}
      */
+    @Override
     public int selectMaxOrder( int nColumn, Plugin plugin )
     {
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_MAX_ORDER_COLUMN, plugin );
@@ -531,6 +552,7 @@ public class ViewDAO implements IViewDAO
     /**
      * {@inheritDoc}
      */
+    @Override
     public List<Integer> selectColumns( Plugin plugin )
     {
         List<Integer> listColumns = new ArrayList<Integer>(  );
@@ -552,6 +574,7 @@ public class ViewDAO implements IViewDAO
     /**
      * {@inheritDoc}
      */
+    @Override
     public List<IDashboardComponent> selectDashboardsByFilter( DashboardFilter filter, String strViewKey, Plugin plugin )
     {
         StringBuilder sbSQL = new StringBuilder( SQL_QUERY_SELECT_DASHBOARDS );
