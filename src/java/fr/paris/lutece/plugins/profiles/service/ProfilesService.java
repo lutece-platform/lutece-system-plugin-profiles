@@ -46,13 +46,15 @@ import fr.paris.lutece.portal.business.user.AdminUser;
 import fr.paris.lutece.portal.business.user.AdminUserHome;
 import fr.paris.lutece.portal.business.user.attribute.AdminUserField;
 import fr.paris.lutece.portal.business.user.attribute.AdminUserFieldHome;
-import fr.paris.lutece.portal.business.user.attribute.AttributeHome;
+import fr.paris.lutece.portal.business.user.attribute.AttributeField;
 import fr.paris.lutece.portal.business.user.attribute.IAttribute;
 import fr.paris.lutece.portal.business.workgroup.AdminWorkgroup;
 import fr.paris.lutece.portal.business.workgroup.AdminWorkgroupHome;
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.portal.service.plugin.PluginService;
 import fr.paris.lutece.portal.service.rbac.RBACService;
+import fr.paris.lutece.portal.service.user.attribute.AttributeFieldService;
+import fr.paris.lutece.portal.service.user.attribute.AttributeService;
 import fr.paris.lutece.util.ReferenceList;
 import fr.paris.lutece.util.html.ItemNavigator;
 import fr.paris.lutece.util.url.UrlItem;
@@ -150,7 +152,9 @@ public class ProfilesService implements IProfilesService
         AdminUser user = AdminUserHome.findByPrimaryKey( nIdUser );
 
         // Remove User Fields
-        List<IAttribute> listAttributes = AttributeHome.findPluginAttributes( ProfilesPlugin.PLUGIN_NAME, locale );
+        List<IAttribute> listAttributes = AttributeService.getInstance(  )
+                                                          .getPluginAttributesWithoutFields( ProfilesPlugin.PLUGIN_NAME,
+                locale );
         IAttribute attribute = listAttributes.get( 0 );
         List<AdminUserField> listUserFields = AdminUserFieldHome.selectUserFieldsByIdUserIdAttribute( user.getUserId(  ),
                 attribute.getIdAttribute(  ) );
@@ -193,58 +197,108 @@ public class ProfilesService implements IProfilesService
     }
 
     /**
-    * Creation of an instance of profile
-    * @param profile The instance of the profile which contains the informations to store
-    * @param plugin Plugin
-    * @return The instance of profile which has been created with its primary key.
-    */
+     * {@inheritDoc}
+     */
     @Override
-    public Profile create( Profile profile, Plugin plugin )
+    public Profile create( Profile profile, Locale locale, Plugin plugin )
     {
         if ( profile != null )
         {
             ProfileHome.create( profile, plugin );
+
+            // Create user field
+            List<IAttribute> listAttributes = AttributeService.getInstance(  )
+                                                              .getPluginAttributesWithoutFields( ProfilesPlugin.PLUGIN_NAME,
+                    locale );
+            AttributeField attributeField = new AttributeField(  );
+            attributeField.setTitle( profile.getKey(  ) );
+            attributeField.setValue( profile.getDescription(  ) );
+            attributeField.setDefaultValue( false );
+            attributeField.setAttribute( listAttributes.get( 0 ) );
+            AttributeFieldService.getInstance(  ).createAttributeField( attributeField );
         }
 
         return profile;
     }
 
     /**
-     * Update of the profile which is specified in parameter
-     * @param profile The instance of the profile which contains the new data to store
-     * @param plugin Plugin
-     * @return The instance of the profile which has been updated
+     * {@inheritDoc}
      */
     @Override
-    public Profile update( Profile profile, Plugin plugin )
+    public Profile update( Profile profile, Locale locale, Plugin plugin )
     {
         if ( profile != null )
         {
             ProfileHome.update( profile, plugin );
+
+            // Modify user field
+            List<IAttribute> listAttributes = AttributeService.getInstance(  )
+                                                              .getPluginAttributesWithFields( ProfilesPlugin.PLUGIN_NAME,
+                    locale );
+
+            for ( IAttribute attribute : listAttributes )
+            {
+                if ( ( attribute == null ) || ( attribute.getListAttributeFields(  ) == null ) ||
+                        attribute.getListAttributeFields(  ).isEmpty(  ) )
+                {
+                    continue;
+                }
+
+                for ( AttributeField attributeField : attribute.getListAttributeFields(  ) )
+                {
+                    if ( ( attributeField.getTitle(  ) != null ) &&
+                            attributeField.getTitle(  ).equals( profile.getKey(  ) ) )
+                    {
+                        attributeField.setValue( profile.getDescription(  ) );
+                        AttributeFieldService.getInstance(  ).updateAttributeField( attributeField );
+
+                        break;
+                    }
+                }
+            }
         }
 
         return profile;
     }
 
     /**
-     * Remove the Profile whose identifier is specified in parameter
-     * @param strProfileKey The Profile object to remove
-     * @param plugin Plugin
+     * {@inheritDoc}
      */
     @Override
-    public void remove( String strProfileKey, Plugin plugin )
+    public void remove( String strProfileKey, Locale locale, Plugin plugin )
     {
         ProfileHome.remove( strProfileKey, plugin );
+
+        // Remove user field
+        List<IAttribute> listAttributes = AttributeService.getInstance(  )
+                                                          .getPluginAttributesWithFields( ProfilesPlugin.PLUGIN_NAME,
+                locale );
+
+        for ( IAttribute attribute : listAttributes )
+        {
+            if ( ( attribute == null ) || ( attribute.getListAttributeFields(  ) == null ) ||
+                    attribute.getListAttributeFields(  ).isEmpty(  ) )
+            {
+                continue;
+            }
+
+            for ( AttributeField attributeField : attribute.getListAttributeFields(  ) )
+            {
+                if ( ( attributeField.getTitle(  ) != null ) && attributeField.getTitle(  ).equals( strProfileKey ) )
+                {
+                    AttributeFieldService.getInstance(  ).removeAttributeFieldFromIdField( attributeField.getIdField(  ) );
+
+                    break;
+                }
+            }
+        }
     }
 
     ///////////////////////////////////////////////////////////////////////////
     // Finders
 
     /**
-     * Returns an instance of a profile whose identifier is specified in parameter
-     * @param strProfileKey The key of the profile
-     * @param plugin Plugin
-     * @return An instance of profile
+     * {@inheritDoc}
      */
     @Override
     public Profile findByPrimaryKey( String strProfileKey, Plugin plugin )
@@ -253,9 +307,7 @@ public class ProfilesService implements IProfilesService
     }
 
     /**
-     * Returns a collection of profiles objects
-     * @param plugin Plugin
-     * @return A collection of profiles
+     * {@inheritDoc}
      */
     @Override
     public List<Profile> findAll( Plugin plugin )
@@ -264,10 +316,7 @@ public class ProfilesService implements IProfilesService
     }
 
     /**
-     * Find profile by filter
-     * @param pFilter the Filter
-     * @param plugin Plugin
-     * @return List of profiles
+     * {@inheritDoc}
      */
     @Override
     public List<Profile> findProfilesByFilter( ProfileFilter pFilter, Plugin plugin )
@@ -276,10 +325,7 @@ public class ProfilesService implements IProfilesService
     }
 
     /**
-     * Check if a profile already exists or not
-     * @param strProfileKey The profile key
-     * @param plugin Plugin
-     * @return true if it already exists
+     * {@inheritDoc}
      */
     @Override
     public boolean checkExistProfile( String strProfileKey, Plugin plugin )
@@ -288,9 +334,7 @@ public class ProfilesService implements IProfilesService
     }
 
     /**
-     * Get the list of profiles
-     * @param plugin Plugin
-     * @return the list of profiles
+     * {@inheritDoc}
      */
     @Override
     public ReferenceList getProfilesList( Plugin plugin )
@@ -299,10 +343,7 @@ public class ProfilesService implements IProfilesService
     }
 
     /**
-     * Check if the profile is attributed to any user
-     * @param strProfileKey the profile key
-     * @param plugin Plugin
-     * @return true if it is attributed to at least one user, false otherwise
+     * {@inheritDoc}
      */
     @Override
     public boolean checkProfileAttributed( String strProfileKey, Plugin plugin )
@@ -311,10 +352,7 @@ public class ProfilesService implements IProfilesService
     }
 
     /**
-     * Load the profile by a given ID user
-     * @param nIdUser the ID user
-     * @param plugin Plugin
-     * @return a profile
+     * {@inheritDoc}
      */
     @Override
     public Profile findProfileByIdUser( int nIdUser, Plugin plugin )
@@ -325,10 +363,7 @@ public class ProfilesService implements IProfilesService
     /* RIGHTS */
 
     /**
-     * Get the list of rights associated to the profile
-     * @param strProfileKey The profile Key
-     * @param plugin Plugin
-     * @return The list of Right
+     * {@inheritDoc}
      */
     @Override
     public List<Right> getRightsListForProfile( String strProfileKey, Plugin plugin )
@@ -337,11 +372,7 @@ public class ProfilesService implements IProfilesService
     }
 
     /**
-     * Check if a profile has the given right.
-     * @param strProfileKey The profile Key
-     * @param strIdRight The Right ID
-     * @param plugin Plugin
-     * @return true if the profile has the right, false otherwise
+     * {@inheritDoc}
      */
     @Override
     public boolean hasRight( String strProfileKey, String strIdRight, Plugin plugin )
@@ -350,10 +381,7 @@ public class ProfilesService implements IProfilesService
     }
 
     /**
-     * Add a right for a profile
-     * @param strProfileKey The profile Key
-     * @param strIdRight The Right ID
-     * @param plugin Plugin
+     * {@inheritDoc}
      */
     @Override
     public void addRightForProfile( String strProfileKey, String strIdRight, Plugin plugin )
@@ -362,10 +390,7 @@ public class ProfilesService implements IProfilesService
     }
 
     /**
-     * Remove a right from a profile
-     * @param strProfileKey The profile Key
-     * @param strIdRight The Right ID
-     * @param plugin Plugin
+     * {@inheritDoc}
      */
     @Override
     public void removeRightFromProfile( String strProfileKey, String strIdRight, Plugin plugin )
@@ -374,9 +399,7 @@ public class ProfilesService implements IProfilesService
     }
 
     /**
-     * Remove all rights from profile
-     * @param strProfileKey The profile key
-     * @param plugin Plugin
+     * {@inheritDoc}
      */
     @Override
     public void removeRights( String strProfileKey, Plugin plugin )
@@ -387,10 +410,7 @@ public class ProfilesService implements IProfilesService
     /* WORKGROUPS */
 
     /**
-     * Get the list of workgroups associated to the profile
-     * @param strProfileKey The profile Key
-     * @param plugin Plugin
-     * @return The list of workgroups
+     * {@inheritDoc}
      */
     @Override
     public List<AdminWorkgroup> getWorkgroupsListForProfile( String strProfileKey, Plugin plugin )
@@ -399,11 +419,7 @@ public class ProfilesService implements IProfilesService
     }
 
     /**
-     * Check if a profile has the given workgroup.
-     * @param strProfileKey The profile Key
-     * @param strWorkgroupKey The Workgroup key
-     * @param plugin Plugin
-     * @return true if the profile has the workgroup, false otherwise
+     * {@inheritDoc}
      */
     @Override
     public boolean hasWorkgroup( String strProfileKey, String strWorkgroupKey, Plugin plugin )
@@ -412,10 +428,7 @@ public class ProfilesService implements IProfilesService
     }
 
     /**
-     * Add a workgroup for a profile
-     * @param strProfileKey The profile Key
-     * @param strWorkgroupKey The WorkgroupKey
-     * @param plugin Plugin
+     * {@inheritDoc}
      */
     @Override
     public void addWorkgroupForProfile( String strProfileKey, String strWorkgroupKey, Plugin plugin )
@@ -424,10 +437,7 @@ public class ProfilesService implements IProfilesService
     }
 
     /**
-     * Remove a workgroup from a profile
-     * @param strProfileKey The profile Key
-     * @param strWorkgroupKey The Workgroup key
-     * @param plugin Plugin
+     * {@inheritDoc}
      */
     @Override
     public void removeWorkgroupFromProfile( String strProfileKey, String strWorkgroupKey, Plugin plugin )
@@ -436,9 +446,7 @@ public class ProfilesService implements IProfilesService
     }
 
     /**
-     * Remove all workgroups from profile
-     * @param strProfileKey The profile key
-     * @param plugin Plugin
+     * {@inheritDoc}
      */
     @Override
     public void removeWorkgroups( String strProfileKey, Plugin plugin )
@@ -449,10 +457,7 @@ public class ProfilesService implements IProfilesService
     /* ROLES */
 
     /**
-     * Get the list of roles associated to the profile
-     * @param strProfileKey The profile Key
-     * @param plugin Plugin
-     * @return The list of roles
+     * {@inheritDoc}
      */
     @Override
     public List<AdminRole> getRolesListForProfile( String strProfileKey, Plugin plugin )
@@ -461,11 +466,7 @@ public class ProfilesService implements IProfilesService
     }
 
     /**
-     * Check if a profile has the given role.
-     * @param strProfileKey The profile Key
-     * @param strRoleKey The Role key
-     * @param plugin Plugin
-     * @return true if the profile has the role, false otherwise
+     * {@inheritDoc}
      */
     @Override
     public boolean hasRole( String strProfileKey, String strRoleKey, Plugin plugin )
@@ -474,10 +475,7 @@ public class ProfilesService implements IProfilesService
     }
 
     /**
-     * Add a role for a profile
-     * @param strProfileKey The profile Key
-     * @param strRoleKey The RoleKey
-     * @param plugin Plugin
+     * {@inheritDoc}
      */
     @Override
     public void addRoleForProfile( String strProfileKey, String strRoleKey, Plugin plugin )
@@ -486,10 +484,7 @@ public class ProfilesService implements IProfilesService
     }
 
     /**
-     * Remove a role from a profile
-     * @param strProfileKey The profile Key
-     * @param strRoleKey The role key
-     * @param plugin Plugin
+     * {@inheritDoc}
      */
     @Override
     public void removeRoleFromProfile( String strProfileKey, String strRoleKey, Plugin plugin )
@@ -498,9 +493,7 @@ public class ProfilesService implements IProfilesService
     }
 
     /**
-     * Remove all roles from profile
-     * @param strProfileKey The profile key
-     * @param plugin Plugin
+     * {@inheritDoc}
      */
     @Override
     public void removeRoles( String strProfileKey, Plugin plugin )
@@ -511,10 +504,7 @@ public class ProfilesService implements IProfilesService
     /* USERS */
 
     /**
-     * Get the list of users associated to the profile
-     * @param strProfileKey The profile Key
-     * @param plugin Plugin
-     * @return The list of users
+     * {@inheritDoc}
      */
     @Override
     public List<AdminUser> getUsersListForProfile( String strProfileKey, Plugin plugin )
@@ -523,11 +513,7 @@ public class ProfilesService implements IProfilesService
     }
 
     /**
-     * Check if a profile has the given user.
-     * @param strProfileKey The profile Key
-     * @param nIdUser The User ID
-     * @param plugin Plugin
-     * @return true if the profile has the user, false otherwise
+     * {@inheritDoc}
      */
     @Override
     public boolean hasUser( String strProfileKey, int nIdUser, Plugin plugin )
@@ -536,10 +522,7 @@ public class ProfilesService implements IProfilesService
     }
 
     /**
-     * Add an user for a profile
-     * @param strProfileKey The profile Key
-     * @param nIdUser The User ID
-     * @param plugin Plugin
+     * {@inheritDoc}
      */
     @Override
     public void addUserForProfile( String strProfileKey, int nIdUser, Plugin plugin )
@@ -548,9 +531,7 @@ public class ProfilesService implements IProfilesService
     }
 
     /**
-     * Remove a user from a profile
-     * @param nIdUser The User ID
-     * @param plugin Plugin
+     * {@inheritDoc}
      */
     @Override
     public void removeUserFromProfile( int nIdUser, Plugin plugin )
@@ -559,9 +540,7 @@ public class ProfilesService implements IProfilesService
     }
 
     /**
-     * Remove all users from profile
-     * @param strProfileKey The profile key
-     * @param plugin Plugin
+     * {@inheritDoc}
      */
     @Override
     public void removeUsers( String strProfileKey, Plugin plugin )
@@ -570,9 +549,7 @@ public class ProfilesService implements IProfilesService
     }
 
     /**
-     * Remove all profiles associated to an user
-     * @param nIdUser The User ID
-     * @param plugin Plugin
+     * {@inheritDoc}
      */
     @Override
     public void removeProfilesFromUser( int nIdUser, Plugin plugin )
@@ -581,10 +558,7 @@ public class ProfilesService implements IProfilesService
     }
 
     /**
-     * Check if the given user has a profile or not
-     * @param nIdUser the ID user
-     * @param plugin Plugin
-     * @return true if the user has the profile, false otherwise
+     * {@inheritDoc}
      */
     @Override
     public boolean hasProfile( int nIdUser, Plugin plugin )
@@ -595,10 +569,7 @@ public class ProfilesService implements IProfilesService
     /* VIEW */
 
     /**
-     * Get the view associated to the profile
-     * @param strProfileKey the profile key
-     * @param plugin Plugin
-     * @return the view
+     * {@inheritDoc}
      */
     @Override
     public View getViewForProfile( String strProfileKey, Plugin plugin )
@@ -607,9 +578,7 @@ public class ProfilesService implements IProfilesService
     }
 
     /**
-     * Remove profile from a view
-     * @param strProfileKey the profile key
-     * @param plugin Plugin
+     * {@inheritDoc}
      */
     @Override
     public void removeView( String strProfileKey, Plugin plugin )

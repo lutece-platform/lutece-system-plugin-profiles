@@ -53,8 +53,6 @@ import fr.paris.lutece.portal.business.right.RightHome;
 import fr.paris.lutece.portal.business.user.AdminUser;
 import fr.paris.lutece.portal.business.user.AdminUserHome;
 import fr.paris.lutece.portal.business.user.attribute.AttributeField;
-import fr.paris.lutece.portal.business.user.attribute.AttributeFieldHome;
-import fr.paris.lutece.portal.business.user.attribute.AttributeHome;
 import fr.paris.lutece.portal.business.user.attribute.IAttribute;
 import fr.paris.lutece.portal.business.workgroup.AdminWorkgroup;
 import fr.paris.lutece.portal.business.workgroup.AdminWorkgroupFilter;
@@ -66,6 +64,7 @@ import fr.paris.lutece.portal.service.message.AdminMessageService;
 import fr.paris.lutece.portal.service.rbac.RBACService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
+import fr.paris.lutece.portal.service.user.attribute.AttributeService;
 import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.portal.service.workgroup.AdminWorkgroupResource;
@@ -290,16 +289,7 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
         Profile profile = new Profile(  );
         profile.setKey( strKey.trim(  ) );
         profile.setDescription( strDescription );
-        _profilesService.create( profile, getPlugin(  ) );
-
-        // Create user field
-        List<IAttribute> listAttributes = AttributeHome.findPluginAttributes( ProfilesPlugin.PLUGIN_NAME, getLocale(  ) );
-        AttributeField attributeField = new AttributeField(  );
-        attributeField.setTitle( profile.getKey(  ) );
-        attributeField.setValue( profile.getDescription(  ) );
-        attributeField.setDefaultValue( false );
-        attributeField.setAttribute( listAttributes.get( 0 ) );
-        AttributeFieldHome.create( attributeField );
+        _profilesService.create( profile, getLocale(  ), getPlugin(  ) );
 
         return JSP_MANAGE_PROFILES;
     }
@@ -350,22 +340,7 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
         _profilesService.removeWorkgroups( strProfileKey, getPlugin(  ) );
         _profilesService.removeRoles( strProfileKey, getPlugin(  ) );
         _profilesService.removeView( strProfileKey, getPlugin(  ) );
-        _profilesService.remove( strProfileKey, getPlugin(  ) );
-
-        // Remove user field
-        List<IAttribute> listAttributes = AttributeHome.findPluginAttributes( ProfilesPlugin.PLUGIN_NAME, getLocale(  ) );
-        IAttribute attribute = listAttributes.get( 0 );
-        List<AttributeField> listAttributeFields = AttributeFieldHome.selectAttributeFieldsByIdAttribute( attribute.getIdAttribute(  ) );
-
-        for ( AttributeField attributeField : listAttributeFields )
-        {
-            if ( ( attributeField.getTitle(  ) != null ) && attributeField.getTitle(  ).equals( strProfileKey ) )
-            {
-                AttributeFieldHome.remove( attributeField.getIdField(  ) );
-
-                break;
-            }
-        }
+        _profilesService.remove( strProfileKey, getLocale(  ), getPlugin(  ) );
 
         return JSP_MANAGE_PROFILES;
     }
@@ -434,23 +409,7 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
         Profile profile = new Profile(  );
         profile.setKey( strProfileKey.trim(  ) );
         profile.setDescription( strDescription );
-        _profilesService.update( profile, getPlugin(  ) );
-
-        // Modify user field
-        List<IAttribute> listAttributes = AttributeHome.findPluginAttributes( ProfilesPlugin.PLUGIN_NAME, getLocale(  ) );
-        IAttribute attribute = listAttributes.get( 0 );
-        List<AttributeField> listAttributeFields = AttributeFieldHome.selectAttributeFieldsByIdAttribute( attribute.getIdAttribute(  ) );
-
-        for ( AttributeField attributeField : listAttributeFields )
-        {
-            if ( ( attributeField.getTitle(  ) != null ) && attributeField.getTitle(  ).equals( strProfileKey ) )
-            {
-                attributeField.setValue( profile.getDescription(  ) );
-                AttributeFieldHome.update( attributeField );
-
-                break;
-            }
-        }
+        _profilesService.update( profile, getLocale(  ), getPlugin(  ) );
 
         return JSP_MANAGE_PROFILES;
     }
@@ -1241,23 +1200,31 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
         profile.setActions( listActions );
 
         // Attribute
-        List<IAttribute> listAttributes = AttributeHome.findPluginAttributes( ProfilesPlugin.PLUGIN_NAME, getLocale(  ) );
-        IAttribute attribute = listAttributes.get( 0 );
+        List<IAttribute> listAttributes = AttributeService.getInstance(  )
+                                                          .getPluginAttributesWithFields( ProfilesPlugin.PLUGIN_NAME,
+                getLocale(  ) );
         AttributeField attributeField = new AttributeField(  );
         attributeField.setTitle( profile.getKey(  ) );
         attributeField.setValue( profile.getDescription(  ) );
         attributeField.setDefaultValue( false );
         attributeField.setAttribute( listAttributes.get( 0 ) );
 
-        List<AttributeField> listAttributeFields = AttributeFieldHome.selectAttributeFieldsByIdAttribute( attribute.getIdAttribute(  ) );
-
-        for ( AttributeField aField : listAttributeFields )
+        for ( IAttribute attribute : listAttributes )
         {
-            if ( strProfileKey.equals( aField.getTitle(  ) ) )
+            if ( ( attribute == null ) || ( attribute.getListAttributeFields(  ) == null ) ||
+                    attribute.getListAttributeFields(  ).isEmpty(  ) )
             {
-                attributeField.setIdField( aField.getIdField(  ) );
+                continue;
+            }
 
-                break;
+            for ( AttributeField aField : attribute.getListAttributeFields(  ) )
+            {
+                if ( strProfileKey.equals( aField.getTitle(  ) ) )
+                {
+                    attributeField.setIdField( aField.getIdField(  ) );
+
+                    break;
+                }
             }
         }
 
@@ -1270,7 +1237,7 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
         model.put( ProfilesConstants.MARK_NB_ITEMS_PER_PAGE, StringUtils.EMPTY + _nItemsPerPage );
         model.put( ProfilesConstants.MARK_PAGINATOR, paginator );
         model.put( ProfilesConstants.MARK_PERMISSION, bPermission );
-        model.put( ProfilesConstants.MARK_ATTRIBUTE, attribute );
+        model.put( ProfilesConstants.MARK_ATTRIBUTE, listAttributes.get( 0 ) );
         model.put( ProfilesConstants.MARK_ATTRIBUTE_FIELD, attributeField );
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_ASSIGN_USERS_PROFILE, getLocale(  ), model );

@@ -43,12 +43,12 @@ import fr.paris.lutece.portal.business.user.AdminUserHome;
 import fr.paris.lutece.portal.business.user.attribute.AdminUserField;
 import fr.paris.lutece.portal.business.user.attribute.AdminUserFieldHome;
 import fr.paris.lutece.portal.business.user.attribute.AdminUserFieldListener;
-import fr.paris.lutece.portal.business.user.attribute.AttributeHome;
 import fr.paris.lutece.portal.business.user.attribute.IAttribute;
 import fr.paris.lutece.portal.business.workgroup.AdminWorkgroup;
 import fr.paris.lutece.portal.business.workgroup.AdminWorkgroupHome;
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.portal.service.plugin.PluginService;
+import fr.paris.lutece.portal.service.user.attribute.AttributeService;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -75,7 +75,9 @@ public class ProfilesAdminUserFieldListener implements AdminUserFieldListener
     public void doCreateUserFields( AdminUser user, HttpServletRequest request, Locale locale )
     {
         Plugin plugin = PluginService.getPlugin( ProfilesPlugin.PLUGIN_NAME );
-        List<IAttribute> listAttributes = AttributeHome.findPluginAttributes( ProfilesPlugin.PLUGIN_NAME, locale );
+        List<IAttribute> listAttributes = AttributeService.getInstance(  )
+                                                          .getPluginAttributesWithoutFields( ProfilesPlugin.PLUGIN_NAME,
+                locale );
         List<AdminUserField> listUserFields = new ArrayList<AdminUserField>(  );
 
         for ( IAttribute attribute : listAttributes )
@@ -153,7 +155,9 @@ public class ProfilesAdminUserFieldListener implements AdminUserFieldListener
     public void doModifyUserFields( AdminUser user, HttpServletRequest request, Locale locale, AdminUser currentUser )
     {
         Plugin plugin = PluginService.getPlugin( ProfilesPlugin.PLUGIN_NAME );
-        List<IAttribute> listAttributes = AttributeHome.findPluginAttributes( ProfilesPlugin.PLUGIN_NAME, locale );
+        List<IAttribute> listAttributes = AttributeService.getInstance(  )
+                                                          .getPluginAttributesWithoutFields( ProfilesPlugin.PLUGIN_NAME,
+                locale );
         List<AdminUserField> listUserFields = new ArrayList<AdminUserField>(  );
 
         for ( IAttribute attribute : listAttributes )

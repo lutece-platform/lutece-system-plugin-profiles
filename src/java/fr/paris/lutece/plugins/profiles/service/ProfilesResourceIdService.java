@@ -152,9 +152,6 @@ public class ProfilesResourceIdService extends ResourceIdService
     */
     public String getTitle( String strProfileKey, Locale locale )
     {
-        Plugin plugin = PluginService.getPlugin( ProfilesPlugin.PLUGIN_NAME );
-        Profile profile = ProfileHome.findByPrimaryKey( strProfileKey, plugin );
-
-        return ( profile != null ) ? profile.getKey(  ) : null;
+        return strProfileKey;
     }
 }

@@ -51,7 +51,7 @@ public final class ProfilesConstants
     public static final String UNDERSCORE = "_";
     public static final String INTERROGATION_MARK = "?";
     public static final String SHARP = "#";
-    public static final String LAST_NAME = "last_name";
+    public static final String LAST_NAME = "lastName";
     public static final String ALL = "ALL";
     public static final int CONSTANTE_FIRST_ORDER = 1;
 

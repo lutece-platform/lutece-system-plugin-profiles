@@ -105,25 +105,28 @@ public interface IProfilesService
     /**
      * Creation of an instance of profile
      * @param profile The instance of the profile which contains the informations to store
+     * @param locale the Locale
      * @param plugin Plugin
      * @return The instance of profile which has been created with its primary key.
      */
-    Profile create( Profile profile, Plugin plugin );
+    Profile create( Profile profile, Locale locale, Plugin plugin );
 
     /**
      * Update of the profile which is specified in parameter
      * @param profile The instance of the profile which contains the new data to store
+     * @param locale the Locale
      * @param plugin Plugin
      * @return The instance of the profile which has been updated
      */
-    Profile update( Profile profile, Plugin plugin );
+    Profile update( Profile profile, Locale locale, Plugin plugin );
 
     /**
      * Remove the Profile whose identifier is specified in parameter
      * @param strProfileKey The Profile object to remove
+     * @param locale the Locale
      * @param plugin Plugin
      */
-    void remove( String strProfileKey, Plugin plugin );
+    void remove( String strProfileKey, Locale locale, Plugin plugin );
 
     ///////////////////////////////////////////////////////////////////////////
     // Finders
