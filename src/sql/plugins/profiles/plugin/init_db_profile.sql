@@ -19,11 +19,7 @@ INSERT INTO profile_action( id_action,name_key,description_key,action_url,icon_u
 --
 -- Init  table profile_view_action
 --	
-INSERT INTO profile_view_action( id_action,name_key,description_key,action_url,icon_url,action_permission) 
-	VALUES(1,'profiles.action.modify_view.name','profiles.action.modify_view.description','jsp/admin/plugins/profiles/ModifyView.jsp','images/admin/skin/actions/modify.png','MODIFY_VIEW');
-INSERT INTO profile_view_action( id_action,name_key,description_key,action_url,icon_url,action_permission) 
-	VALUES(2,'profiles.action.delete_view.name','profiles.action.delete_view.description','jsp/admin/plugins/profiles/RemoveView.jsp','images/admin/skin/actions/delete.png','DELETE_VIEW');
-INSERT INTO profile_view_action( id_action,name_key,description_key,action_url,icon_url,action_permission) 
-	VALUES(3,'profiles.action.manage_views_assignment.name','profiles.action.manage_views_assignment.description','jsp/admin/plugins/profiles/AssignProfilesView.jsp','images/admin/skin/actions/group.png','MANAGE_PROFILES_ASSIGNMENT');
-INSERT INTO profile_view_action( id_action,name_key,description_key,action_url,icon_url,action_permission) 
-	VALUES(4,'profiles.action.manage_dashboards.name','profiles.action.manage_dashboards.description','jsp/admin/plugins/profiles/ManageDashboards.jsp','images/admin/skin/plugins/profiles/actions/manage_dashboards.png','MANAGE_DASHBOARDS');
+INSERT INTO profile_view_action (id_action, name_key, description_key, action_url, icon_url, action_permission) VALUES (1, 'profiles.action.modify_view.name', 'profiles.action.modify_view.description', 'jsp/admin/plugins/profiles/ModifyView.jsp', 'icon-edit', 'MODIFY_VIEW');
+INSERT INTO profile_view_action (id_action, name_key, description_key, action_url, icon_url, action_permission) VALUES (2, 'profiles.action.delete_view.name', 'profiles.action.delete_view.description', 'jsp/admin/plugins/profiles/RemoveView.jsp', 'icon-trash', 'DELETE_VIEW');
+INSERT INTO profile_view_action (id_action, name_key, description_key, action_url, icon_url, action_permission) VALUES (3, 'profiles.action.manage_views_assignment.name', 'profiles.action.manage_views_assignment.description', 'jsp/admin/plugins/profiles/AssignProfilesView.jsp', 'icon-folder-close', 'MANAGE_PROFILES_ASSIGNMENT');
+INSERT INTO profile_view_action (id_action, name_key, description_key, action_url, icon_url, action_permission) VALUES (4, 'profiles.action.manage_dashboards.name', 'profiles.action.manage_dashboards.description', 'jsp/admin/plugins/profiles/ManageDashboards.jsp', 'icon-wrench', 'MANAGE_DASHBOARDS');

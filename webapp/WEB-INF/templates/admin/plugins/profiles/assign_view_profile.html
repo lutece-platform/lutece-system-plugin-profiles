@@ -1,72 +1,47 @@
-<div id="left">
-    <div class="content-box" >
-    	<h2>#i18n{profiles.assign_view_profile.profileKey} : ${profile.key}</h2>
-        <table>
-            <tr>
-                <th>
-                     #i18n{profiles.assign_view_profile.profileDescription}
-                </th>
-            </tr>
-            <tr>
-                <td>
-                    ${profile.description}
-                </td>
-            </tr>
-            <tr>
-                <th>
-                     #i18n{profiles.assign_view_profile.actions}
-                </th>
-            </tr>
-            <tr>
-                <td>
-                	<@item_navigation item_navigator=item_navigator />
-                	<#if profile.actions?exists>
-						<#list profile.actions as action>
-						 	<a href="${action.url}?profile_key=${profile.key}">
-						  		<img src="${action.iconUrl}" alt="${action.name}" title="${action.description}">
-						  	</a>
-						</#list>
-					</#if>
-                </td>
-            </tr>
-        </table>
+<div class="row-fluid">
+	<div class="span3">
+		<fieldset>
+    	<legend>#i18n{profiles.assign_rights_profile.profileKey} : ${profile.key}</legend>
+        <p><strong>#i18n{profiles.assign_rights_profile.profileDescription}</strong></p>
+		<p>${profile.description}</p>
+        <p><strong>#i18n{profiles.assign_rights_profile.actions}</strong></p>
+		<p>
+		<#if profile.actions?exists>
+			<#list profile.actions as action>
+				<a class="btn  <#if action.permission!='DELETE_DELETE'>btn-primary<#else>btn-danger</#if> btn-mini" href="${action.url}?profile_key=${profile.key}"  title="${action.description}" >
+					<i class="${action.iconUrl} icon-white"></i>
+				</a>
+			</#list>
+		</#if>
+        </p>
+		<p><@item_navigation item_navigator=item_navigator /></p>
+        </fieldset>
     </div>
-</div>
-<div id="right">
-	<div class="content-box">
-	    <h2>#i18n{profiles.assign_view_profile.pageTitle}</h2>
-	    <div class="multibox" width="100%">
-		     <#if available_list?size &gt; 0 >
-		     	<form name="assign-view-profile" method="post" action="jsp/admin/plugins/profiles/DoAssignViewProfile.jsp">
-		     		<#list available_list as available_item>
-		     			<p>
-			     			<input type="radio" name="view_key" value="${available_item.code}"
-				     			<#if assigned_view?exists && available_item.code == assigned_view.key>
-				     				 checked="checked"
-			     				</#if>
-			     			/> ${available_item.code}
-		     			</p>
-		     		</#list>
-		     		<br />
-		     		<p>
-		     			<input type="radio" name="view_key" value="" 
-		     				<#if !assigned_view?exists>
-		     					checked="checked"
-		     				</#if>
-						/> #i18n{profiles.assign_view_profile.noValue}
-					</p>
-		     		<br/>
-			        <input type="hidden" name="profile_key" value="${profile.key}" />
-			        <#if permission>
-			        	<input type="submit" value="#i18n{profiles.assign_view_profile.labelButtonValidate}" class="button" />
-			        </#if>
-				    <input type="submit" name="cancel" value="#i18n{portal.admin.message.buttonCancel}" class="button"/>
-		    	</form>
-	    	<#else>
-	    		<p>
-	          		#i18n{profiles.assign_view_profile.noViewToAssign}
-	          	</p>
+	<div class="span9">
+		<fieldset>
+	    <legend>#i18n{profiles.assign_view_profile.pageTitle}</legend>
+		<#if available_list?size &gt; 0 >
+			<form class="form-horizontal" name="assign-view-profile" method="post" action="jsp/admin/plugins/profiles/DoAssignViewProfile.jsp">
+			<input type="hidden" name="profile_key" value="${profile.key}" />
+			<label></label> 
+			<#list available_list as available_item>
+			<div class="controls">
+				<input type="radio" name="view_key" value="${available_item.code}" <#if assigned_view?exists && available_item.code == assigned_view.key> checked="checked"</#if>/> ${available_item.code}
+			</div>
+			</#list>
+			<div class="controls">
+			<input type="radio" name="view_key" value="" <#if !assigned_view?exists>checked="checked"</#if>/> #i18n{profiles.assign_view_profile.noValue}
+			</div>
+			<div class="form-actions">
+			<#if permission>
+				<button class="btn btn-primary" type="submit" >#i18n{profiles.assign_view_profile.labelButtonValidate}</button>
+			</#if>
+			<button class="btn btn-primary" type="submit" >#i18n{portal.admin.message.buttonCancel}</button>
+			</div>
+			</form>
+	    <#else>
+	   		<p class="label label-warning">#i18n{profiles.assign_view_profile.noViewToAssign}</p>
 	        </#if>
-	    </div>	
-	</div>
+		</fieldset>
+    </div>	
 </div>

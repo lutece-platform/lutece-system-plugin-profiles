@@ -1,132 +1,84 @@
-<div id="left">
-    <div class="content-box" >
-    	<h2>#i18n{profiles.assign_roles_profile.profileKey} : ${profile.key}</h2>
-        <table>
-            <tr>
-                <th>
-                     #i18n{profiles.assign_roles_profile.profileDescription}
-                </th>
-            </tr>
-            <tr>
-                <td>
-                    ${profile.description}
-                </td>
-            </tr>
-            <tr>
-                <th>
-                     #i18n{profiles.assign_roles_profile.numberRoles}
-                </th>
-            </tr>
-            <tr>
-                <td>
-                    ${assigned_number}
-                </td>
-            </tr>
-            <tr>
-                <th>
-                     #i18n{profiles.assign_roles_profile.actions}
-                </th>
-            </tr>
-            <tr>
-                <td>
-                	<@item_navigation item_navigator=item_navigator />
-                	<#if profile.actions?exists>
-						<#list profile.actions as action>
-						 	<a href="${action.url}?profile_key=${profile.key}">
-						  		<img src="${action.iconUrl}" alt="${action.name}" title="${action.description}">
-						  	</a>
-						</#list>
-					</#if>
-                </td>
-            </tr>
-        </table>
+<div class="row-fluid">
+	<div class="span3">
+		<fieldset>
+    	<legend>#i18n{profiles.assign_rights_profile.profileKey} : ${profile.key}</legend>
+        <p><strong>#i18n{profiles.assign_rights_profile.profileDescription}</strong></p>
+		<p>${profile.description}</p>
+        <p><strong>#i18n{profiles.assign_rights_profile.actions}</strong></p>
+		<p>
+		<#if profile.actions?exists>
+			<#list profile.actions as action>
+				<a class="btn  <#if action.permission!='DELETE_DELETE'>btn-primary<#else>btn-danger</#if> btn-mini" href="${action.url}?profile_key=${profile.key}"  title="${action.description}" >
+					<i class="${action.iconUrl} icon-white"></i>
+				</a>
+			</#list>
+		</#if>
+        </p>
+		<p><@item_navigation item_navigator=item_navigator /></p>
+        </fieldset>
     </div>
-</div>
-<div id="right">
-	<div class="content-box">
-	    <h2>#i18n{profiles.assign_roles_profile.pageTitle}</h2>
-	    <div class="multibox"  width="100%">
-		     <#if available_list?size &gt; 0 >
-		     	<form name="assign-roles-profile" method="post" action="jsp/admin/plugins/profiles/DoAssignRolesProfile.jsp">
-		        	<table width="100%" >
-			            <tr>
-			                <th>
-			                    #i18n{profiles.assign_roles_profile.labelAvailableRoles}
-			                </th>
-			            </tr>
-			            
-		                <tr>
-		                 	<td>
-		                    	<@comboWithParamsAndLength name="roles_list" default_value="" additionalParameters="multiple='multiple' size='10' style='width:100%;'" items=available_list?sort_by('name') max_length=175 />		    
-		                    </td>					
-		                </tr>
-		                <tr>
-		                    <td align="center">
-		                    	<#if permission>
-		                    		<input type="submit" value="#i18n{profiles.assign_roles_profile.labelButtonValidate}" class="button" />
-		                    	</#if>
-		                        <input type="hidden" name="profile_key" value="${profile.key}" />
-							    <input type="submit" name="cancel" value="#i18n{portal.admin.message.buttonCancel}" class="button"/>
-		                    </td>
-		                </tr>
-			        </table>
-		    	</form>
-	    	<#else>
-	    		<p>
-	          		#i18n{profiles.assign_roles_profile.noRoleToAssign}
-	          	</p>
-	        </#if>
-	    </div>	
-	</div>
-	<div class="content-box"> 
-		<h2>
-		    #i18n{profiles.assign_roles_profile.labelAssignedRoles}
-		</h2>
-		
+	<div class="span9">
+		<fieldset>
+	    <legend>#i18n{profiles.assign_roles_profile.pageTitle}</legend>
+	    <#if available_list?size &gt; 0 >
+			<form class="form" name="assign-roles-profile" method="post" action="jsp/admin/plugins/profiles/DoAssignRolesProfile.jsp">
+			<input type="hidden" name="profile_key" value="${profile.key}" />
+			<label for="profile_key" >#i18n{profiles.assign_roles_profile.labelAvailableRoles}</label>
+			<@comboWithParamsAndLength name="roles_list" default_value="" additionalParameters="multiple='multiple' class='span12'" items=available_list?sort_by('name') max_length=175 />
+			<div class="form-actions">
+			<#if permission>
+				<button class="btn btn-primary" type="submit"><i class="icon-ok icon-white"></i>&nbsp;#i18n{profiles.assign_roles_profile.labelButtonValidate}</button>
+			</#if>
+				<button class="btn btn-primary" type="button" onclick="javascript:window.history.back();" ><i class="icon-remove-cicle icon-white"></i>&nbsp;#i18n{portal.admin.message.buttonCancel}</button>
+			</div>
+			</form>
+    	<#else>
+    		<p class="label label-warning">#i18n{profiles.assign_roles_profile.noRoleToAssign}</p>
+        </#if>
+		</fieldset>
+		<p class="lead">#i18n{profiles.assign_roles_profile.labelAssignedRoles}</p>	
 	    <#if assigned_list?size &gt; 0 >
-	    	<form method="post" action="jsp/admin/plugins/profiles/AssignRolesProfile.jsp">
-		        <@paginationAdmin paginator=paginator combo=1 form=0 />
-		        <input type="hidden" name="profile_key" value="${profile.key}" />
-		    </form>
-	    	<table width="80%">
-	    		 <tr>            
-		            <th>
-		            	#i18n{profiles.assign_roles_profile.columnTitleKey}
-		            	<@sort jsp_url="jsp/admin/plugins/profiles/AssignRolesProfile.jsp" attribute="key&profile_key=${profile.key}" />
-		            </th>
-		            <th>
-		            	#i18n{profiles.assign_roles_profile.columnTitleDescription}
-		            	<@sort jsp_url="jsp/admin/plugins/profiles/AssignRolesProfile.jsp" attribute="description&profile_key=${profile.key}" />
-		            </th>
-		            <th>#i18n{profiles.assign_roles_profile.actions}</th>
-		        </tr>
-	        	<#list assigned_list as assigned_item>
-	        		<#if assigned_item_has_next || assigned_list?size = 1>
-	        			<#assign anchor = assigned_item_index>
-	        		<#else>
-	        			<#assign anchor = assigned_item_index - 1 >
-	        		</#if>
-		            <tr id="anchor-${assigned_item_index}">
-		                <td>${assigned_item.key}</td>
-		                <td>${assigned_item.description}</td>
-	                    <td>
-	                    	<a href="jsp/admin/rbac/ViewRoleDescription.jsp?role_key=${assigned_item.key}">
-	                    		<img src="images/admin/skin/actions/modify.png" alt="#i18n{profiles.actions.labelModify}" title="#i18n{profiles.actions.labelModify}" />
-	                    	</a>
-	                    	<#if permission>
-				                <a href="jsp/admin/plugins/profiles/DoUnassignRoleProfile.jsp?profile_key=${profile.key}&role_key=${assigned_item.key}&anchor=anchor-${anchor}" >
-				                    <img src="images/admin/skin/actions/delete.png" alt="#i18n{profiles.assign_roles_profile.actionUnassign}" title="#i18n{profiles.assign_roles_profile.actionUnassign}" />
-				                </a>
-				            </#if>
-	               		</td>
-		            </tr>
-	        	</#list>
-	   		</table>
+		<form class="form-inline" method="post" action="jsp/admin/plugins/profiles/AssignRolesProfile.jsp">
+		<input type="hidden" name="profile_key" value="${profile.key}" />
+		<@paginationAdmin paginator=paginator combo=1 form=0 />
+		</form>
+		<table class="table table-striped table-condensed">
+			<tr>            
+				<th>
+					#i18n{profiles.assign_roles_profile.columnTitleKey}
+					<@sort jsp_url="jsp/admin/plugins/profiles/AssignRolesProfile.jsp" attribute="key&profile_key=${profile.key}" />
+				</th>
+				<th>
+					#i18n{profiles.assign_roles_profile.columnTitleDescription}
+					<@sort jsp_url="jsp/admin/plugins/profiles/AssignRolesProfile.jsp" attribute="description&profile_key=${profile.key}" />
+				</th>
+					<th>#i18n{profiles.assign_roles_profile.actions}</th>
+				</tr>
+				<#list assigned_list as assigned_item>
+					<#if assigned_item_has_next || assigned_list?size = 1>
+						<#assign anchor = assigned_item_index>
+					<#else>
+						<#assign anchor = assigned_item_index - 1 >
+					</#if>
+					<tr id="anchor-${assigned_item_index}">
+						<td>${assigned_item.key}</td>
+						<td>${assigned_item.description}</td>
+						<td>
+							<a class="btn btn-primary btn-mini" href="jsp/admin/rbac/ViewRoleDescription.jsp?role_key=${assigned_item.key}"  title="#i18n{profiles.actions.labelModify}" >
+								<i class="icon-edit icon-white"></i>
+							</a>
+							<#if permission>
+								<a class="btn btn-danger btn-mini" href="jsp/admin/plugins/profiles/DoUnassignRoleProfile.jsp?profile_key=${profile.key}&role_key=${assigned_item.key}&anchor=anchor-${anchor}"  title="#i18n{profiles.assign_roles_profile.actionUnassign}" >
+									<i class="icon-trash icon-white"></i>
+								</a>
+							</#if>
+						</td>
+					</tr>
+				</#list>
+			</table>
 	   		<@paginationAdmin paginator=paginator />
 	    <#else>
-	    	<p>
-	    		#i18n{profiles.assign_roles_profile.noAssignedList}
-	    	</p>
+	    	<p class="label label-warning">#i18n{profiles.assign_roles_profile.noAssignedList}</p>
 	    </#if>	    
 	</div>
 </div>

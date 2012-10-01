@@ -1,60 +1,49 @@
-<div id="left">
-    <div class="content-box" >
-    	<h2>#i18n{profiles.manage_views.columnKey} : ${view.key}</h2>
-        <table>
-            <tr>
-                <th>
-                     #i18n{profiles.manage_views.columnDescription}
-                </th>
-            </tr>
-            <tr>
-                <td>
-                    ${view.description}
-                </td>
-            </tr>
-            <tr>
-                <th>
-                     #i18n{profiles.manage_views.columnActions}
-                </th>
-            </tr>
-            <tr>
-                <td>
-                	<@item_navigation item_navigator=item_navigator />
-                	<#if view.actions?exists>
-						<#list view.actions as action>
-						 	<a href="${action.url}?view_key=${view.key}">
-						  		<img src="${action.iconUrl}" alt="${action.name}" title="${action.description}">
-						  	</a>
-						</#list>
-					</#if>
-                </td>
-            </tr>
-        </table>
+<div class="row-fluid">
+	<div class="span3">
+		<fieldset>
+    	<legend>#i18n{profiles.manage_views.columnKey} : ${view.key}</legend>
+        <p><strong> #i18n{profiles.manage_views.columnDescription}</strong></p>
+		<p> ${view.description}</p>
+		<p><strong>#i18n{profiles.manage_views.columnActions}</strong></p>
+		<p>
+    	<#if view.actions?exists>
+			<#list view.actions as action>
+				<a class="btn  <#if action.permission!='DELETE_DELETE'>btn-primary<#else>btn-danger</#if> btn-mini" href="${action.url}?view_key=${view.key}"  title="${action.description}" >
+					<i class="${action.iconUrl} icon-white"></i>
+				</a>
+			</#list>
+		</#if>
+        </p>
+    </fieldset>
     </div>
-</div>
-<div id="right">
-	<div class="content-box" >
-	    <h2>#i18n{profiles.modify_view.titleModificationForm}</h2>
-	    <form method="post" action="jsp/admin/plugins/profiles/DoModifyView.jsp" >
-			<p>
-	            <label for="view_key">#i18n{profiles.modify_view.labelKey} * :</label>
-	            <input type="hidden" id="view_key" name="view_key" value="${view.key}" />
-	            ${view.key}
-			</p>
-			<p>
-	            <label for="view_description">#i18n{profiles.modify_view.labelDescription} * :</label>
-	            <#if permission>
-	            	<input type="text" id="view_description" name="view_description" value="${view.description}" size="50" maxlength="250" />
-	            <#else>
-	            	${view.description}
-	            </#if>
-			</p>
-			<p>
+	<div class="span9">
+		<fieldset>
+	    <legend>#i18n{profiles.modify_view.titleModificationForm}</legend>
+	    <form class="form-horizontal" method="post" action="jsp/admin/plugins/profiles/DoModifyView.jsp" >
+			<input type="hidden" id="view_key" name="view_key" value="${view.key}" />
+			<div class="control-group">
+			<label class="control-label" for="view_key">#i18n{profiles.modify_view.labelKey} * :</label>
+				<div class="controls">
+					${view.key}
+				</div>	
+			</div>	
+			<div class="control-group">
+			<label class="control-label" for="view_description">#i18n{profiles.modify_view.labelDescription} * :</label>
+			<#if permission>
+				<div class="controls">
+					<input type="text" id="view_description" name="view_description" value="${view.description}"  maxlength="250" />
+				</div>
+			</div>
+			<#else>
+				${view.description}
+			</#if>
+			<div class="form-actions">
 				<#if permission>
-			    	<input class="button" type="submit" value="#i18n{profiles.modify_view.buttonLabelModify}" />
-			    </#if>
-			    <input class="button" type="button" onclick="javascript:history.go(-1)" value="#i18n{portal.admin.message.buttonCancel}" />
-			</p>
-	    </form>
+					<button class="btn btn-primary" type="submit" >#i18n{profiles.modify_view.buttonLabelModify}</button>
+				</#if>
+				<button class="btn btn-primary" onclick="javascript:history.go(-1)" >#i18n{portal.admin.message.buttonCancel}</button>
+			</div>
+		</form>
+		</fieldset>
 	</div>
 </div>

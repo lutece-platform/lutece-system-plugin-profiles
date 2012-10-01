@@ -1,91 +1,47 @@
-<div id="left">
-    <div class="content-box" >
-    	<h2>#i18n{profiles.assign_rights_profile.profileKey} : ${profile.key}</h2>
-        <table>
-            <tr>
-                <th>
-                     #i18n{profiles.assign_rights_profile.profileDescription}
-                </th>
-            </tr>
-            <tr>
-                <td>
-                    ${profile.description}
-                </td>
-            </tr>
-            <tr>
-                <th>
-                     #i18n{profiles.assign_rights_profile.numberRights}
-                </th>
-            </tr>
-            <tr>
-                <td>
-                    ${assigned_number}
-                </td>
-            </tr>
-            <tr>
-                <th>
-                     #i18n{profiles.assign_rights_profile.actions}
-                </th>
-            </tr>
-            <tr>
-                <td>
-                	<@item_navigation item_navigator=item_navigator />
-                	<#if profile.actions?exists>
-						<#list profile.actions as action>
-						 	<a href="${action.url}?profile_key=${profile.key}">
-						  		<img src="${action.iconUrl}" alt="${action.name}" title="${action.description}">
-						  	</a>
-						</#list>
-					</#if>
-                </td>
-            </tr>
-        </table>
+<div class="row-fluid">
+	<div class="span3">
+		<fieldset>
+    	<legend>#i18n{profiles.assign_rights_profile.profileKey} : ${profile.key}</legend>
+        <p><strong>#i18n{profiles.assign_rights_profile.profileDescription}</strong></p>
+		<p>${profile.description}</p>
+        <p><strong>#i18n{profiles.assign_rights_profile.actions}</strong></p>
+		<p>
+		<#if profile.actions?exists>
+			<#list profile.actions as action>
+				<a class="btn  <#if action.permission!='DELETE_DELETE'>btn-primary<#else>btn-danger</#if> btn-mini" href="${action.url}?profile_key=${profile.key}"  title="${action.description}" >
+					<i class="${action.iconUrl} icon-white"></i>
+				</a>
+			</#list>
+		</#if>
+        </p>
+		<p><@item_navigation item_navigator=item_navigator /></p>
+        </fieldset>
     </div>
-</div>
-<div id="right">
-	<div class="content-box">
-	    <h2>#i18n{profiles.assign_rights_profile.pageTitle}</h2>
-	    <div class="multibox"  width="100%">
-		     <#if available_list?size &gt; 0 >
-		     	<form name="assign-rights-profile" method="post" action="jsp/admin/plugins/profiles/DoAssignRightsProfile.jsp">		
-		        	<table width="100%" >
-			            <tr>
-			                <th>
-			                    #i18n{profiles.assign_rights_profile.labelAvailableRights}
-			                </th>
-			            </tr>
-			            
-		                <tr>
-		                 	<td>
-		                    	<@comboWithParamsAndLength name="rights_list" default_value="" additionalParameters="multiple='multiple' size='10' style='width:100%;'" items=available_list?sort_by('name') max_length=175 />		    
-		                    </td>					
-		                </tr>
-		                <tr>
-		                    <td align="center">
-		                    	<#if permission>
-			                        <input type="submit" value="#i18n{profiles.assign_rights_profile.labelButtonValidate}" class="button" />
-								</#if>
-								<input type="submit" name="cancel" value="#i18n{portal.admin.message.buttonCancel}" class="button"/>
-								<input type="hidden" name="profile_key" value="${profile.key}" />
-		                    </td>
-		                </tr>
-			        </table>	
-		    	</form>
-	    	<#else>
-	    		<p>
-	          		#i18n{profiles.assign_rights_profile.noRightToAssign}
-	          	</p>
-	        </#if>
-	    </div>	
-	</div>
-	
-	<div class="content-box"> 
-		<h2>
-		    #i18n{profiles.assign_rights_profile.labelAssignedRights}
-		</h2>
-		        
+	<div class="span9">
+		<fieldset>		
+	    <legend>#i18n{profiles.assign_rights_profile.pageTitle}</legend>
+	    <#if available_list?size &gt; 0 >
+			<form class="form-horizontal" name="assign-rights-profile" method="post" action="jsp/admin/plugins/profiles/DoAssignRightsProfile.jsp">
+			<input type="hidden" name="profile_key" value="${profile.key}" />
+			<div class="control-group">
+			<label class="control-label" for="profile_key" >#i18n{profiles.assign_rights_profile.labelAvailableRights}</label>
+				<div class="controls">
+					<@comboWithParamsAndLength name="rights_list" default_value="" additionalParameters="multiple='multiple' class='span8' style='width:100%;'" items=available_list?sort_by('name') max_length=175 />
+				</div>
+			</div>
+			<div class="form-actions">	
+			<#if permission>
+				<button class="btn btn-primary" type="submit"><i class="icon-ok icon-white"></i>&nbsp;#i18n{profiles.assign_rights_profile.labelButtonValidate}</button>
+			</#if>
+				<button class="btn btn-primary" type="button" onclick="javascript:window.history.back();"><i class="icon-remove-circle icon-white"></i>&nbsp;#i18n{portal.admin.message.buttonCancel}</button>
+			</div>	
+			</form>
+	    <#else>
+    		<p class="label label-warning">#i18n{profiles.assign_rights_profile.noRightToAssign}</p>
+        </#if>
+    	<p class="lead">#i18n{profiles.assign_rights_profile.labelAssignedRights}</p>
 	    <#if assigned_list?size &gt; 0 >
-	    	<table width="80%">
+	    	<table class="table table-striped table-condensed">
 	    		 <tr>            
 		            <th>#i18n{profiles.assign_rights_profile.columnTitleName}</th>
 		            <th>#i18n{profiles.assign_rights_profile.columnTitleDescription}</th>
@@ -104,18 +60,17 @@
 		                <td>${assigned_item.level}</td>
 	                    <td>
 	                    	<#if permission>
-				                <a href="jsp/admin/plugins/profiles/DoUnassignRightProfile.jsp?profile_key=${profile.key}&id_right=${assigned_item.id}&anchor=anchor-${anchor}" >
-				                    <img src="images/admin/skin/actions/delete.png" alt="#i18n{profiles.assign_rights_profile.actionUnassign}" title="#i18n{profiles.assign_rights_profile.actionUnassign}" />
-				                </a>
+				                <a class="btn btn-danger btn-mini" href="jsp/admin/plugins/profiles/DoUnassignRightProfile.jsp?profile_key=${profile.key}&id_right=${assigned_item.id}&anchor=anchor-${anchor}"  title="#i18n{profiles.assign_rights_profile.actionUnassign}" >
+									<i class="icon-trash icon-white"></i>
+								</a>
 				            </#if>
 	               		</td>
 		            </tr>
 	        	</#list>
 	   		</table>
 	    <#else>
-	    	<p>
-	    		#i18n{profiles.assign_rights_profile.noAssignedList}
-	    	</p>
-	    </#if>	    
+	    	<p class="label label-warning">#i18n{profiles.assign_rights_profile.noAssignedList}</p>
+	    </#if>	
+		</fieldset>		
 	</div>
 </div>

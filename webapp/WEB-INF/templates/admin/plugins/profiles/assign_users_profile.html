@@ -1,232 +1,170 @@
-<div id="left">
-    <div class="content-box" >
-    	<h2>#i18n{profiles.assign_users_profile.profileKey} : ${profile.key}</h2>
-        <table>
-            <tr>
-                <th>
-                     #i18n{profiles.assign_users_profile.profileDescription}
-                </th>
-            </tr>
-            <tr>
-                <td>
-                    ${profile.description}
-                </td>
-            </tr>
-            <tr>
-                <th>
-                     #i18n{profiles.assign_users_profile.numberUsers}
-                </th>
-            </tr>
-            <tr>
-                <td>
-                    ${assigned_number}
-                </td>
-            </tr>
-            <tr>
-                <th>
-                     #i18n{profiles.assign_users_profile.actions}
-                </th>
-            </tr>
-            <tr>
-                <td>
-                	<@item_navigation item_navigator=item_navigator />
-                	<#if profile.actions?exists>
-						<#list profile.actions as action>
-						 	<a href="${action.url}?profile_key=${profile.key}">
-						  		<img src="${action.iconUrl}" alt="${action.name}" title="${action.description}">
-						  	</a>
-						</#list>
-					</#if>
-                </td>
-            </tr>
-        </table>
-    </div>
-</div>
-<div id="right">
-	<div class="content-box">
-	    <h2>#i18n{profiles.assign_users_profile.pageTitle}</h2>
-	    <div class="multibox"  width="100%">
-		     <#if available_list?size &gt; 0 >
-		     	<form name="assign-users-profile" method="post" action="jsp/admin/plugins/profiles/DoAssignUsersProfile.jsp">
-		        	<table width="100%" >
-			            <tr>
-			                <th>
-			                    #i18n{profiles.assign_users_profile.labelAvailableUsers}
-			                </th>
-			            </tr>
-			            
-		                <tr>
-		                 	<td>
-		                    	<@comboWithParamsAndLength name="users_list" default_value="" additionalParameters="multiple='multiple' size='10' style='width:100%;'" items=available_list?sort_by('name') max_length=175 />		    
-		                    </td>					
-		                </tr>
-		                <tr>
-		                    <td align="center">
-		                    	<#if permission>
-		                    		<input type="submit" value="#i18n{profiles.assign_users_profile.labelButtonValidate}" class="button" />
-		                    	</#if>
-		                        <input type="hidden" name="profile_key" value="${profile.key}" />
-		                        <input type="hidden" name="attribute_${attribute.idAttribute}" value="${attribute_field.idField}" />
-							    <input type="submit" name="cancel" value="#i18n{portal.admin.message.buttonCancel}" class="button"/>
-		                    </td>
-		                </tr>
-			        </table>
-		    	</form>
-	    	<#else>
-	    		<p>
-	          		#i18n{profiles.assign_users_profile.noUserToAssign}
-	          	</p>
-	        </#if>
-	    </div>	
-	</div>
-	
-	<div class="content-box"> 
-		<h2>
-		    #i18n{profiles.assign_users_profile.labelAssignedUsers}
-		</h2>
-		
-	    <#if assigned_list?size &gt; 0 || search_is_search >
-	    	<div class="highlight-box">
-				<div id="search-users">
-					<form method="post" name="search_users" action="jsp/admin/plugins/profiles/AssignUsersProfile.jsp"  >
-						<#if (user_levels?has_content)>
-							<p>
-				                <label for="user_level">#i18n{portal.users.manage_users.search_users.userLevelLabel} :</label>
-								<select id="user_level" name="search_user_level">
-									<#if (search_admin_user_filter.userLevel > -1) >
-										<option value="noValue" >#i18n{portal.users.manage_users.search_users.labelAllLevels}</option>
-				                		<#list user_levels as user_level>
-				                			<#if (search_admin_user_filter.userLevel == user_level.id) >
-				                    			<option value="${user_level.id}" selected="selected" >${user_level.name}</option>
-				                    		<#else>
-				                    			<option value="${user_level.id}" >${user_level.name}</option>
-				                    		</#if>
-				                    	</#list>
-				                	<#else>
-				                		<option value="noValue" selected="selected" >#i18n{portal.users.manage_users.search_users.labelAllLevels}</option>
-				                		<#list user_levels as user_level>
-				                			<option value="${user_level.id}" >${user_level.name}</option>
-				                		</#list>
-				                	</#if>
-				                </select>
-				            </p>
+<div class="row-fluid">
+	<div class="span3">
+		<fieldset>
+    	<legend>#i18n{profiles.assign_rights_profile.profileKey} : ${profile.key}</legend>
+        <p><strong>#i18n{profiles.assign_rights_profile.profileDescription}</strong></p>
+		<p>${profile.description}</p>
+        <p><strong>#i18n{profiles.assign_rights_profile.actions}</strong></p>
+		<p>
+		<#if profile.actions?exists>
+			<#list profile.actions as action>
+				<a class="btn  <#if action.permission!='DELETE_DELETE'>btn-primary<#else>btn-danger</#if> btn-mini" href="${action.url}?profile_key=${profile.key}"  title="${action.description}" >
+					<i class="${action.iconUrl} icon-white"></i>
+				</a>
+			</#list>
+		</#if>
+        </p>
+		<p><@item_navigation item_navigator=item_navigator /></p>
+        </fieldset>
+		<#if assigned_list?size &gt; 0 || search_is_search >
+	    <form class="form" method="post" name="search_users" action="jsp/admin/plugins/profiles/AssignUsersProfile.jsp"  >
+		<input type="hidden" name="profile_key" value="${profile.key}" />
+		<#if (user_levels?has_content)>
+		<label for="user_level">#i18n{portal.users.manage_users.search_users.userLevelLabel} :</label>
+		<select id="user_level" name="search_user_level" class="span12">
+				<#if (search_admin_user_filter.userLevel > -1) >
+					<option value="noValue" >#i18n{portal.users.manage_users.search_users.labelAllLevels}</option>
+					<#list user_levels as user_level>
+						<#if (search_admin_user_filter.userLevel == user_level.id) >
+							<option value="${user_level.id}" selected="selected" >${user_level.name}</option>
+						<#else>
+							<option value="${user_level.id}" >${user_level.name}</option>
 						</#if>
-						<p>
-							<label for="access_code" >#i18n{portal.users.manage_users.search_users.labelAccessCode} :</label>
-							<input type="text" id="access_code" name="search_access_code" value="${search_admin_user_filter.accessCode}" />
-						</p>
-						<p>
-							<label for="last_name" >#i18n{portal.users.manage_users.search_users.labelLastName} :</label>
-							<input type="text"  id="last_name" name="search_last_name" value="${search_admin_user_filter.lastName}" maxlength="100" size="35" tabindex="2" />
-						</p>
-						<p>
-							<label for="first_name">#i18n{portal.users.manage_users.search_users.labelFirstName} :</label>
-							<input type="text" id="first_name" name="search_first_name" value="${search_admin_user_filter.firstName}" maxlength="100" size="35" tabindex="3" />
-						</p>
-						<p>
-							<label for="email">#i18n{portal.users.manage_users.search_users.labelEmail} :</label>
-							<input type="text" id="email" name="search_email" value="${search_admin_user_filter.email}" maxlength="100" size="35" tabindex="4" />
-						</p>
-						<p>
-				            <label for="status">#i18n{portal.users.manage_users.search_users.labelStatus} :</label>
-				            <select id="status" name="search_status" tabindex="5">
-				            	<#switch search_admin_user_filter.status >
-			                		<#case 0 >
-			                			<option value="noValue" >#i18n{portal.users.manage_users.search_users.labelAllStatus}</option>
-						               	<option value="0" selected="selected" >#i18n{portal.users.create_user.statusLabelEnabled}</option>
-										<option value="1" >#i18n{portal.users.create_user.statusLabelDisabled}</option>
-			                			<#break>
-			                		<#case 1 >
-			                			<option value="noValue" >#i18n{portal.users.manage_users.search_users.labelAllStatus}</option>
-						               	<option value="0" >#i18n{portal.users.create_user.statusLabelEnabled}</option>
-										<option value="1" selected="selected" >#i18n{portal.users.create_user.statusLabelDisabled}</option>
-			                			<#break>
-			                		<#default>
-			                			<option value="noValue" selected="selected" >#i18n{portal.users.manage_users.search_users.labelAllStatus}</option>
-						               	<option value="0" >#i18n{portal.users.create_user.statusLabelEnabled}</option>
-										<option value="1" >#i18n{portal.users.create_user.statusLabelDisabled}</option>
-										<#break>
-		                		</#switch>
-				            </select>
-						</p>
-						<p>
-							<input type="hidden" name="profile_key" value="${profile.key}" />
-				           	<input type="submit" value="#i18n{portal.users.manage_users.search_users.buttonSearch}" tabindex="6" class="button" name="search_is_search"/>   
-				        </p>
-					</form>
-		    	</div>
-		    </div>
-		    <form method="post" action="jsp/admin/plugins/profiles/AssignUsersProfile.jsp">
-		        <@paginationAdmin paginator=paginator combo=1 form=0 />
-		        <#if search_is_search >
-		   			<input type="hidden" name="search_is_search" value="true"/>
-		   			<input type="hidden" name="search_user_level" value="${search_admin_user_filter.userLevel}"/>
-		   			<input type="hidden" name="search_access_code" value="${search_admin_user_filter.accessCode}"/>
-		   			<input type="hidden" name="search_last_name" value="${search_admin_user_filter.lastName}"/>
-		   			<input type="hidden" name="search_first_name" value="${search_admin_user_filter.firstName}"/>
-		   			<input type="hidden" name="search_email" value="${search_admin_user_filter.email}"/>
-		   			<input type="hidden" name="search_status" value="${search_admin_user_filter.status}"/>
-		        </#if>
-		        <#if search_admin_user_field_filter.listUserFields?exists && search_admin_user_field_filter.listUserFields?has_content>
-	   				<#list search_admin_user_field_filter.listUserFields as user_field>
-	   					<#if user_field.attribute.attributeType.className == "fr.paris.lutece.portal.business.user.attribute.AttributeComboBox">
-	   						<input type="hidden" name="attribute_${user_field.attribute.idAttribute}" value="${user_field.attributeField.idField}"/>
-	   					<#else>
-	   						<input type="hidden" name="attribute_${user_field.attribute.idAttribute}" value="${user_field.value}" />
-	   					</#if>
-	   				</#list>
-	   			</#if>
-		        <input type="hidden" name="profile_key" value="${profile.key}" />
-		    </form>
-	    	<table width="80%">
-	    		 <tr>            
-		            <th>
-		            	#i18n{profiles.assign_users_profile.columnTitleLastName}
-		            	<@sort jsp_url="jsp/admin/plugins/profiles/AssignUsersProfile.jsp" attribute="lastName&profile_key=${profile.key}${sort_search_attribute}" />
-		            </th>
-		            <th>
-		            	#i18n{profiles.assign_users_profile.columnTitleFirstName}
-		            	<@sort jsp_url="jsp/admin/plugins/profiles/AssignUsersProfile.jsp" attribute="firstName&profile_key=${profile.key}${sort_search_attribute}" />
-		            </th> 
-		            <th>
-		            	#i18n{profiles.assign_users_profile.columnTitleAccessCode}
-		            	<@sort jsp_url="jsp/admin/plugins/profiles/AssignUsersProfile.jsp" attribute="accessCode&profile_key=${profile.key}${sort_search_attribute}" />
-		            </th>        
-		            <th>
-		            	#i18n{profiles.assign_users_profile.columnTitleEmail}
-		            	<@sort jsp_url="jsp/admin/plugins/profiles/AssignUsersProfile.jsp" attribute="email&profile_key=${profile.key}${sort_search_attribute}" />
-		            </th>
-		            <th>#i18n{profiles.assign_users_profile.actions}</th>
-		        </tr>
-	        	<#list assigned_list as assigned_item>
-	        		<#if assigned_item_has_next || assigned_list?size = 1>
-	        			<#assign anchor = assigned_item_index>
-	        		<#else>
-	        			<#assign anchor = assigned_item_index - 1 >
-	        		</#if>
-		            <tr id="anchor-${assigned_item_index}">
-		                <td>${assigned_item.lastName}</td>
-		                <td>${assigned_item.firstName}</td>
-		                <td>${assigned_item.accessCode}</td>
-		                <td>${assigned_item.email}</td>	 
-	                    <td>
-	                    	<a href="jsp/admin/user/ModifyUser.jsp?id_user=${assigned_item.userId}" >
-			                    <img src="images/admin/skin/actions/modify.png" alt="#i18n{profiles.actions.labelModify}" title="#i18n{profiles.actions.labelModify}" />
-			                </a>
-			                <#if permission>
-				                <a href="jsp/admin/plugins/profiles/DoUnassignUserProfile.jsp?profile_key=${profile.key}&amp;id_user=${assigned_item.userId}&amp;attribute_${attribute.idAttribute}=${attribute_field.idField}&amp;anchor=anchor-${anchor}" >
-				                    <img src="images/admin/skin/actions/delete.png" alt="#i18n{profiles.assign_users_profile.actionUnassign}" title="#i18n{profiles.assign_users_profile.actionUnassign}" />
-				                </a>
-				            </#if>
-	               		</td>
-		            </tr>
-	        	</#list>
-	   		</table>
-	   		<@paginationAdmin paginator=paginator />
+					</#list>
+				<#else>
+				    <option value="noValue" selected="selected" >#i18n{portal.users.manage_users.search_users.labelAllLevels}</option>
+				    <#list user_levels as user_level>
+						<option value="${user_level.id}" >${user_level.name}</option>
+				    </#list>
+				</#if>
+		</select>
+		</#if>
+		<label for="access_code" >#i18n{portal.users.manage_users.search_users.labelAccessCode} :</label>
+		<input type="text" id="access_code" name="search_access_code" value="${search_admin_user_filter.accessCode}" class="input-large" />
+		<label for="last_name" >#i18n{portal.users.manage_users.search_users.labelLastName} :</label>
+		<input type="text"  id="last_name" name="search_last_name" value="${search_admin_user_filter.lastName}" maxlength="100" class="input-large" tabindex="2" />
+		<label for="first_name">#i18n{portal.users.manage_users.search_users.labelFirstName} :</label>
+		<input type="text" id="first_name" name="search_first_name" value="${search_admin_user_filter.firstName}" maxlength="100" class="input-large"  tabindex="3" />
+		<label for="email">#i18n{portal.users.manage_users.search_users.labelEmail} :</label>
+		<input type="text" id="email" name="search_email" value="${search_admin_user_filter.email}" maxlength="100" class="input-large"  tabindex="4" />
+		<label for="status">#i18n{portal.users.manage_users.search_users.labelStatus} :</label>
+		<select id="status" name="search_status" tabindex="5" class="span8">
+		<#switch search_admin_user_filter.status >
+			<#case 0 >
+				<option value="noValue" >#i18n{portal.users.manage_users.search_users.labelAllStatus}</option>
+				<option value="0" selected="selected" >#i18n{portal.users.create_user.statusLabelEnabled}</option>
+				<option value="1" >#i18n{portal.users.create_user.statusLabelDisabled}</option>
+			<#break>
+			<#case 1 >
+				<option value="noValue" >#i18n{portal.users.manage_users.search_users.labelAllStatus}</option>
+				<option value="0" >#i18n{portal.users.create_user.statusLabelEnabled}</option>
+				<option value="1" selected="selected" >#i18n{portal.users.create_user.statusLabelDisabled}</option>
+			<#break>
+			<#default>
+				<option value="noValue" selected="selected" >#i18n{portal.users.manage_users.search_users.labelAllStatus}</option>
+				<option value="0" >#i18n{portal.users.create_user.statusLabelEnabled}</option>
+				<option value="1" >#i18n{portal.users.create_user.statusLabelDisabled}</option>
+			<#break>
+		</#switch>
+		</select>
+		<button class="btn btn-primary" type="submit" ><i class="icon-search icon-white"></i>&nbsp;#i18n{portal.users.manage_users.search_users.buttonSearch}</button>
+		</#if>
+    </div>
+	<div class="span9">
+		<fieldset>
+	    <legend>#i18n{profiles.assign_users_profile.pageTitle}</legend>
+		<#if available_list?size &gt; 0 >
+			<form class="form-horizontal" name="assign-users-profile" method="post" action="jsp/admin/plugins/profiles/DoAssignUsersProfile.jsp">
+			<input type="hidden" name="profile_key" value="${profile.key}" />
+			<input type="hidden" name="attribute_${attribute.idAttribute}" value="${attribute_field.idField}" />
+			<div class="control-group">
+				<label class="control-label" for="profile_key" >#i18n{profiles.assign_users_profile.labelAvailableUsers}</label>
+					<div class="controls">
+						<@comboWithParamsAndLength name="users_list" default_value="" additionalParameters="multiple='multiple' size='10' style='width:100%;'" items=available_list?sort_by('name') max_length=175 />
+					</div>
+				</div>		    
+				<div class="form-actions">
+					<#if permission>
+						<button class="btn btn-primary" type="submit" ><i class="icon-ok icon-white"></i>&nbsp;#i18n{profiles.assign_users_profile.labelButtonValidate}</button>
+					</#if>
+					<button class="btn btn-primary" type="button" onclick="javascript:window.history.back();"><i class="icon-remove-circle icon-white"></i>&nbsp;#i18n{portal.admin.message.buttonCancel}</button>
+				</div>
+			</form>
 	    <#else>
-	    	<p>
-	    		#i18n{profiles.assign_users_profile.noAssignedList}
-	    	</p>
+			<p class="label label-warning">#i18n{profiles.assign_users_profile.noUserToAssign}</p>
+	    </#if>
+		</fieldset>
+		<p class="lead">#i18n{profiles.assign_users_profile.labelAssignedUsers}</p>
+		<#if assigned_list?size &gt; 0 || search_is_search >
+		<form class="form" method="post" action="jsp/admin/plugins/profiles/AssignUsersProfile.jsp">
+		<@paginationAdmin paginator=paginator combo=1 form=0 />
+		<#if search_is_search >
+			<input type="hidden" name="search_is_search" value="true"/>
+		   	<input type="hidden" name="search_user_level" value="${search_admin_user_filter.userLevel}"/>
+		   	<input type="hidden" name="search_access_code" value="${search_admin_user_filter.accessCode}"/>
+		   	<input type="hidden" name="search_last_name" value="${search_admin_user_filter.lastName}"/>
+		   	<input type="hidden" name="search_first_name" value="${search_admin_user_filter.firstName}"/>
+		   	<input type="hidden" name="search_email" value="${search_admin_user_filter.email}"/>
+		   	<input type="hidden" name="search_status" value="${search_admin_user_filter.status}"/>
+		</#if>
+		<#if search_admin_user_field_filter.listUserFields?exists && search_admin_user_field_filter.listUserFields?has_content>
+			<#list search_admin_user_field_filter.listUserFields as user_field>
+				<#if user_field.attribute.attributeType.className == "fr.paris.lutece.portal.business.user.attribute.AttributeComboBox">
+					<input type="hidden" name="attribute_${user_field.attribute.idAttribute}" value="${user_field.attributeField.idField}"/>
+	   			<#else>
+					<input type="hidden" name="attribute_${user_field.attribute.idAttribute}" value="${user_field.value}" />
+	   			</#if>
+	   		</#list>
+	   	</#if>
+		<input type="hidden" name="profile_key" value="${profile.key}" />
+		</form>
+	    <table class="table table-striped table-condensed">
+			<tr>            
+				<th>
+					#i18n{profiles.assign_users_profile.columnTitleLastName}
+		            <@sort jsp_url="jsp/admin/plugins/profiles/AssignUsersProfile.jsp" attribute="lastName&profile_key=${profile.key}${sort_search_attribute}" />
+		        </th>
+		        <th>
+					#i18n{profiles.assign_users_profile.columnTitleFirstName}
+		            <@sort jsp_url="jsp/admin/plugins/profiles/AssignUsersProfile.jsp" attribute="firstName&profile_key=${profile.key}${sort_search_attribute}" />
+		        </th> 
+		        <th>
+					#i18n{profiles.assign_users_profile.columnTitleAccessCode}
+		            <@sort jsp_url="jsp/admin/plugins/profiles/AssignUsersProfile.jsp" attribute="accessCode&profile_key=${profile.key}${sort_search_attribute}" />
+		        </th>        
+		        <th>
+					#i18n{profiles.assign_users_profile.columnTitleEmail}
+					<@sort jsp_url="jsp/admin/plugins/profiles/AssignUsersProfile.jsp" attribute="email&profile_key=${profile.key}${sort_search_attribute}" />
+		        </th>
+		        <th>#i18n{profiles.assign_users_profile.actions}</th>
+		    </tr>
+	        <#list assigned_list as assigned_item>
+			<#if assigned_item_has_next || assigned_list?size = 1>
+				<#assign anchor = assigned_item_index>
+	        <#else>
+				<#assign anchor = assigned_item_index - 1 >
+	        </#if>
+		    <tr id="anchor-${assigned_item_index}">
+				<td>${assigned_item.lastName}</td>
+		        <td>${assigned_item.firstName}</td>
+		        <td>${assigned_item.accessCode}</td>
+		        <td>${assigned_item.email}</td>	 
+	            <td>
+					<a class="btn btn-primary btn-mini" href="jsp/admin/user/ModifyUser.jsp?id_user=${assigned_item.userId}"  title="#i18n{profiles.actions.labelModify}" >
+						<i class="icon-edit icon-white"></i>
+					</a>
+					<#if permission>
+				    <a class="btn btn-danger btn-mini" href="jsp/admin/plugins/profiles/DoUnassignUserProfile.jsp?profile_key=${profile.key}&amp;id_user=${assigned_item.userId}&amp;attribute_${attribute.idAttribute}=${attribute_field.idField}&amp;anchor=anchor-${anchor}"  title="#i18n{profiles.assign_users_profile.actionUnassign}" >
+						<i class="icon-trash icon-white"></i>
+					</a>
+					</#if>
+	            </td>
+		    </tr>
+	        </#list>
+	   	</table>
+	   	<@paginationAdmin paginator=paginator />
+	    <#else>
+			<p class="label label-warning">#i18n{profiles.assign_users_profile.noAssignedList}</p>
 	    </#if>	    
 	</div>
 </div>
