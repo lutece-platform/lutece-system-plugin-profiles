@@ -27,9 +27,9 @@
 			<@comboWithParamsAndLength name="roles_list" default_value="" additionalParameters="multiple='multiple' class='span12'" items=available_list?sort_by('name') max_length=175 />
 			<div class="form-actions">
 			<#if permission>
-				<button class="btn btn-primary" type="submit"><i class="icon-ok icon-white"></i>&nbsp;#i18n{profiles.assign_roles_profile.labelButtonValidate}</button>
+				<button class="btn btn-primary btn-small" type="submit"><i class="icon-ok icon-white"></i>&nbsp;#i18n{profiles.assign_roles_profile.labelButtonValidate}</button>
 			</#if>
-				<button class="btn btn-primary" type="button" onclick="javascript:window.history.back();" ><i class="icon-remove-cicle icon-white"></i>&nbsp;#i18n{portal.admin.message.buttonCancel}</button>
+				<button class="btn btn-primary btn-small" type="button" onclick="javascript:window.history.back();" ><i class="icon-remove-cicle icon-white"></i>&nbsp;#i18n{portal.admin.message.buttonCancel}</button>
 			</div>
 			</form>
     	<#else>
