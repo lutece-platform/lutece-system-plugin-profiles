@@ -21,7 +21,7 @@
 						<input type="hidden" name="dashboard_order" value="${dashboard_order}"/>
 						<input type="hidden" name="view_key" value="${view.key}"/>
 							<@comboSortedWithParams name="dashboard_column" default_value="${dashboard.zone!}" additionalParameters="class=\"span4\"" items=list_available_columns />
-							<button class="btn btn-primary btn-mini" type="submit" title="#i18n{portal.dashboard.table.action.setColumn}" >
+							<button class="btn btn-primary btn-small" type="submit" title="#i18n{portal.dashboard.table.action.setColumn}" >
 								<i class="icon-ok icon-white"></i>
 							</button>
 						</form>
@@ -38,7 +38,7 @@
 						<input type="hidden" name="dashboard_column" value="${dashboard_column}"/>
 						<input type="hidden" name="view_key" value="${view.key}"/>
 						<@comboSortedWithParams name="dashboard_order" default_value="${dashboard.order!}" additionalParameters="class=\"span4\"" items=list_available_orders_column />
-						<button class="btn btn-primary btn-mini" type="submit" title="#i18n{portal.dashboard.table.action.move}" >
+						<button class="btn btn-primary btn-small" type="submit" title="#i18n{portal.dashboard.table.action.move}" >
 							<i class="icon-move icon-white"></i>
 						</button>
 					</form>
@@ -49,7 +49,7 @@
 						<form class="form" action="jsp/admin/plugins/profiles/DoUnsetColumn.jsp" method="post">
 						<input type="hidden" name="dashboard_name" value="${dashboard.name}"/>
 						<input type="hidden" name="view_key" value="${view.key}"/>
-						<button class="btn btn-danger btn-mini" type="submit" title="#i18n{profiles.manage_dashboards.action.unsetColumn}">
+						<button class="btn btn-danger btn-small" type="submit" title="#i18n{profiles.manage_dashboards.action.unsetColumn}">
 							<i class="icon-trash icon-white"></i>
 						</button>
 						</form>
@@ -73,7 +73,7 @@
 			<@item_navigation item_navigator=item_navigator />
 				<#if view.actions?exists>
 					<#list view.actions as action>
-						<a class="btn <#if action.permission!='DELETE_VIEW'>btn-primary<#else>btn-danger</#if> btn-mini" href="${action.url}?view_key=${view.key}"  title="${action.description}" >
+						<a class="btn <#if action.permission!='DELETE_VIEW'>btn-primary<#else>btn-danger</#if> btn-small" href="${action.url}?view_key=${view.key}"  title="${action.description}" >
 							<i class="${action.iconUrl} icon-white"></i>
 						</a>
 					</#list>

@@ -8,7 +8,7 @@
 		<p>
 		<#if profile.actions?exists>
 			<#list profile.actions as action>
-				<a class="btn  <#if action.permission!='DELETE_DELETE'>btn-primary<#else>btn-danger</#if> btn-mini" href="${action.url}?profile_key=${profile.key}"  title="${action.description}" >
+				<a class="btn  <#if action.permission!='DELETE_DELETE'>btn-primary<#else>btn-danger</#if> btn-small" href="${action.url}?profile_key=${profile.key}"  title="${action.description}" >
 					<i class="${action.iconUrl} icon-white"></i>
 				</a>
 			</#list>
@@ -60,7 +60,7 @@
 		                <td>${assigned_item.level}</td>
 	                    <td>
 	                    	<#if permission>
-				                <a class="btn btn-danger btn-mini" href="jsp/admin/plugins/profiles/DoUnassignRightProfile.jsp?profile_key=${profile.key}&id_right=${assigned_item.id}&anchor=anchor-${anchor}"  title="#i18n{profiles.assign_rights_profile.actionUnassign}" >
+				                <a class="btn btn-danger btn-small" href="jsp/admin/plugins/profiles/DoUnassignRightProfile.jsp?profile_key=${profile.key}&id_right=${assigned_item.id}&anchor=anchor-${anchor}"  title="#i18n{profiles.assign_rights_profile.actionUnassign}" >
 									<i class="icon-trash icon-white"></i>
 								</a>
 				            </#if>

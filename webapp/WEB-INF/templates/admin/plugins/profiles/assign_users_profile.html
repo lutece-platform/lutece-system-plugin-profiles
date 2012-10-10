@@ -8,7 +8,7 @@
 		<p>
 		<#if profile.actions?exists>
 			<#list profile.actions as action>
-				<a class="btn  <#if action.permission!='DELETE_DELETE'>btn-primary<#else>btn-danger</#if> btn-mini" href="${action.url}?profile_key=${profile.key}"  title="${action.description}" >
+				<a class="btn  <#if action.permission!='DELETE_DELETE'>btn-primary<#else>btn-danger</#if> btn-small" href="${action.url}?profile_key=${profile.key}"  title="${action.description}" >
 					<i class="${action.iconUrl} icon-white"></i>
 				</a>
 			</#list>
@@ -150,11 +150,11 @@
 		        <td>${assigned_item.accessCode}</td>
 		        <td>${assigned_item.email}</td>	 
 	            <td>
-					<a class="btn btn-primary btn-mini" href="jsp/admin/user/ModifyUser.jsp?id_user=${assigned_item.userId}"  title="#i18n{profiles.actions.labelModify}" >
+					<a class="btn btn-primary btn-small" href="jsp/admin/user/ModifyUser.jsp?id_user=${assigned_item.userId}"  title="#i18n{profiles.actions.labelModify}" >
 						<i class="icon-edit icon-white"></i>
 					</a>
 					<#if permission>
-				    <a class="btn btn-danger btn-mini" href="jsp/admin/plugins/profiles/DoUnassignUserProfile.jsp?profile_key=${profile.key}&amp;id_user=${assigned_item.userId}&amp;attribute_${attribute.idAttribute}=${attribute_field.idField}&amp;anchor=anchor-${anchor}"  title="#i18n{profiles.assign_users_profile.actionUnassign}" >
+				    <a class="btn btn-danger btn-small" href="jsp/admin/plugins/profiles/DoUnassignUserProfile.jsp?profile_key=${profile.key}&amp;id_user=${assigned_item.userId}&amp;attribute_${attribute.idAttribute}=${attribute_field.idField}&amp;anchor=anchor-${anchor}"  title="#i18n{profiles.assign_users_profile.actionUnassign}" >
 						<i class="icon-trash icon-white"></i>
 					</a>
 					</#if>

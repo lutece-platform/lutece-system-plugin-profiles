@@ -48,7 +48,7 @@
 			<#if view.actions?exists>
 				<#if view.actions?size != 0>
 					<#list view.actions as action>
-					<a class="btn <#if action.permission!='DELETE_VIEW'>btn-primary<#else>btn-danger</#if> btn-mini" href="${action.url}?view_key=${view.key}"  title="${action.description}" >
+					<a class="btn <#if action.permission!='DELETE_VIEW'>btn-primary<#else>btn-danger</#if> btn-small" href="${action.url}?view_key=${view.key}"  title="${action.description}" >
 						<i class="${action.iconUrl} icon-white"></i>
 					</a>
 					</#list>
