@@ -82,8 +82,6 @@ import fr.paris.lutece.util.sort.AttributeComparator;
 import fr.paris.lutece.util.string.StringUtil;
 import fr.paris.lutece.util.url.UrlItem;
 
-import org.apache.commons.lang.StringUtils;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -92,6 +90,8 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.lang.StringUtils;
 
 
 /**
@@ -1279,28 +1279,7 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
                 for ( int i = 0; i < arrayUserIds.length; i++ )
                 {
                     int nIdUser = Integer.parseInt( arrayUserIds[i] );
-
-                    if ( !_profilesService.hasProfile( nIdUser, getPlugin(  ) ) )
-                    {
-                        _profilesService.doAssignUserToProfile( nIdUser, request, getLocale(  ) );
-                    }
-                    else
-                    {
-                        AdminUser user = AdminUserHome.findByPrimaryKey( nIdUser );
-                        String strErrorMessage = StringUtils.EMPTY;
-
-                        if ( user != null )
-                        {
-                            strErrorMessage = user.getLastName(  ) + ProfilesConstants.SPACE + user.getFirstName(  ) +
-                                ProfilesConstants.SPACE + ProfilesConstants.OPEN_BRACKET + user.getAccessCode(  ) +
-                                ProfilesConstants.CLOSED_BRACKET;
-                        }
-
-                        Object[] args = { strErrorMessage };
-
-                        return AdminMessageService.getMessageUrl( request,
-                            ProfilesConstants.PROPERTY_NO_MULTIPLE_PROFILES, args, AdminMessage.TYPE_STOP );
-                    }
+                    _profilesService.doAssignUserToProfile( nIdUser, request, getLocale( ) );
                 }
             }
 

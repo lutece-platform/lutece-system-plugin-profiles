@@ -50,13 +50,13 @@ import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.portal.service.plugin.PluginService;
 import fr.paris.lutece.portal.service.user.attribute.AttributeService;
 
-import org.apache.commons.lang.StringUtils;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.lang.StringUtils;
 
 
 /**
@@ -179,47 +179,50 @@ public class ProfilesAdminUserFieldListener implements AdminUserFieldListener
         }
 
         // Check if the user has a profile
-        Profile assignedProfile = ProfileHome.findProfileByIdUser( user.getUserId(  ), plugin );
+        List<Profile> listAssignedProfiles = ProfileHome.findProfileByIdUser( user.getUserId( ), plugin );
 
-        if ( assignedProfile != null )
+        if ( listAssignedProfiles != null )
         {
-            // Remove profiles, rights, roles and workgroups from the user
-            String strKey = assignedProfile.getKey(  );
-
-            // Remove all profiles from the user
-            ProfileHome.removeUserFromProfile( user.getUserId(  ), plugin );
-
-            // Remove rights to the user
-            for ( Right right : ProfileHome.getRightsListForProfile( strKey, plugin ) )
+            for ( Profile assignedProfile : listAssignedProfiles )
             {
-                right = RightHome.findByPrimaryKey( right.getId(  ) );
+                // Remove profiles, rights, roles and workgroups from the user
+                String strKey = assignedProfile.getKey( );
 
-                if ( AdminUserHome.hasRight( user, right.getId(  ) ) &&
-                        ( ( user.getUserLevel(  ) > currentUser.getUserLevel(  ) ) || currentUser.isAdmin(  ) ) )
+                // Remove all profiles from the user
+                ProfileHome.removeUserFromProfile( strKey, user.getUserId( ), plugin );
+
+                // Remove rights to the user
+                for ( Right right : ProfileHome.getRightsListForProfile( strKey, plugin ) )
                 {
-                    AdminUserHome.removeRightForUser( user.getUserId(  ), right.getId(  ) );
+                    right = RightHome.findByPrimaryKey( right.getId( ) );
+
+                    if ( AdminUserHome.hasRight( user, right.getId( ) )
+                            && ( ( user.getUserLevel( ) > currentUser.getUserLevel( ) ) || currentUser.isAdmin( ) ) )
+                    {
+                        AdminUserHome.removeRightForUser( user.getUserId( ), right.getId( ) );
+                    }
                 }
-            }
 
-            // Remove roles to the user
-            for ( AdminRole role : ProfileHome.getRolesListForProfile( strKey, plugin ) )
-            {
-                role = AdminRoleHome.findByPrimaryKey( role.getKey(  ) );
-
-                if ( AdminUserHome.hasRole( user, role.getKey(  ) ) )
+                // Remove roles to the user
+                for ( AdminRole role : ProfileHome.getRolesListForProfile( strKey, plugin ) )
                 {
-                    AdminUserHome.removeRoleForUser( user.getUserId(  ), role.getKey(  ) );
+                    role = AdminRoleHome.findByPrimaryKey( role.getKey( ) );
+
+                    if ( AdminUserHome.hasRole( user, role.getKey( ) ) )
+                    {
+                        AdminUserHome.removeRoleForUser( user.getUserId( ), role.getKey( ) );
+                    }
                 }
-            }
 
-            // Remove workgroups to the user
-            for ( AdminWorkgroup workgroup : ProfileHome.getWorkgroupsListForProfile( strKey, plugin ) )
-            {
-                workgroup = AdminWorkgroupHome.findByPrimaryKey( workgroup.getKey(  ) );
-
-                if ( AdminWorkgroupHome.isUserInWorkgroup( user, workgroup.getKey(  ) ) )
+                // Remove workgroups to the user
+                for ( AdminWorkgroup workgroup : ProfileHome.getWorkgroupsListForProfile( strKey, plugin ) )
                 {
-                    AdminWorkgroupHome.removeUserFromWorkgroup( user, workgroup.getKey(  ) );
+                    workgroup = AdminWorkgroupHome.findByPrimaryKey( workgroup.getKey( ) );
+
+                    if ( AdminWorkgroupHome.isUserInWorkgroup( user, workgroup.getKey( ) ) )
+                    {
+                        AdminWorkgroupHome.removeUserFromWorkgroup( user, workgroup.getKey( ) );
+                    }
                 }
             }
         }
@@ -230,7 +233,7 @@ public class ProfilesAdminUserFieldListener implements AdminUserFieldListener
             String strProfileKey = userField.getValue(  );
             int nIdUser = user.getUserId(  );
 
-            if ( !ProfileHome.hasProfile( nIdUser, plugin ) )
+            if ( !ProfileHome.hasProfile( strProfileKey, nIdUser, plugin ) )
             {
                 ProfileHome.addUserForProfile( strProfileKey, nIdUser, plugin );
 

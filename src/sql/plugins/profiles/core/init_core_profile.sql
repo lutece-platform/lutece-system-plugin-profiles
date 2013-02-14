@@ -36,4 +36,4 @@ INSERT INTO core_attribute (id_attribute,type_class_name, title, help_message, i
 --
 -- Init  table core_attibute_field
 --
-INSERT INTO core_attribute_field (id_field, id_attribute, title, DEFAULT_value, is_DEFAULT_value, height, width, max_size_enter, is_multiple, field_position) VALUES (1,1,NULL,NULL,0,0,0,0,0,1);
+INSERT INTO core_attribute_field (id_field, id_attribute, title, DEFAULT_value, is_DEFAULT_value, height, width, max_size_enter, is_multiple, field_position) VALUES (1,1,NULL,NULL,0,0,0,0,1,1);

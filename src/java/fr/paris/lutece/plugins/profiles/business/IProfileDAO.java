@@ -122,9 +122,9 @@ public interface IProfileDAO
      * Load the profiles by a given ID user
      * @param nIdUser the ID user
      * @param plugin Plugin
-     * @return a profile
+     * @return the list of profiles of the user
      */
-    Profile selectProfileByIdUser( int nIdUser, Plugin plugin );
+    List<Profile> selectProfileByIdUser( int nIdUser, Plugin plugin );
 
     /* RIGHTS */
 
@@ -281,10 +281,11 @@ public interface IProfileDAO
 
     /**
      * Remove an user from a profile
+     * @param strProfileKey The key of the profile
      * @param nIdUser The User ID
      * @param plugin Plugin
      */
-    void deleteUserFromProfile( int nIdUser, Plugin plugin );
+    void deleteUserFromProfile( String strProfileKey, int nIdUser, Plugin plugin );
 
     /**
      * Remove all users from profile
@@ -301,12 +302,13 @@ public interface IProfileDAO
     void deleteProfilesFromUser( int nIdUser, Plugin plugin );
 
     /**
-     * Check if the given user has a profile or not
+     * Check if the given user has a given profile or not
+     * @param strProfileKey The key of the profile
      * @param nIdUser the ID user
      * @param plugin Plugin
-     * @return true if the user has a profile, false otherwise
+     * @return true if the user has the profile, false otherwise
      */
-    boolean hasProfile( int nIdUser, Plugin plugin );
+    boolean hasProfile( String strProfileKey, int nIdUser, Plugin plugin );
 
     /* VIEW */
 

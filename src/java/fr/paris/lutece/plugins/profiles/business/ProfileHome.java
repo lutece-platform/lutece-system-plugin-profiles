@@ -171,7 +171,7 @@ public final class ProfileHome
      * @param plugin Plugin
      * @return a profile
      */
-    public static Profile findProfileByIdUser( int nIdUser, Plugin plugin )
+    public static List<Profile> findProfileByIdUser( int nIdUser, Plugin plugin )
     {
         return _dao.selectProfileByIdUser( nIdUser, plugin );
     }
@@ -385,12 +385,13 @@ public final class ProfileHome
 
     /**
      * Remove a user from a profile
+     * @param strProfileKey The key of the profile
      * @param nIdUser The User ID
      * @param plugin Plugin
      */
-    public static void removeUserFromProfile( int nIdUser, Plugin plugin )
+    public static void removeUserFromProfile( String strProfileKey, int nIdUser, Plugin plugin )
     {
-        _dao.deleteUserFromProfile( nIdUser, plugin );
+        _dao.deleteUserFromProfile( strProfileKey, nIdUser, plugin );
     }
 
     /**
@@ -414,14 +415,15 @@ public final class ProfileHome
     }
 
     /**
-     * Check if the given user has a profile or not
+     * Check if the given user has a given profile or not
+     * @param strProfileKey The key of the profile
      * @param nIdUser the ID user
      * @param plugin Plugin
      * @return true if the user has the profile, false otherwise
      */
-    public static boolean hasProfile( int nIdUser, Plugin plugin )
+    public static boolean hasProfile( String strProfileKey, int nIdUser, Plugin plugin )
     {
-        return _dao.hasProfile( nIdUser, plugin );
+        return _dao.hasProfile( strProfileKey, nIdUser, plugin );
     }
 
     /* VIEW */

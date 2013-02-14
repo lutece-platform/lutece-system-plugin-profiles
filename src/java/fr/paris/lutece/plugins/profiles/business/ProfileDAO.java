@@ -82,10 +82,10 @@ public class ProfileDAO implements IProfileDAO
     private static final String SQL_QUERY_SELECT_USERS_LIST_FOR_PROFILE = " SELECT id_user FROM profile_user WHERE profile_key = ? ORDER BY id_user ASC ";
     private static final String SQL_QUERY_SELECT_PROFILE_USER = " SELECT profile_key, id_user FROM profile_user WHERE profile_key = ? AND id_user = ? ";
     private static final String SQL_QUERY_INSERT_PROFILE_USER = " INSERT INTO profile_user (profile_key, id_user) VALUES ( ?, ? ) ";
-    private static final String SQL_QUERY_DELETE_PROFILE_USER = " DELETE FROM profile_user WHERE id_user = ? ";
+    private static final String SQL_QUERY_DELETE_PROFILE_USER = " DELETE FROM profile_user WHERE id_user = ? AND profile_key = ? ";
     private static final String SQL_QUERY_DELETE_USERS = " DELETE FROM profile_user WHERE profile_key = ? ";
     private static final String SQL_QUERY_DELETE_PROFILES_FROM_USER = " DELETE FROM profile_user WHERE id_user = ? ";
-    private static final String SQL_QUERY_SELECT_PROFILE_USER_FROM_ID_USER = " SELECT profile_key, id_user FROM profile_user WHERE id_user = ? LIMIT 1";
+    private static final String SQL_QUERY_SELECT_PROFILE_USER_FROM_ID_USER_AND_PROFILE_KEY = " SELECT profile_key, id_user FROM profile_user WHERE id_user = ? AND profile_key = ? ";
     private static final String SQL_QUERY_SELECT_VIEW_FOR_PROFILE = " SELECT view_key FROM profile_view_profile WHERE profile_key = ? ";
     private static final String SQL_QUERY_DELETE_VIEW = " DELETE FROM profile_view_profile WHERE profile_key = ? ";
 
@@ -280,23 +280,25 @@ public class ProfileDAO implements IProfileDAO
     * {@inheritDoc}
     */
     @Override
-    public Profile selectProfileByIdUser( int nIdUser, Plugin plugin )
+    public List<Profile> selectProfileByIdUser( int nIdUser, Plugin plugin )
     {
-        Profile profile = null;
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_PROFILE_FROM_ID_USER, plugin );
         daoUtil.setInt( 1, nIdUser );
         daoUtil.executeQuery(  );
 
-        if ( daoUtil.next(  ) )
+        List<Profile> listProfiles = new ArrayList<Profile>( );
+
+        while ( daoUtil.next( ) )
         {
-            profile = new Profile(  );
+            Profile profile = new Profile( );
             profile.setKey( daoUtil.getString( 1 ) );
             profile.setDescription( daoUtil.getString( 2 ) );
+            listProfiles.add( profile );
         }
 
         daoUtil.free(  );
 
-        return profile;
+        return listProfiles;
     }
 
     /* RIGHTS */
@@ -640,10 +642,11 @@ public class ProfileDAO implements IProfileDAO
      * {@inheritDoc}
      */
     @Override
-    public void deleteUserFromProfile( int nIdUser, Plugin plugin )
+    public void deleteUserFromProfile( String strProfileKey, int nIdUser, Plugin plugin )
     {
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_PROFILE_USER, plugin );
         daoUtil.setInt( 1, nIdUser );
+        daoUtil.setString( 2, strProfileKey );
 
         daoUtil.executeUpdate(  );
         daoUtil.free(  );
@@ -679,11 +682,12 @@ public class ProfileDAO implements IProfileDAO
      * {@inheritDoc}
      */
     @Override
-    public boolean hasProfile( int nIdUser, Plugin plugin )
+    public boolean hasProfile( String strProfileKey, int nIdUser, Plugin plugin )
     {
         boolean bHasProfile = false;
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_PROFILE_USER_FROM_ID_USER, plugin );
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_PROFILE_USER_FROM_ID_USER_AND_PROFILE_KEY, plugin );
         daoUtil.setInt( 1, nIdUser );
+        daoUtil.setString( 2, strProfileKey );
         daoUtil.executeQuery(  );
 
         if ( daoUtil.next(  ) )

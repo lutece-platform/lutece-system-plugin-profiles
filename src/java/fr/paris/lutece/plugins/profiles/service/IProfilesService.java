@@ -178,12 +178,12 @@ public interface IProfilesService
     boolean checkProfileAttributed( String strProfileKey, Plugin plugin );
 
     /**
-     * Load the profile by a given ID user
+     * Load the list of profiles by a given ID user
      * @param nIdUser the ID user
      * @param plugin Plugin
-     * @return a profile
+     * @return The list of profiles
      */
-    Profile findProfileByIdUser( int nIdUser, Plugin plugin );
+    List<Profile> findProfileByIdUser( int nIdUser, Plugin plugin );
 
     /* RIGHTS */
 
@@ -340,10 +340,11 @@ public interface IProfilesService
 
     /**
      * Remove a user from a profile
+     * @param strProfileKey The key of the profile
      * @param nIdUser The User ID
      * @param plugin Plugin
      */
-    void removeUserFromProfile( int nIdUser, Plugin plugin );
+    void removeUserFromProfile( String strProfileKey, int nIdUser, Plugin plugin );
 
     /**
      * Remove all users from profile
@@ -360,12 +361,13 @@ public interface IProfilesService
     void removeProfilesFromUser( int nIdUser, Plugin plugin );
 
     /**
-     * Check if the given user has a profile or not
+     * Check if the given user has a given profile or not
+     * @param strProfileKey The key of the profile
      * @param nIdUser the ID user
      * @param plugin Plugin
      * @return true if the user has the profile, false otherwise
      */
-    boolean hasProfile( int nIdUser, Plugin plugin );
+    boolean hasProfile( String strProfileKey, int nIdUser, Plugin plugin );
 
     /* VIEW */
 

@@ -63,10 +63,13 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
+import java.util.TreeSet;
 
 import javax.inject.Inject;
-
 import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.lang.StringUtils;
 
 
 /**
@@ -165,12 +168,27 @@ public class ProfilesService implements IProfilesService
         }
 
         // Remove profile
-        removeUserFromProfile( nIdUser, plugin );
+        removeUserFromProfile( strProfileKey, nIdUser, plugin );
+
+        List<Profile> listProfiles = findProfileByIdUser( nIdUser, plugin );
+        Set<Right> listProfilesRights = new TreeSet<Right>( );
+        Set<AdminRole> listProfilesRoles = new TreeSet<AdminRole>( );
+        Set<AdminWorkgroup> listProfilesWorkgroups = new TreeSet<AdminWorkgroup>( );
+        for ( Profile profile : listProfiles )
+        {
+            if ( !StringUtils.equals( profile.getKey( ), strProfileKey ) )
+            {
+                listProfilesRights.addAll( getRightsListForProfile( profile.getKey( ), plugin ) );
+                listProfilesRoles.addAll( getRolesListForProfile( profile.getKey( ), plugin ) );
+                listProfilesWorkgroups.addAll( getWorkgroupsListForProfile( profile.getKey( ), plugin ) );
+            }
+        }
 
         // Remove rights to the user
         for ( Right right : getRightsListForProfile( strProfileKey, plugin ) )
         {
-            if ( AdminUserHome.hasRight( user, right.getId(  ) ) &&
+            if ( !listProfilesRights.contains( right ) && AdminUserHome.hasRight( user, right.getId( ) )
+                    &&
                     ( ( user.getUserLevel(  ) > currentUser.getUserLevel(  ) ) || currentUser.isAdmin(  ) ) )
             {
                 AdminUserHome.removeRightForUser( nIdUser, right.getId(  ) );
@@ -180,7 +198,7 @@ public class ProfilesService implements IProfilesService
         // Remove roles to the user
         for ( AdminRole role : getRolesListForProfile( strProfileKey, plugin ) )
         {
-            if ( AdminUserHome.hasRole( user, role.getKey(  ) ) )
+            if ( !listProfilesRoles.contains( role ) && AdminUserHome.hasRole( user, role.getKey( ) ) )
             {
                 AdminUserHome.removeRoleForUser( nIdUser, role.getKey(  ) );
             }
@@ -189,7 +207,8 @@ public class ProfilesService implements IProfilesService
         // Remove workgroups to the user
         for ( AdminWorkgroup workgroup : getWorkgroupsListForProfile( strProfileKey, plugin ) )
         {
-            if ( AdminWorkgroupHome.isUserInWorkgroup( user, workgroup.getKey(  ) ) )
+            if ( !listProfilesWorkgroups.contains( workgroup )
+                    && AdminWorkgroupHome.isUserInWorkgroup( user, workgroup.getKey( ) ) )
             {
                 AdminWorkgroupHome.removeUserFromWorkgroup( user, workgroup.getKey(  ) );
             }
@@ -355,7 +374,7 @@ public class ProfilesService implements IProfilesService
      * {@inheritDoc}
      */
     @Override
-    public Profile findProfileByIdUser( int nIdUser, Plugin plugin )
+    public List<Profile> findProfileByIdUser( int nIdUser, Plugin plugin )
     {
         return ProfileHome.findProfileByIdUser( nIdUser, plugin );
     }
@@ -534,9 +553,9 @@ public class ProfilesService implements IProfilesService
      * {@inheritDoc}
      */
     @Override
-    public void removeUserFromProfile( int nIdUser, Plugin plugin )
+    public void removeUserFromProfile( String strProfileKey, int nIdUser, Plugin plugin )
     {
-        ProfileHome.removeUserFromProfile( nIdUser, plugin );
+        ProfileHome.removeUserFromProfile( strProfileKey, nIdUser, plugin );
     }
 
     /**
@@ -561,9 +580,9 @@ public class ProfilesService implements IProfilesService
      * {@inheritDoc}
      */
     @Override
-    public boolean hasProfile( int nIdUser, Plugin plugin )
+    public boolean hasProfile( String strProfileKey, int nIdUser, Plugin plugin )
     {
-        return ProfileHome.hasProfile( nIdUser, plugin );
+        return ProfileHome.hasProfile( strProfileKey, nIdUser, plugin );
     }
 
     /* VIEW */

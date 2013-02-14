@@ -70,15 +70,18 @@ public class ViewDashboardListener implements DashboardListener
         if ( ( plugin.getDbPoolName(  ) != null ) &&
                 !AppConnectionService.NO_POOL_DEFINED.equals( plugin.getDbPoolName(  ) ) )
         {
-            Profile profile = ProfileHome.findProfileByIdUser( user.getUserId(  ), plugin );
+            List<Profile> listProfile = ProfileHome.findProfileByIdUser( user.getUserId( ), plugin );
 
-            if ( profile != null )
+            if ( listProfile != null )
             {
-                View view = ViewHome.findViewForProfile( profile.getKey(  ), plugin );
-
-                if ( view != null )
+                for ( Profile profile : listProfile )
                 {
-                    listDashboards = ViewHome.findDashboards( view.getKey(  ), plugin );
+                    View view = ViewHome.findViewForProfile( profile.getKey( ), plugin );
+
+                    if ( view != null )
+                    {
+                        listDashboards.addAll( ViewHome.findDashboards( view.getKey( ), plugin ) );
+                    }
                 }
             }
         }
