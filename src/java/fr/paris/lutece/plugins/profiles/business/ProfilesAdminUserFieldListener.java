@@ -41,22 +41,14 @@ import fr.paris.lutece.portal.business.right.RightHome;
 import fr.paris.lutece.portal.business.user.AdminUser;
 import fr.paris.lutece.portal.business.user.AdminUserHome;
 import fr.paris.lutece.portal.business.user.attribute.AdminUserField;
-import fr.paris.lutece.portal.business.user.attribute.AdminUserFieldHome;
-import fr.paris.lutece.portal.business.user.attribute.AdminUserFieldListener;
-import fr.paris.lutece.portal.business.user.attribute.IAttribute;
+import fr.paris.lutece.portal.business.user.attribute.SimpleAdminUserFieldListener;
 import fr.paris.lutece.portal.business.workgroup.AdminWorkgroup;
 import fr.paris.lutece.portal.business.workgroup.AdminWorkgroupHome;
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.portal.service.plugin.PluginService;
-import fr.paris.lutece.portal.service.user.attribute.AttributeService;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.commons.lang.StringUtils;
 
 
 /**
@@ -64,45 +56,20 @@ import org.apache.commons.lang.StringUtils;
  * ProfilesAdminUserFieldListener
  *
  */
-public class ProfilesAdminUserFieldListener implements AdminUserFieldListener
+public class ProfilesAdminUserFieldListener extends SimpleAdminUserFieldListener
 {
     /**
-     * Create user fields
-     * @param user AdminUser
-     * @param request HttpServletRequest
-     * @param locale Locale
+     * {@inheritDoc}
      */
-    public void doCreateUserFields( AdminUser user, HttpServletRequest request, Locale locale )
+    @Override
+    public void doCreateUserFields( AdminUser user, List<AdminUserField> listUserFields, Locale locale )
     {
         Plugin plugin = PluginService.getPlugin( ProfilesPlugin.PLUGIN_NAME );
-        List<IAttribute> listAttributes = AttributeService.getInstance(  )
-                                                          .getPluginAttributesWithoutFields( ProfilesPlugin.PLUGIN_NAME,
-                locale );
-        List<AdminUserField> listUserFields = new ArrayList<AdminUserField>(  );
-
-        for ( IAttribute attribute : listAttributes )
-        {
-            List<AdminUserField> userFields = attribute.getUserFieldsData( request, user );
-
-            for ( AdminUserField userField : userFields )
-            {
-                if ( ( userField != null ) && StringUtils.isNotBlank( userField.getValue(  ) ) )
-                {
-                    // Change the value of the user field
-                    // Instead of having the ID of the attribute field, we put the attribute field title
-                    // which represents the profile's ID
-                    userField.setValue( userField.getAttributeField(  ).getTitle(  ) );
-                    AdminUserFieldHome.create( userField );
-                    listUserFields.add( userField );
-                }
-            }
-        }
-
         // For each selected profiles
         for ( AdminUserField userField : listUserFields )
         {
-            String strProfileKey = userField.getValue(  );
-            int nIdUser = user.getUserId(  );
+            String strProfileKey = userField.getValue( );
+            int nIdUser = user.getUserId( );
 
             if ( !ProfileHome.hasUser( strProfileKey, nIdUser, plugin ) )
             {
@@ -111,34 +78,34 @@ public class ProfilesAdminUserFieldListener implements AdminUserFieldListener
                 // Add rights to the user
                 for ( Right right : ProfileHome.getRightsListForProfile( strProfileKey, plugin ) )
                 {
-                    right = RightHome.findByPrimaryKey( right.getId(  ) );
+                    right = RightHome.findByPrimaryKey( right.getId( ) );
 
-                    if ( !AdminUserHome.hasRight( user, right.getId(  ) ) &&
-                            ( user.getUserLevel(  ) <= right.getLevel(  ) ) )
+                    if ( !AdminUserHome.hasRight( user, right.getId( ) )
+                            && ( user.getUserLevel( ) <= right.getLevel( ) ) )
                     {
-                        AdminUserHome.createRightForUser( nIdUser, right.getId(  ) );
+                        AdminUserHome.createRightForUser( nIdUser, right.getId( ) );
                     }
                 }
 
                 // Add roles to the user
                 for ( AdminRole role : ProfileHome.getRolesListForProfile( strProfileKey, plugin ) )
                 {
-                    role = AdminRoleHome.findByPrimaryKey( role.getKey(  ) );
+                    role = AdminRoleHome.findByPrimaryKey( role.getKey( ) );
 
-                    if ( !AdminUserHome.hasRole( user, role.getKey(  ) ) )
+                    if ( !AdminUserHome.hasRole( user, role.getKey( ) ) )
                     {
-                        AdminUserHome.createRoleForUser( nIdUser, role.getKey(  ) );
+                        AdminUserHome.createRoleForUser( nIdUser, role.getKey( ) );
                     }
                 }
 
                 // Add workgroups to the user
                 for ( AdminWorkgroup workgroup : ProfileHome.getWorkgroupsListForProfile( strProfileKey, plugin ) )
                 {
-                    workgroup = AdminWorkgroupHome.findByPrimaryKey( workgroup.getKey(  ) );
+                    workgroup = AdminWorkgroupHome.findByPrimaryKey( workgroup.getKey( ) );
 
-                    if ( !AdminWorkgroupHome.isUserInWorkgroup( user, workgroup.getKey(  ) ) )
+                    if ( !AdminWorkgroupHome.isUserInWorkgroup( user, workgroup.getKey( ) ) )
                     {
-                        AdminWorkgroupHome.addUserForWorkgroup( user, workgroup.getKey(  ) );
+                        AdminWorkgroupHome.addUserForWorkgroup( user, workgroup.getKey( ) );
                     }
                 }
             }
@@ -146,38 +113,13 @@ public class ProfilesAdminUserFieldListener implements AdminUserFieldListener
     }
 
     /**
-     * Modify user fields
-     * @param user AdminUser
-     * @param request HttpServletRequest
-     * @param locale Locale
-     * @param currentUser current user
+     * {@inheritDoc}
      */
-    public void doModifyUserFields( AdminUser user, HttpServletRequest request, Locale locale, AdminUser currentUser )
+    @Override
+    public void doModifyUserFields( AdminUser user, List<AdminUserField> listUserFields, Locale locale,
+            AdminUser currentUser )
     {
         Plugin plugin = PluginService.getPlugin( ProfilesPlugin.PLUGIN_NAME );
-        List<IAttribute> listAttributes = AttributeService.getInstance(  )
-                                                          .getPluginAttributesWithoutFields( ProfilesPlugin.PLUGIN_NAME,
-                locale );
-        List<AdminUserField> listUserFields = new ArrayList<AdminUserField>(  );
-
-        for ( IAttribute attribute : listAttributes )
-        {
-            List<AdminUserField> userFields = attribute.getUserFieldsData( request, user );
-
-            for ( AdminUserField userField : userFields )
-            {
-                if ( ( userField != null ) && StringUtils.isNotBlank( userField.getValue(  ) ) )
-                {
-                    // Change the value of the user field
-                    // Instead of having the ID of the attribute field, we put the attribute field title
-                    // which represents the profile's ID
-                    userField.setValue( userField.getAttributeField(  ).getTitle(  ) );
-                    AdminUserFieldHome.create( userField );
-                    listUserFields.add( userField );
-                }
-            }
-        }
-
         // Check if the user has a profile
         List<Profile> listAssignedProfiles = ProfileHome.findProfileByIdUser( user.getUserId( ), plugin );
 
@@ -275,14 +217,21 @@ public class ProfilesAdminUserFieldListener implements AdminUserFieldListener
     }
 
     /**
-     * Remove user fields
-     * @param user Adminuser
-     * @param request HttpServletRequest
-     * @param locale locale
+     * {@inheritDoc}
      */
-    public void doRemoveUserFields( AdminUser user, HttpServletRequest request, Locale locale )
+    @Override
+    public void doRemoveUserFields( AdminUser user, Locale locale )
     {
         Plugin plugin = PluginService.getPlugin( ProfilesPlugin.PLUGIN_NAME );
-        ProfileHome.removeProfilesFromUser( user.getUserId(  ), plugin );
+        ProfileHome.removeProfilesFromUser( user.getUserId( ), plugin );
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Plugin getPlugin( )
+    {
+        return PluginService.getPlugin( ProfilesPlugin.PLUGIN_NAME );
     }
 }
