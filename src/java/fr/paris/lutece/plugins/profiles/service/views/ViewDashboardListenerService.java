@@ -60,7 +60,6 @@ public final class ViewDashboardListenerService
      */
     public static DashboardListenerService getService(  )
     {
-        return (DashboardListenerService) SpringContextService.getPluginBean( SPRING_CONTEXT_NAME,
-            BEAN_VIEW_DASHBOARD_SERVICE );
+        return (DashboardListenerService) SpringContextService.getBean( BEAN_VIEW_DASHBOARD_SERVICE );
     }
 }

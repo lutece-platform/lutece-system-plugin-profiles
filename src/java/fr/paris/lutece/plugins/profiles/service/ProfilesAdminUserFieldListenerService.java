@@ -60,7 +60,6 @@ public final class ProfilesAdminUserFieldListenerService
      */
     public static AdminUserFieldListenerService getService(  )
     {
-        return (AdminUserFieldListenerService) SpringContextService.getPluginBean( SPRING_CONTEXT_NAME,
-            BEAN_PROFILES_ADMIN_USER_FIELD_SERVICE );
+        return (AdminUserFieldListenerService) SpringContextService.getBean( BEAN_PROFILES_ADMIN_USER_FIELD_SERVICE );
     }
 }
