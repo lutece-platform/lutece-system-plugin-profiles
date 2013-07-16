@@ -44,7 +44,7 @@ import fr.paris.lutece.portal.service.user.attribute.AdminUserFieldListenerServi
  */
 public final class ProfilesAdminUserFieldListenerService
 {
-    private static final String SPRING_CONTEXT_NAME = "profiles";
+    //    private static final String SPRING_CONTEXT_NAME = "profiles";
     private static final String BEAN_PROFILES_ADMIN_USER_FIELD_SERVICE = "profiles.profilesAdminUserFieldListenerService";
 
     /**

@@ -48,9 +48,9 @@ import java.util.List;
 
 
 /**
- *
+ * 
  * ProfileDAO
- *
+ * 
  */
 public class ProfileDAO implements IProfileDAO
 {
@@ -59,11 +59,11 @@ public class ProfileDAO implements IProfileDAO
     private static final String SQL_QUERY_DELETE = " DELETE FROM profile_profile WHERE profile_key = ? ";
     private static final String SQL_QUERY_UPDATE = " UPDATE profile_profile SET profile_description = ? WHERE profile_key = ? ";
     private static final String SQL_QUERY_SELECTALL = " SELECT profile_key, profile_description FROM profile_profile ORDER BY profile_key ";
-    private static final String SQL_QUERY_SELECT_PROFILES_FROM_SEARCH = " SELECT profile_key, profile_description FROM profile_profile " +
-        " WHERE profile_key LIKE ? AND profile_description LIKE ? ORDER BY profile_key ";
+    private static final String SQL_QUERY_SELECT_PROFILES_FROM_SEARCH = " SELECT profile_key, profile_description FROM profile_profile "
+            + " WHERE profile_key LIKE ? AND profile_description LIKE ? ORDER BY profile_key ";
     private static final String SQL_QUERY_CHECK_PROFILE_ATTRIBUTED = " SELECT id_user FROM profile_user WHERE profile_key = ? LIMIT 1 ";
-    private static final String SQL_QUERY_SELECT_PROFILE_FROM_ID_USER = " SELECT p.profile_key, p.profile_description " +
-        " FROM profile_profile p INNER JOIN profile_user pu ON p.profile_key = pu.profile_key WHERE pu.id_user = ? ";
+    private static final String SQL_QUERY_SELECT_PROFILE_FROM_ID_USER = " SELECT p.profile_key, p.profile_description "
+            + " FROM profile_profile p INNER JOIN profile_user pu ON p.profile_key = pu.profile_key WHERE pu.id_user = ? ";
     private static final String SQL_QUERY_SELECT_RIGHTS_LIST_FOR_PROFILE = " SELECT id_right FROM profile_right WHERE profile_key = ? ORDER BY id_right ASC ";
     private static final String SQL_QUERY_SELECT_PROFILE_RIGHT = " SELECT profile_key, id_right FROM profile_right WHERE profile_key = ? AND profile_key = ? ";
     private static final String SQL_QUERY_INSERT_PROFILE_RIGHT = " INSERT INTO profile_right (profile_key, id_right) VALUES ( ?, ? ) ";
@@ -90,17 +90,17 @@ public class ProfileDAO implements IProfileDAO
     private static final String SQL_QUERY_DELETE_VIEW = " DELETE FROM profile_view_profile WHERE profile_key = ? ";
 
     /**
-    * {@inheritDoc}
-    */
+     * {@inheritDoc}
+     */
     @Override
     public void insert( Profile profile, Plugin plugin )
     {
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, plugin );
-        daoUtil.setString( 1, profile.getKey(  ) );
-        daoUtil.setString( 2, profile.getDescription(  ) );
+        daoUtil.setString( 1, profile.getKey( ) );
+        daoUtil.setString( 2, profile.getDescription( ) );
 
-        daoUtil.executeUpdate(  );
-        daoUtil.free(  );
+        daoUtil.executeUpdate( );
+        daoUtil.free( );
     }
 
     /**
@@ -111,18 +111,18 @@ public class ProfileDAO implements IProfileDAO
     {
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT, plugin );
         daoUtil.setString( 1, strProfileKey );
-        daoUtil.executeQuery(  );
+        daoUtil.executeQuery( );
 
         Profile profile = null;
 
-        if ( daoUtil.next(  ) )
+        if ( daoUtil.next( ) )
         {
-            profile = new Profile(  );
+            profile = new Profile( );
             profile.setKey( daoUtil.getString( 1 ) );
             profile.setDescription( daoUtil.getString( 2 ) );
         }
 
-        daoUtil.free(  );
+        daoUtil.free( );
 
         return profile;
     }
@@ -136,8 +136,8 @@ public class ProfileDAO implements IProfileDAO
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE, plugin );
         daoUtil.setString( 1, strProfileKey );
 
-        daoUtil.executeUpdate(  );
-        daoUtil.free(  );
+        daoUtil.executeUpdate( );
+        daoUtil.free( );
     }
 
     /**
@@ -147,11 +147,11 @@ public class ProfileDAO implements IProfileDAO
     public void store( Profile profile, Plugin plugin )
     {
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE, plugin );
-        daoUtil.setString( 1, profile.getDescription(  ) );
-        daoUtil.setString( 2, profile.getKey(  ) );
+        daoUtil.setString( 1, profile.getDescription( ) );
+        daoUtil.setString( 2, profile.getKey( ) );
 
-        daoUtil.executeUpdate(  );
-        daoUtil.free(  );
+        daoUtil.executeUpdate( );
+        daoUtil.free( );
     }
 
     /**
@@ -160,20 +160,20 @@ public class ProfileDAO implements IProfileDAO
     @Override
     public List<Profile> selectProfileList( Plugin plugin )
     {
-        List<Profile> listProfiles = new ArrayList<Profile>(  );
+        List<Profile> listProfiles = new ArrayList<Profile>( );
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECTALL, plugin );
-        daoUtil.executeQuery(  );
+        daoUtil.executeQuery( );
 
-        while ( daoUtil.next(  ) )
+        while ( daoUtil.next( ) )
         {
-            Profile profile = new Profile(  );
+            Profile profile = new Profile( );
             profile.setKey( daoUtil.getString( 1 ) );
             profile.setDescription( daoUtil.getString( 2 ) );
 
             listProfiles.add( profile );
         }
 
-        daoUtil.free(  );
+        daoUtil.free( );
 
         return listProfiles;
     }
@@ -184,79 +184,74 @@ public class ProfileDAO implements IProfileDAO
     @Override
     public List<Profile> selectProfilesByFilter( ProfileFilter pFilter, Plugin plugin )
     {
-        List<Profile> listFilteredProfiles = new ArrayList<Profile>(  );
+        List<Profile> listFilteredProfiles = new ArrayList<Profile>( );
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_PROFILES_FROM_SEARCH, plugin );
 
-        daoUtil.setString( 1, ProfilesConstants.PERCENT + pFilter.getKey(  ) + ProfilesConstants.PERCENT );
-        daoUtil.setString( 2, ProfilesConstants.PERCENT + pFilter.getDescription(  ) + ProfilesConstants.PERCENT );
+        daoUtil.setString( 1, ProfilesConstants.PERCENT + pFilter.getKey( ) + ProfilesConstants.PERCENT );
+        daoUtil.setString( 2, ProfilesConstants.PERCENT + pFilter.getDescription( ) + ProfilesConstants.PERCENT );
 
-        daoUtil.executeQuery(  );
+        daoUtil.executeQuery( );
 
-        while ( daoUtil.next(  ) )
+        while ( daoUtil.next( ) )
         {
-            Profile profile = new Profile(  );
+            Profile profile = new Profile( );
             profile.setKey( daoUtil.getString( 1 ) );
             profile.setDescription( daoUtil.getString( 2 ) );
 
             listFilteredProfiles.add( profile );
         }
 
-        daoUtil.free(  );
+        daoUtil.free( );
 
         return listFilteredProfiles;
     }
 
     /**
-    * {@inheritDoc}
-    */
+     * {@inheritDoc}
+     */
     @Override
     public boolean checkExistProfile( String strProfileKey, Plugin plugin )
     {
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT, plugin );
         daoUtil.setString( 1, strProfileKey );
-        daoUtil.executeQuery(  );
+        daoUtil.executeQuery( );
 
-        if ( daoUtil.next(  ) )
+        boolean bResult = false;
+        if ( daoUtil.next( ) )
         {
-            daoUtil.free(  );
-
-            return true;
+            bResult = true;
         }
-        else
-        {
-            daoUtil.free(  );
-
-            return false;
-        }
+        daoUtil.free( );
+        return bResult;
     }
 
     /**
-    * {@inheritDoc}
-    */
+     * {@inheritDoc}
+     */
     @Override
     public ReferenceList getProfileList( Plugin plugin )
     {
-        ReferenceList listProfiles = new ReferenceList(  );
+        ReferenceList listProfiles = new ReferenceList( );
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECTALL, plugin );
-        daoUtil.executeQuery(  );
+        daoUtil.executeQuery( );
 
-        while ( daoUtil.next(  ) )
+        while ( daoUtil.next( ) )
         {
-            Profile profile = new Profile(  );
+            Profile profile = new Profile( );
             profile.setKey( daoUtil.getString( 1 ) );
             profile.setDescription( daoUtil.getString( 2 ) );
 
-            listProfiles.addItem( profile.getKey(  ), profile.getKey(  ) );
+            listProfiles.addItem( profile.getKey( ), profile.getKey( ) );
         }
 
-        daoUtil.free(  );
+        daoUtil.free( );
 
         return listProfiles;
     }
 
     /**
-    * {@inheritDoc}
-    */
+     * {@inheritDoc}
+     */
     @Override
     public boolean checkProfileAttributed( String strProfileKey, Plugin plugin )
     {
@@ -264,27 +259,27 @@ public class ProfileDAO implements IProfileDAO
 
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_CHECK_PROFILE_ATTRIBUTED, plugin );
         daoUtil.setString( 1, strProfileKey );
-        daoUtil.executeQuery(  );
+        daoUtil.executeQuery( );
 
-        if ( daoUtil.next(  ) )
+        if ( daoUtil.next( ) )
         {
             bInUse = true;
         }
 
-        daoUtil.free(  );
+        daoUtil.free( );
 
         return bInUse;
     }
 
     /**
-    * {@inheritDoc}
-    */
+     * {@inheritDoc}
+     */
     @Override
     public List<Profile> selectProfileByIdUser( int nIdUser, Plugin plugin )
     {
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_PROFILE_FROM_ID_USER, plugin );
         daoUtil.setInt( 1, nIdUser );
-        daoUtil.executeQuery(  );
+        daoUtil.executeQuery( );
 
         List<Profile> listProfiles = new ArrayList<Profile>( );
 
@@ -296,7 +291,7 @@ public class ProfileDAO implements IProfileDAO
             listProfiles.add( profile );
         }
 
-        daoUtil.free(  );
+        daoUtil.free( );
 
         return listProfiles;
     }
@@ -304,34 +299,34 @@ public class ProfileDAO implements IProfileDAO
     /* RIGHTS */
 
     /**
-    * {@inheritDoc}
-    */
+     * {@inheritDoc}
+     */
     @Override
     public List<Right> selectRightsListForProfile( String strProfileKey, Plugin plugin )
     {
-        List<Right> listRights = new ArrayList<Right>(  );
+        List<Right> listRights = new ArrayList<Right>( );
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_RIGHTS_LIST_FOR_PROFILE, plugin );
 
         daoUtil.setString( 1, strProfileKey );
 
-        daoUtil.executeQuery(  );
+        daoUtil.executeQuery( );
 
-        while ( daoUtil.next(  ) )
+        while ( daoUtil.next( ) )
         {
-            Right right = new Right(  );
+            Right right = new Right( );
             right.setId( daoUtil.getString( 1 ) );
 
             listRights.add( right );
         }
 
-        daoUtil.free(  );
+        daoUtil.free( );
 
         return listRights;
     }
 
     /**
-    * {@inheritDoc}
-    */
+     * {@inheritDoc}
+     */
     @Override
     public boolean hasRight( String strProfileKey, String strIdRight, Plugin plugin )
     {
@@ -339,14 +334,14 @@ public class ProfileDAO implements IProfileDAO
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_PROFILE_RIGHT, plugin );
         daoUtil.setString( 1, strProfileKey );
         daoUtil.setString( 2, strIdRight );
-        daoUtil.executeQuery(  );
+        daoUtil.executeQuery( );
 
-        if ( daoUtil.next(  ) )
+        if ( daoUtil.next( ) )
         {
             bHasRight = true;
         }
 
-        daoUtil.free(  );
+        daoUtil.free( );
 
         return bHasRight;
     }
@@ -361,8 +356,8 @@ public class ProfileDAO implements IProfileDAO
         daoUtil.setString( 1, strProfileKey );
         daoUtil.setString( 2, strIdRight );
 
-        daoUtil.executeUpdate(  );
-        daoUtil.free(  );
+        daoUtil.executeUpdate( );
+        daoUtil.free( );
     }
 
     /**
@@ -375,8 +370,8 @@ public class ProfileDAO implements IProfileDAO
         daoUtil.setString( 1, strProfileKey );
         daoUtil.setString( 2, strIdRight );
 
-        daoUtil.executeUpdate(  );
-        daoUtil.free(  );
+        daoUtil.executeUpdate( );
+        daoUtil.free( );
     }
 
     /**
@@ -388,8 +383,8 @@ public class ProfileDAO implements IProfileDAO
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_RIGHTS, plugin );
         daoUtil.setString( 1, strProfileKey );
 
-        daoUtil.executeUpdate(  );
-        daoUtil.free(  );
+        daoUtil.executeUpdate( );
+        daoUtil.free( );
     }
 
     /* WORKGROUPS */
@@ -400,29 +395,29 @@ public class ProfileDAO implements IProfileDAO
     @Override
     public List<AdminWorkgroup> selectWorkgroupsListForProfile( String strProfileKey, Plugin plugin )
     {
-        List<AdminWorkgroup> listWorkgroups = new ArrayList<AdminWorkgroup>(  );
+        List<AdminWorkgroup> listWorkgroups = new ArrayList<AdminWorkgroup>( );
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_WORKGROUPS_LIST_FOR_PROFILE, plugin );
 
         daoUtil.setString( 1, strProfileKey );
 
-        daoUtil.executeQuery(  );
+        daoUtil.executeQuery( );
 
-        while ( daoUtil.next(  ) )
+        while ( daoUtil.next( ) )
         {
-            AdminWorkgroup workgroup = new AdminWorkgroup(  );
+            AdminWorkgroup workgroup = new AdminWorkgroup( );
             workgroup.setKey( daoUtil.getString( 1 ) );
 
             listWorkgroups.add( workgroup );
         }
 
-        daoUtil.free(  );
+        daoUtil.free( );
 
         return listWorkgroups;
     }
 
     /**
-    * {@inheritDoc}
-    */
+     * {@inheritDoc}
+     */
     @Override
     public boolean hasWorkgroup( String strProfileKey, String strWorkgroupKey, Plugin plugin )
     {
@@ -430,14 +425,14 @@ public class ProfileDAO implements IProfileDAO
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_PROFILE_WORKGROUP, plugin );
         daoUtil.setString( 1, strProfileKey );
         daoUtil.setString( 2, strWorkgroupKey );
-        daoUtil.executeQuery(  );
+        daoUtil.executeQuery( );
 
-        if ( daoUtil.next(  ) )
+        if ( daoUtil.next( ) )
         {
             bHasWorkgroup = true;
         }
 
-        daoUtil.free(  );
+        daoUtil.free( );
 
         return bHasWorkgroup;
     }
@@ -452,8 +447,8 @@ public class ProfileDAO implements IProfileDAO
         daoUtil.setString( 1, strProfileKey );
         daoUtil.setString( 2, strWorkgroupKey );
 
-        daoUtil.executeUpdate(  );
-        daoUtil.free(  );
+        daoUtil.executeUpdate( );
+        daoUtil.free( );
     }
 
     /**
@@ -466,8 +461,8 @@ public class ProfileDAO implements IProfileDAO
         daoUtil.setString( 1, strProfileKey );
         daoUtil.setString( 2, strWorkgroupKey );
 
-        daoUtil.executeUpdate(  );
-        daoUtil.free(  );
+        daoUtil.executeUpdate( );
+        daoUtil.free( );
     }
 
     /**
@@ -479,8 +474,8 @@ public class ProfileDAO implements IProfileDAO
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_WORKGROUPS, plugin );
         daoUtil.setString( 1, strProfileKey );
 
-        daoUtil.executeUpdate(  );
-        daoUtil.free(  );
+        daoUtil.executeUpdate( );
+        daoUtil.free( );
     }
 
     /* ROLES */
@@ -491,29 +486,29 @@ public class ProfileDAO implements IProfileDAO
     @Override
     public List<AdminRole> selectRolesListForProfile( String strProfileKey, Plugin plugin )
     {
-        List<AdminRole> listRoles = new ArrayList<AdminRole>(  );
+        List<AdminRole> listRoles = new ArrayList<AdminRole>( );
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_ROLES_LIST_FOR_PROFILE, plugin );
 
         daoUtil.setString( 1, strProfileKey );
 
-        daoUtil.executeQuery(  );
+        daoUtil.executeQuery( );
 
-        while ( daoUtil.next(  ) )
+        while ( daoUtil.next( ) )
         {
-            AdminRole role = new AdminRole(  );
+            AdminRole role = new AdminRole( );
             role.setKey( daoUtil.getString( 1 ) );
 
             listRoles.add( role );
         }
 
-        daoUtil.free(  );
+        daoUtil.free( );
 
         return listRoles;
     }
 
     /**
-    * {@inheritDoc}
-    */
+     * {@inheritDoc}
+     */
     @Override
     public boolean hasRole( String strProfileKey, String strRoleKey, Plugin plugin )
     {
@@ -521,14 +516,14 @@ public class ProfileDAO implements IProfileDAO
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_PROFILE_ROLE, plugin );
         daoUtil.setString( 1, strProfileKey );
         daoUtil.setString( 2, strRoleKey );
-        daoUtil.executeQuery(  );
+        daoUtil.executeQuery( );
 
-        if ( daoUtil.next(  ) )
+        if ( daoUtil.next( ) )
         {
             bHasRole = true;
         }
 
-        daoUtil.free(  );
+        daoUtil.free( );
 
         return bHasRole;
     }
@@ -543,8 +538,8 @@ public class ProfileDAO implements IProfileDAO
         daoUtil.setString( 1, strProfileKey );
         daoUtil.setString( 2, strRoleKey );
 
-        daoUtil.executeUpdate(  );
-        daoUtil.free(  );
+        daoUtil.executeUpdate( );
+        daoUtil.free( );
     }
 
     /**
@@ -557,8 +552,8 @@ public class ProfileDAO implements IProfileDAO
         daoUtil.setString( 1, strProfileKey );
         daoUtil.setString( 2, strRoleKey );
 
-        daoUtil.executeUpdate(  );
-        daoUtil.free(  );
+        daoUtil.executeUpdate( );
+        daoUtil.free( );
     }
 
     /**
@@ -570,8 +565,8 @@ public class ProfileDAO implements IProfileDAO
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_ROLES, plugin );
         daoUtil.setString( 1, strProfileKey );
 
-        daoUtil.executeUpdate(  );
-        daoUtil.free(  );
+        daoUtil.executeUpdate( );
+        daoUtil.free( );
     }
 
     /* USERS */
@@ -582,29 +577,29 @@ public class ProfileDAO implements IProfileDAO
     @Override
     public List<AdminUser> selectUsersListForProfile( String strProfileKey, Plugin plugin )
     {
-        List<AdminUser> listUsers = new ArrayList<AdminUser>(  );
+        List<AdminUser> listUsers = new ArrayList<AdminUser>( );
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_USERS_LIST_FOR_PROFILE, plugin );
 
         daoUtil.setString( 1, strProfileKey );
 
-        daoUtil.executeQuery(  );
+        daoUtil.executeQuery( );
 
-        while ( daoUtil.next(  ) )
+        while ( daoUtil.next( ) )
         {
-            AdminUser user = new AdminUser(  );
+            AdminUser user = new AdminUser( );
             user.setUserId( daoUtil.getInt( 1 ) );
 
             listUsers.add( user );
         }
 
-        daoUtil.free(  );
+        daoUtil.free( );
 
         return listUsers;
     }
 
     /**
-    * {@inheritDoc}
-    */
+     * {@inheritDoc}
+     */
     @Override
     public boolean hasUser( String strProfileKey, int nIdUser, Plugin plugin )
     {
@@ -612,14 +607,14 @@ public class ProfileDAO implements IProfileDAO
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_PROFILE_USER, plugin );
         daoUtil.setString( 1, strProfileKey );
         daoUtil.setInt( 2, nIdUser );
-        daoUtil.executeQuery(  );
+        daoUtil.executeQuery( );
 
-        if ( daoUtil.next(  ) )
+        if ( daoUtil.next( ) )
         {
             bHasUser = true;
         }
 
-        daoUtil.free(  );
+        daoUtil.free( );
 
         return bHasUser;
     }
@@ -634,8 +629,8 @@ public class ProfileDAO implements IProfileDAO
         daoUtil.setString( 1, strProfileKey );
         daoUtil.setInt( 2, nIdUser );
 
-        daoUtil.executeUpdate(  );
-        daoUtil.free(  );
+        daoUtil.executeUpdate( );
+        daoUtil.free( );
     }
 
     /**
@@ -648,8 +643,8 @@ public class ProfileDAO implements IProfileDAO
         daoUtil.setInt( 1, nIdUser );
         daoUtil.setString( 2, strProfileKey );
 
-        daoUtil.executeUpdate(  );
-        daoUtil.free(  );
+        daoUtil.executeUpdate( );
+        daoUtil.free( );
     }
 
     /**
@@ -661,8 +656,8 @@ public class ProfileDAO implements IProfileDAO
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_USERS, plugin );
         daoUtil.setString( 1, strProfileKey );
 
-        daoUtil.executeUpdate(  );
-        daoUtil.free(  );
+        daoUtil.executeUpdate( );
+        daoUtil.free( );
     }
 
     /**
@@ -674,8 +669,8 @@ public class ProfileDAO implements IProfileDAO
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_PROFILES_FROM_USER, plugin );
         daoUtil.setInt( 1, nIdUser );
 
-        daoUtil.executeUpdate(  );
-        daoUtil.free(  );
+        daoUtil.executeUpdate( );
+        daoUtil.free( );
     }
 
     /**
@@ -688,14 +683,14 @@ public class ProfileDAO implements IProfileDAO
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_PROFILE_USER_FROM_ID_USER_AND_PROFILE_KEY, plugin );
         daoUtil.setInt( 1, nIdUser );
         daoUtil.setString( 2, strProfileKey );
-        daoUtil.executeQuery(  );
+        daoUtil.executeQuery( );
 
-        if ( daoUtil.next(  ) )
+        if ( daoUtil.next( ) )
         {
             bHasProfile = true;
         }
 
-        daoUtil.free(  );
+        daoUtil.free( );
 
         return bHasProfile;
     }
@@ -713,15 +708,15 @@ public class ProfileDAO implements IProfileDAO
 
         daoUtil.setString( 1, strProfileKey );
 
-        daoUtil.executeQuery(  );
+        daoUtil.executeQuery( );
 
-        if ( daoUtil.next(  ) )
+        if ( daoUtil.next( ) )
         {
-            view = new View(  );
+            view = new View( );
             view.setKey( daoUtil.getString( 1 ) );
         }
 
-        daoUtil.free(  );
+        daoUtil.free( );
 
         return view;
     }
@@ -735,7 +730,7 @@ public class ProfileDAO implements IProfileDAO
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_VIEW, plugin );
         daoUtil.setString( 1, strProfileKey );
 
-        daoUtil.executeUpdate(  );
-        daoUtil.free(  );
+        daoUtil.executeUpdate( );
+        daoUtil.free( );
     }
 }
