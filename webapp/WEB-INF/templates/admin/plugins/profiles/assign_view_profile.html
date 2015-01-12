@@ -1,48 +1,54 @@
-<div class="row-fluid">
-	<div class="span3">
-		<fieldset>
-    	<legend>#i18n{profiles.assign_rights_profile.profileKey} : ${profile.key}</legend>
-        <p><strong>#i18n{profiles.assign_rights_profile.profileDescription}</strong></p>
-		<p>${profile.description}</p>
-        <p><strong>#i18n{profiles.assign_rights_profile.actions}</strong></p>
-		<p>
-		<#if profile.actions?exists>
-			<#list profile.actions as action>
-				<a class="btn  <#if action.permission!='DELETE_DELETE'>btn-primary<#else>btn-danger</#if> btn-small" href="${action.url}?profile_key=${profile.key}"  title="${action.description}" >
-					<i class="${action.iconUrl} icon-white"></i>
-				</a>
-			</#list>
-		</#if>
-        </p>
-		<p><@item_navigation item_navigator=item_navigator /></p>
-        </fieldset>
-    </div>
-	<div class="span9">
-		<fieldset>
-	    <legend>#i18n{profiles.assign_view_profile.pageTitle}</legend>
-		<#if available_list?size &gt; 0 >
-			<form class="form-horizontal" name="assign-view-profile" method="post" action="jsp/admin/plugins/profiles/DoAssignViewProfile.jsp">
-			<input type="hidden" name="profile_key" value="${profile.key}" />
-			<label></label> 
-			<#list available_list as available_item>
-			<div class="controls">
-				<input type="radio" name="view_key" value="${available_item.code}" <#if assigned_view?exists && available_item.code == assigned_view.key> checked="checked"</#if>/> ${available_item.code}
+<div class="row">
+	<div class="col-xs-12 col-sm-12 col-md-12">
+		<div class="box box-solid box-success">
+			<div class="box-header">
+				<h3 class="box-title">#i18n{profiles.assign_rights_profile.profileKey} : ${profile.key}</h3>
+				<div class="box-tools pull-right">
+					<#if profile.actions?exists>
+						<#list profile.actions as action>
+							<a class="btn  <#if action.permission!='DELETE_DELETE'>btn-primary<#else>btn-danger</#if> btn-xs btn-flat" href="${action.url}?profile_key=${profile.key}"  title="${action.description}" >
+								<i class="${action.iconUrl}"></i>
+							</a>
+						</#list>
+					</#if>
+				</div>
 			</div>
-			</#list>
-			<div class="controls">
-			<input type="radio" name="view_key" value="" <#if !assigned_view?exists>checked="checked"</#if>/> #i18n{profiles.assign_view_profile.noValue}
-			</div>
-			<div class="form-actions">
-			<#if permission>
-				<button class="btn btn-primary btn-small" type="submit" >#i18n{profiles.assign_view_profile.labelButtonValidate}</button>
-			</#if>
-			<button class="btn btn-small" type="submit" >
-			<i class="icon-remove-circle icon-white"></i>&nbsp;#i18n{portal.admin.message.buttonCancel}</button>
-			</div>
-			</form>
-	    <#else>
-	   		<p class="label label-warning">#i18n{profiles.assign_view_profile.noViewToAssign}</p>
-	        </#if>
-		</fieldset>
+			 <div class="box-body">	
+				<@item_navigation item_navigator=item_navigator />
+				<#if available_list?size &gt; 0 >
+					<form class="form-horizontal" name="assign-view-profile" method="post" action="jsp/admin/plugins/profiles/DoAssignViewProfile.jsp">
+						<input type="hidden" name="profile_key" value="${profile.key}">
+						<div class="form-group">
+							<label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3" for="view_key"></label>
+							<div class="col-xs-12 col-sm-12 col-md-6">
+							<#list available_list as available_item>
+							<div class="radio">
+								<label>
+									<input type="radio" name="view_key" value="${available_item.code}" <#if assigned_view?exists && available_item.code == assigned_view.key> checked="checked"</#if>/> ${available_item.code}
+								</label>	
+							</div>	
+							</#list>
+							<div class="radio">
+								<label>
+									<input type="radio" name="view_key" value="" <#if !assigned_view?exists>checked="checked"</#if>/> #i18n{profiles.assign_view_profile.noValue}
+								</label>	
+							</div>
+							</div>
+						</div>
+						<div class="form-group">
+							<div class="col-xs-12 col-sm-12 col-md-6 col-md-offset-3 ">
+							<#if permission>
+								<button class="btn btn-primary btn-flat" type="submit" >
+									#i18n{profiles.assign_view_profile.labelButtonValidate}
+								</button>
+							</#if>
+							</div>
+						</div>
+					</form>
+				<#else>
+					<p class="label label-warning">#i18n{profiles.assign_view_profile.noViewToAssign}</p>
+				</#if>
+			</div>	
+		</div>	
     </div>	
 </div>

@@ -1,25 +1,35 @@
-<div class="row-fluid">
-	<div class="span12">
-		<fieldset>
-		<legend>#i18n{profiles.create_view.pageTitle}</legend>
-			<form class="form-horizontal" method="post" name="create_view" action="jsp/admin/plugins/profiles/DoCreateView.jsp">
-			<div class="control-group">
-			<label class="control-label" for="view_key" >#i18n{profiles.create_view.key} * :</label>
-				<div class="controls">
-					<input type="text" id="view_key" name="view_key" tabindex="1" class="input-mini" maxlength="50" />
+<div class="row">
+	<div class="col-xs-12 col-sm-12 col-md-12">
+		<div class="box box-solid box-success">
+			<div class="box-header">
+				<h3 class="box-title">#i18n{profiles.create_view.pageTitle}</h3>
+            </div>
+            <div class="box-body">
+				<form class="form-horizontal" method="post" name="create_view" action="jsp/admin/plugins/profiles/DoCreateView.jsp">
+				<div class="form-group">
+				<label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3" for="view_key" >#i18n{profiles.create_view.key} *</label>
+					<div class="col-xs-12 col-sm-12 col-md-2">
+						<input type="text" id="view_key" name="view_key" tabindex="1" class="form-control" maxlength="50" >
+					</div>
+				</div>			
+				<div class="form-group">
+				<label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3" for="view_description" >#i18n{profiles.create_view.description} *</label>
+					<div class="col-xs-12 col-sm-12 col-md-5">
+						<input type="text" id="view_description" name="view_description" tabindex="2" class="form-control"  maxlength="255" >
+					</div>
+				</div>			
+				<div class="form-group">
+					<div class="col-xs-12 col-sm-12 col-md-9 col-md-offset-3">
+					<button class="btn btn-primary btn-flat" type="submit">
+						<i class="fa fa-check"></i>&nbsp;#i18n{profiles.create_view.buttonLabelCreate}
+					</button>
+					<a class="btn btn-default" href="jsp/admin/plugins/profiles/ManageViews.jsp" title="#i18n{portal.admin.message.buttonCancel}">
+						<i class="fa fa-remove"></i>&nbsp;#i18n{portal.admin.message.buttonCancel}
+					</a>
+					</div>
 				</div>
-			</div>			
-			<div class="control-group">
-			<label class="control-label" for="view_description" >#i18n{profiles.create_view.description} * :</label>
-				<div class="controls">
-					<input type="text" id="view_description" name="view_description" tabindex="1"  maxlength="255" />
-				</div>
-			</div>			
-			<div class="form-actions">
-				<button class="btn btn-primary btn-small" type="submit"><i class="icon-ok icon-white"></i>&nbsp;#i18n{profiles.create_view.buttonLabelCreate}</button>
-				<button class="btn btn-small" type="button" onclick="javascript:window.history.back();" >
-				<i class="icon-remove-circle"></i>&nbsp;#i18n{portal.admin.message.buttonCancel}</button>
+				</form>
 			</div>
-			</form>
-	 </fieldset>
+		</div>
+	</div>
 </div>
