@@ -1,12 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document>
-	<properties>
-		<title>Plugin</title>
-	</properties>
-	<body>
-		<section name="Plugin">
-			<subsection name="Introduction">
-			</subsection>
-		</section>
-	</body>
+    <properties>
+        <title>Plugin Profiles</title>
+    </properties>
+    <body>
+        <section name="Plugin Profiles">
+            <subsection name="Introduction">
+                <p>
+                    This plugin allows to define user profiles based
+                     a set of roles and rights.
+                 </p>
+                 <p>
+                     It thus facilitates the management of authorizations
+                </p>
+            </subsection>
+        </section>
+    </body>
 </document>
