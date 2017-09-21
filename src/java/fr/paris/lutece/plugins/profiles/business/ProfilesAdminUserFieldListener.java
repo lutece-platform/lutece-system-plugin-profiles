@@ -184,7 +184,7 @@ public class ProfilesAdminUserFieldListener extends SimpleAdminUserFieldListener
                 {
                     right = RightHome.findByPrimaryKey( right.getId(  ) );
 
-                    if ( !AdminUserHome.hasRight( user, right.getId(  ) ) &&
+                    if ( right != null && !AdminUserHome.hasRight( user, right.getId(  ) ) &&
                             ( user.getUserLevel(  ) <= right.getLevel(  ) ) )
                     {
                         AdminUserHome.createRightForUser( nIdUser, right.getId(  ) );
@@ -196,7 +196,7 @@ public class ProfilesAdminUserFieldListener extends SimpleAdminUserFieldListener
                 {
                     role = AdminRoleHome.findByPrimaryKey( role.getKey(  ) );
 
-                    if ( !AdminUserHome.hasRole( user, role.getKey(  ) ) )
+                    if ( role != null && !AdminUserHome.hasRole( user, role.getKey(  ) ) )
                     {
                         AdminUserHome.createRoleForUser( nIdUser, role.getKey(  ) );
                     }
@@ -207,7 +207,7 @@ public class ProfilesAdminUserFieldListener extends SimpleAdminUserFieldListener
                 {
                     workgroup = AdminWorkgroupHome.findByPrimaryKey( workgroup.getKey(  ) );
 
-                    if ( !AdminWorkgroupHome.isUserInWorkgroup( user, workgroup.getKey(  ) ) )
+                    if ( workgroup != null && !AdminWorkgroupHome.isUserInWorkgroup( user, workgroup.getKey(  ) ) )
                     {
                         AdminWorkgroupHome.addUserForWorkgroup( user, workgroup.getKey(  ) );
                     }
