@@ -34,7 +34,7 @@
 package fr.paris.lutece.plugins.profiles.business;
 
 import fr.paris.lutece.plugins.profiles.business.views.View;
-import fr.paris.lutece.portal.business.rbac.AdminRole;
+import fr.paris.lutece.portal.business.rbac.RBACRole;
 import fr.paris.lutece.portal.business.right.Right;
 import fr.paris.lutece.portal.business.user.AdminUser;
 import fr.paris.lutece.portal.business.workgroup.AdminWorkgroup;
@@ -364,7 +364,7 @@ public final class ProfileHome
      *            Plugin
      * @return The list of roles
      */
-    public static List<AdminRole> getRolesListForProfile( String strProfileKey, Plugin plugin )
+    public static List<RBACRole> getRolesListForProfile( String strProfileKey, Plugin plugin )
     {
         return _dao.selectRolesListForProfile( strProfileKey, plugin );
     }

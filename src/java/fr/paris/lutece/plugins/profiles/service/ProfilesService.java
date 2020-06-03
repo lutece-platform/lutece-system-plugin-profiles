@@ -40,7 +40,7 @@ import fr.paris.lutece.plugins.profiles.business.ProfileHome;
 import fr.paris.lutece.plugins.profiles.business.views.View;
 import fr.paris.lutece.plugins.profiles.service.action.IProfileActionService;
 import fr.paris.lutece.plugins.profiles.utils.constants.ProfilesConstants;
-import fr.paris.lutece.portal.business.rbac.AdminRole;
+import fr.paris.lutece.portal.business.rbac.RBACRole;
 import fr.paris.lutece.portal.business.right.Right;
 import fr.paris.lutece.portal.business.user.AdminUser;
 import fr.paris.lutece.portal.business.user.AdminUserHome;
@@ -166,7 +166,7 @@ public class ProfilesService implements IProfilesService
 
         List<Profile> listProfiles = findProfileByIdUser( nIdUser, plugin );
         Set<Right> listProfilesRights = new HashSet<Right>( );
-        Set<AdminRole> listProfilesRoles = new HashSet<AdminRole>( );
+        Set<RBACRole> listProfilesRoles = new HashSet<RBACRole>( );
         Set<AdminWorkgroup> listProfilesWorkgroups = new HashSet<AdminWorkgroup>( );
         for ( Profile profile : listProfiles )
         {
@@ -189,7 +189,7 @@ public class ProfilesService implements IProfilesService
         }
 
         // Remove roles to the user
-        for ( AdminRole role : getRolesListForProfile( strProfileKey, plugin ) )
+        for ( RBACRole role : getRolesListForProfile( strProfileKey, plugin ) )
         {
             if ( !listProfilesRoles.contains( role ) && AdminUserHome.hasRole( user, role.getKey( ) ) )
             {
@@ -462,7 +462,7 @@ public class ProfilesService implements IProfilesService
      * {@inheritDoc}
      */
     @Override
-    public List<AdminRole> getRolesListForProfile( String strProfileKey, Plugin plugin )
+    public List<RBACRole> getRolesListForProfile( String strProfileKey, Plugin plugin )
     {
         return ProfileHome.getRolesListForProfile( strProfileKey, plugin );
     }

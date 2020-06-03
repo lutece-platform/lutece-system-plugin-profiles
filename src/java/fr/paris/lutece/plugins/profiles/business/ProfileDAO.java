@@ -35,7 +35,7 @@ package fr.paris.lutece.plugins.profiles.business;
 
 import fr.paris.lutece.plugins.profiles.business.views.View;
 import fr.paris.lutece.plugins.profiles.utils.constants.ProfilesConstants;
-import fr.paris.lutece.portal.business.rbac.AdminRole;
+import fr.paris.lutece.portal.business.rbac.RBACRole;
 import fr.paris.lutece.portal.business.right.Right;
 import fr.paris.lutece.portal.business.user.AdminUser;
 import fr.paris.lutece.portal.business.workgroup.AdminWorkgroup;
@@ -483,9 +483,9 @@ public class ProfileDAO implements IProfileDAO
      * {@inheritDoc}
      */
     @Override
-    public List<AdminRole> selectRolesListForProfile( String strProfileKey, Plugin plugin )
+    public List<RBACRole> selectRolesListForProfile( String strProfileKey, Plugin plugin )
     {
-        List<AdminRole> listRoles = new ArrayList<AdminRole>( );
+        List<RBACRole> listRoles = new ArrayList<RBACRole>( );
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_ROLES_LIST_FOR_PROFILE, plugin );
 
         daoUtil.setString( 1, strProfileKey );
@@ -494,7 +494,7 @@ public class ProfileDAO implements IProfileDAO
 
         while ( daoUtil.next( ) )
         {
-            AdminRole role = new AdminRole( );
+            RBACRole role = new RBACRole( );
             role.setKey( daoUtil.getString( 1 ) );
 
             listRoles.add( role );
