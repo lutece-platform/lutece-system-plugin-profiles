@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2014, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -32,7 +32,6 @@
  * License 1.0
  */
 package fr.paris.lutece.plugins.profiles.utils.constants;
-
 
 /**
  *
@@ -82,7 +81,7 @@ public final class ProfilesConstants
     public static final String PROPERTY_ASSIGN_PROFILES_VIEW_PAGETITLE = "profiles.assign_profiles_view.pageTitle";
     public static final String PROPERTY_ASSIGN_VIEW_PROFILE_PAGETITLE = "profiles.assign_view_profile.pageTitle";
 
-    // MARKS 
+    // MARKS
     public static final String MARK_LIST_PROFILES = "list_profiles";
     public static final String MARK_NB_ITEMS_PER_PAGE = "nb_items_per_page";
     public static final String MARK_PAGINATOR = "paginator";
@@ -154,7 +153,7 @@ public final class ProfilesConstants
     /**
      * Private constructor
      */
-    private ProfilesConstants(  )
+    private ProfilesConstants( )
     {
     }
 }

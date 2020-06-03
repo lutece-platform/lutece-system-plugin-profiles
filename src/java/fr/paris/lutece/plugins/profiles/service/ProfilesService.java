@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2014, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -71,7 +71,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
 
-
 /**
  * 
  * ProfilesService
@@ -113,8 +112,7 @@ public class ProfilesService implements IProfilesService
      * {@inheritDoc}
      */
     @Override
-    public List<ProfileAction> getListActions( AdminUser user, Profile profile, String strPermission, Locale locale,
-            Plugin plugin )
+    public List<ProfileAction> getListActions( AdminUser user, Profile profile, String strPermission, Locale locale, Plugin plugin )
     {
         List<ProfileAction> listActions = new ArrayList<ProfileAction>( );
 
@@ -149,17 +147,14 @@ public class ProfilesService implements IProfilesService
      * {@inheritDoc}
      */
     @Override
-    public void doUnassignUserFromProfile( int nIdUser, String strProfileKey, AdminUser currentUser,
-            HttpServletRequest request, Locale locale, Plugin plugin )
+    public void doUnassignUserFromProfile( int nIdUser, String strProfileKey, AdminUser currentUser, HttpServletRequest request, Locale locale, Plugin plugin )
     {
         AdminUser user = AdminUserHome.findByPrimaryKey( nIdUser );
 
         // Remove User Fields
-        List<IAttribute> listAttributes = AttributeService.getInstance( ).getPluginAttributesWithoutFields(
-                ProfilesPlugin.PLUGIN_NAME, locale );
+        List<IAttribute> listAttributes = AttributeService.getInstance( ).getPluginAttributesWithoutFields( ProfilesPlugin.PLUGIN_NAME, locale );
         IAttribute attribute = listAttributes.get( 0 );
-        List<AdminUserField> listUserFields = AdminUserFieldHome.selectUserFieldsByIdUserIdAttribute(
-                user.getUserId( ), attribute.getIdAttribute( ) );
+        List<AdminUserField> listUserFields = AdminUserFieldHome.selectUserFieldsByIdUserIdAttribute( user.getUserId( ), attribute.getIdAttribute( ) );
 
         for ( AdminUserField userField : listUserFields )
         {
@@ -205,8 +200,7 @@ public class ProfilesService implements IProfilesService
         // Remove workgroups to the user
         for ( AdminWorkgroup workgroup : getWorkgroupsListForProfile( strProfileKey, plugin ) )
         {
-            if ( !listProfilesWorkgroups.contains( workgroup )
-                    && AdminWorkgroupHome.isUserInWorkgroup( user, workgroup.getKey( ) ) )
+            if ( !listProfilesWorkgroups.contains( workgroup ) && AdminWorkgroupHome.isUserInWorkgroup( user, workgroup.getKey( ) ) )
             {
                 AdminWorkgroupHome.removeUserFromWorkgroup( user, workgroup.getKey( ) );
             }
@@ -224,8 +218,7 @@ public class ProfilesService implements IProfilesService
             ProfileHome.create( profile, plugin );
 
             // Create user field
-            List<IAttribute> listAttributes = AttributeService.getInstance( ).getPluginAttributesWithoutFields(
-                    ProfilesPlugin.PLUGIN_NAME, locale );
+            List<IAttribute> listAttributes = AttributeService.getInstance( ).getPluginAttributesWithoutFields( ProfilesPlugin.PLUGIN_NAME, locale );
             AttributeField attributeField = new AttributeField( );
             attributeField.setTitle( profile.getKey( ) );
             attributeField.setValue( profile.getDescription( ) );
@@ -248,21 +241,18 @@ public class ProfilesService implements IProfilesService
             ProfileHome.update( profile, plugin );
 
             // Modify user field
-            List<IAttribute> listAttributes = AttributeService.getInstance( ).getPluginAttributesWithFields(
-                    ProfilesPlugin.PLUGIN_NAME, locale );
+            List<IAttribute> listAttributes = AttributeService.getInstance( ).getPluginAttributesWithFields( ProfilesPlugin.PLUGIN_NAME, locale );
 
             for ( IAttribute attribute : listAttributes )
             {
-                if ( ( attribute == null ) || ( attribute.getListAttributeFields( ) == null )
-                        || attribute.getListAttributeFields( ).isEmpty( ) )
+                if ( ( attribute == null ) || ( attribute.getListAttributeFields( ) == null ) || attribute.getListAttributeFields( ).isEmpty( ) )
                 {
                     continue;
                 }
 
                 for ( AttributeField attributeField : attribute.getListAttributeFields( ) )
                 {
-                    if ( ( attributeField.getTitle( ) != null )
-                            && attributeField.getTitle( ).equals( profile.getKey( ) ) )
+                    if ( ( attributeField.getTitle( ) != null ) && attributeField.getTitle( ).equals( profile.getKey( ) ) )
                     {
                         attributeField.setValue( profile.getDescription( ) );
                         AttributeFieldService.getInstance( ).updateAttributeField( attributeField );
@@ -285,13 +275,11 @@ public class ProfilesService implements IProfilesService
         ProfileHome.remove( strProfileKey, plugin );
 
         // Remove user field
-        List<IAttribute> listAttributes = AttributeService.getInstance( ).getPluginAttributesWithFields(
-                ProfilesPlugin.PLUGIN_NAME, locale );
+        List<IAttribute> listAttributes = AttributeService.getInstance( ).getPluginAttributesWithFields( ProfilesPlugin.PLUGIN_NAME, locale );
 
         for ( IAttribute attribute : listAttributes )
         {
-            if ( ( attribute == null ) || ( attribute.getListAttributeFields( ) == null )
-                    || attribute.getListAttributeFields( ).isEmpty( ) )
+            if ( ( attribute == null ) || ( attribute.getListAttributeFields( ) == null ) || attribute.getListAttributeFields( ).isEmpty( ) )
             {
                 continue;
             }

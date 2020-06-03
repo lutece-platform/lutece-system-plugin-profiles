@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2014, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -36,7 +36,6 @@ package fr.paris.lutece.plugins.profiles.service.views;
 import fr.paris.lutece.portal.service.dashboard.DashboardListenerService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 
-
 /**
  *
  * ProfilesAdminUserFieldListenerService
@@ -50,15 +49,16 @@ public final class ViewDashboardListenerService
     /**
      * Private constructor
      */
-    private ViewDashboardListenerService(  )
+    private ViewDashboardListenerService( )
     {
     }
 
     /**
      * Get DashboardListenerService
+     * 
      * @return the service
      */
-    public static DashboardListenerService getService(  )
+    public static DashboardListenerService getService( )
     {
         return (DashboardListenerService) SpringContextService.getBean( BEAN_VIEW_DASHBOARD_SERVICE );
     }

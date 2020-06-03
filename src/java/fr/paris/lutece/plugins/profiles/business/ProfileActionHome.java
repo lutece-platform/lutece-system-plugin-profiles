@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2014, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -39,7 +39,6 @@ import fr.paris.lutece.portal.service.spring.SpringContextService;
 import java.util.List;
 import java.util.Locale;
 
-
 /**
  *
  * ProfileActionHome
@@ -53,14 +52,17 @@ public final class ProfileActionHome
     /**
      * Private constructor - this class need not be instantiated
      */
-    private ProfileActionHome(  )
+    private ProfileActionHome( )
     {
     }
 
     /**
      * Select profile actions
-     * @param locale Locale
-         * @param plugin Plugin
+     * 
+     * @param locale
+     *            Locale
+     * @param plugin
+     *            Plugin
      * @return list of profile actions
      */
     public static List<ProfileAction> selectActionsList( Locale locale, Plugin plugin )

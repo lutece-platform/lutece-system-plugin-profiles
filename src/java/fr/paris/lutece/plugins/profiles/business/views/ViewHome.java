@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2014, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -42,7 +42,6 @@ import fr.paris.lutece.util.ReferenceList;
 
 import java.util.List;
 
-
 /**
  *
  * ProfileHome
@@ -56,14 +55,17 @@ public final class ViewHome
     /**
      * Private constructor - this class need not be instantiated
      */
-    private ViewHome(  )
+    private ViewHome( )
     {
     }
 
     /**
      * Creation of an instance of View
-     * @param view The instance of the View which contains the informations to store
-     * @param plugin Plugin
+     * 
+     * @param view
+     *            The instance of the View which contains the informations to store
+     * @param plugin
+     *            Plugin
      * @return The instance of View which has been created with its primary key.
      */
     public static View create( View view, Plugin plugin )
@@ -75,8 +77,11 @@ public final class ViewHome
 
     /**
      * Update of the view which is specified in parameter
-     * @param view The instance of the view which contains the new data to store
-     * @param plugin Plugin
+     * 
+     * @param view
+     *            The instance of the view which contains the new data to store
+     * @param plugin
+     *            Plugin
      * @return The instance of the view which has been updated
      */
     public static View update( View view, Plugin plugin )
@@ -88,8 +93,11 @@ public final class ViewHome
 
     /**
      * Remove the View whose identifier is specified in parameter
-     * @param strViewKey The View object to remove
-     * @param plugin Plugin
+     * 
+     * @param strViewKey
+     *            The View object to remove
+     * @param plugin
+     *            Plugin
      */
     public static void remove( String strViewKey, Plugin plugin )
     {
@@ -101,8 +109,11 @@ public final class ViewHome
 
     /**
      * Returns an instance of a profile whose identifier is specified in parameter
-     * @param strViewKey The key of the View
-     * @param plugin Plugin
+     * 
+     * @param strViewKey
+     *            The key of the View
+     * @param plugin
+     *            Plugin
      * @return An instance of View
      */
     public static View findByPrimaryKey( String strViewKey, Plugin plugin )
@@ -112,7 +123,9 @@ public final class ViewHome
 
     /**
      * Returns a List of Views objects
-     * @param plugin Plugin
+     * 
+     * @param plugin
+     *            Plugin
      * @return A List of Views
      */
     public static List<View> findAll( Plugin plugin )
@@ -122,8 +135,11 @@ public final class ViewHome
 
     /**
      * Find Views by filter
-     * @param vFilter the Filter
-     * @param plugin Plugin
+     * 
+     * @param vFilter
+     *            the Filter
+     * @param plugin
+     *            Plugin
      * @return List of Views
      */
     public static List<View> findViewsByFilter( ViewFilter vFilter, Plugin plugin )
@@ -133,8 +149,11 @@ public final class ViewHome
 
     /**
      * Check if a view already exists or not
-     * @param strViewKey The view key
-     * @param plugin Plugin
+     * 
+     * @param strViewKey
+     *            The view key
+     * @param plugin
+     *            Plugin
      * @return true if it already exists, false otherwise
      */
     public static boolean checkExistView( String strViewKey, Plugin plugin )
@@ -144,7 +163,9 @@ public final class ViewHome
 
     /**
      * Get the list of Views
-     * @param plugin Plugin
+     * 
+     * @param plugin
+     *            Plugin
      * @return the list of Views
      */
     public static ReferenceList getViewsList( Plugin plugin )
@@ -156,8 +177,11 @@ public final class ViewHome
 
     /**
      * Get the list of profiles associated to the view
-     * @param strViewKey The view Key
-     * @param plugin Plugin
+     * 
+     * @param strViewKey
+     *            The view Key
+     * @param plugin
+     *            Plugin
      * @return The list of profile
      */
     public static List<Profile> getProfilesListForView( String strViewKey, Plugin plugin )
@@ -167,8 +191,11 @@ public final class ViewHome
 
     /**
      * Get the view from a profile
-     * @param strProfileKey the profile key
-     * @param plugin Plugin
+     * 
+     * @param strProfileKey
+     *            the profile key
+     * @param plugin
+     *            Plugin
      * @return the view associated to the profile
      */
     public static View findViewForProfile( String strProfileKey, Plugin plugin )
@@ -178,8 +205,11 @@ public final class ViewHome
 
     /**
      * Check if the given profile has a view or not
-     * @param strProfileKey the profile key
-     * @param plugin Plugin
+     * 
+     * @param strProfileKey
+     *            the profile key
+     * @param plugin
+     *            Plugin
      * @return true if the profile has the view, false otherwise
      */
     public static boolean hasView( String strProfileKey, Plugin plugin )
@@ -189,9 +219,13 @@ public final class ViewHome
 
     /**
      * Add a profile for a view
-     * @param strViewKey The view Key
-     * @param strProfileKey The profile Key
-     * @param plugin Plugin
+     * 
+     * @param strViewKey
+     *            The view Key
+     * @param strProfileKey
+     *            The profile Key
+     * @param plugin
+     *            Plugin
      */
     public static void addProfileForView( String strViewKey, String strProfileKey, Plugin plugin )
     {
@@ -200,8 +234,11 @@ public final class ViewHome
 
     /**
      * Remove a profile from a view
-     * @param strViewKey The view Key
-     * @param plugin Plugin
+     * 
+     * @param strViewKey
+     *            The view Key
+     * @param plugin
+     *            Plugin
      */
     public static void removeProfiles( String strViewKey, Plugin plugin )
     {
@@ -210,9 +247,13 @@ public final class ViewHome
 
     /**
      * Remove a view from a profile
-     * @param strViewKey the view key
-     * @param strProfileKey the profile key
-     * @param plugin Plugin
+     * 
+     * @param strViewKey
+     *            the view key
+     * @param strProfileKey
+     *            the profile key
+     * @param plugin
+     *            Plugin
      */
     public static void removeProfileFromView( String strViewKey, String strProfileKey, Plugin plugin )
     {
@@ -223,8 +264,11 @@ public final class ViewHome
 
     /**
      * Load the list of dashboards from a given view key
-     * @param strViewKey the view key
-     * @param plugin Plugin
+     * 
+     * @param strViewKey
+     *            the view key
+     * @param plugin
+     *            Plugin
      * @return a list of {@link IDashboardComponent}
      */
     public static List<IDashboardComponent> findDashboards( String strViewKey, Plugin plugin )
@@ -234,9 +278,13 @@ public final class ViewHome
 
     /**
      * Load the dashboard
-     * @param strDashboardName the dashboard name
-     * @param strViewKey the view key
-     * @param plugin Plugin
+     * 
+     * @param strDashboardName
+     *            the dashboard name
+     * @param strViewKey
+     *            the view key
+     * @param plugin
+     *            Plugin
      * @return the dashboard
      */
     public static IDashboardComponent findDashboard( String strDashboardName, String strViewKey, Plugin plugin )
@@ -246,9 +294,13 @@ public final class ViewHome
 
     /**
      * Insert a dashboard for a view
-     * @param strViewKey the view key
-     * @param dashboard the dashboard
-     * @param plugin Plugin
+     * 
+     * @param strViewKey
+     *            the view key
+     * @param dashboard
+     *            the dashboard
+     * @param plugin
+     *            Plugin
      */
     public static void createDashboard( String strViewKey, IDashboardComponent dashboard, Plugin plugin )
     {
@@ -257,8 +309,11 @@ public final class ViewHome
 
     /**
      * Delete all dashboards of a view
-     * @param strViewKey the view key
-     * @param plugin Plugin
+     * 
+     * @param strViewKey
+     *            the view key
+     * @param plugin
+     *            Plugin
      */
     public static void removeDashboards( String strViewKey, Plugin plugin )
     {
@@ -267,9 +322,13 @@ public final class ViewHome
 
     /**
      * Delete a dashboard of a view
-     * @param strViewKey the view key
-     * @param strDashboardName the dashboard name
-     * @param plugin Plugin
+     * 
+     * @param strViewKey
+     *            the view key
+     * @param strDashboardName
+     *            the dashboard name
+     * @param plugin
+     *            Plugin
      */
     public static void removeDashboard( String strViewKey, String strDashboardName, Plugin plugin )
     {
@@ -278,9 +337,13 @@ public final class ViewHome
 
     /**
      * Update a dashboard
-     * @param strViewKey the view key
-     * @param dashboard the dashboard
-     * @param plugin Plugin
+     * 
+     * @param strViewKey
+     *            the view key
+     * @param dashboard
+     *            the dashboard
+     * @param plugin
+     *            Plugin
      */
     public static void updateDashboard( String strViewKey, IDashboardComponent dashboard, Plugin plugin )
     {
@@ -289,20 +352,25 @@ public final class ViewHome
 
     /**
      * Loads the data of all the IDashboardComponent
-     * @param filter the filter
-     * @param strViewKey the view key
-     * @param plugin Plugin
+     * 
+     * @param filter
+     *            the filter
+     * @param strViewKey
+     *            the view key
+     * @param plugin
+     *            Plugin
      * @return the list which contains the data of all the IDashboardComponent
      */
-    public static List<IDashboardComponent> findDashboardsByFilter( DashboardFilter filter, String strViewKey,
-        Plugin plugin )
+    public static List<IDashboardComponent> findDashboardsByFilter( DashboardFilter filter, String strViewKey, Plugin plugin )
     {
         return _dao.selectDashboardsByFilter( filter, strViewKey, plugin );
     }
 
     /**
      * Finds the max order for all columns.
-     * @param plugin Plugin
+     * 
+     * @param plugin
+     *            Plugin
      * @return the max order
      */
     public static int findMaxOrder( Plugin plugin )
@@ -312,8 +380,11 @@ public final class ViewHome
 
     /**
      * Finds the max order for the column.
-     * @param nColumn the column
-     * @param plugin Plugin
+     * 
+     * @param nColumn
+     *            the column
+     * @param plugin
+     *            Plugin
      * @return the max order
      */
     public static int findMaxOrder( int nColumn, Plugin plugin )
@@ -323,7 +394,9 @@ public final class ViewHome
 
     /**
      * Finds all columns
-     * @param plugin Plugin
+     * 
+     * @param plugin
+     *            Plugin
      * @return the list of columns
      */
     public static List<Integer> findColumns( Plugin plugin )

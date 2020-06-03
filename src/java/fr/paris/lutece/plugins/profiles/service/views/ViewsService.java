@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2014, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -66,7 +66,6 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
-
 /**
  *
  * ViewService
@@ -78,22 +77,22 @@ public class ViewsService implements IViewsService
     private IViewActionService _viewActionService;
 
     /**
-    * {@inheritDoc}
-    */
+     * {@inheritDoc}
+     */
     @Override
     public ItemNavigator getItemNavigator( ViewFilter vFilter, View view, UrlItem url )
     {
         Plugin plugin = PluginService.getPlugin( ProfilesPlugin.PLUGIN_NAME );
-        List<String> listItem = new ArrayList<String>(  );
+        List<String> listItem = new ArrayList<String>( );
         Collection<View> listAllViews = ViewHome.findViewsByFilter( vFilter, plugin );
         int nIndex = 0;
         int nCurrentItemId = 0;
 
         for ( View allView : listAllViews )
         {
-            listItem.add( allView.getKey(  ) );
+            listItem.add( allView.getKey( ) );
 
-            if ( allView.getKey(  ).equals( view.getKey(  ) ) )
+            if ( allView.getKey( ).equals( view.getKey( ) ) )
             {
                 nCurrentItemId = nIndex;
             }
@@ -101,21 +100,20 @@ public class ViewsService implements IViewsService
             nIndex++;
         }
 
-        return new ItemNavigator( listItem, nCurrentItemId, url.getUrl(  ), ProfilesConstants.PARAMETER_VIEW_KEY );
+        return new ItemNavigator( listItem, nCurrentItemId, url.getUrl( ), ProfilesConstants.PARAMETER_VIEW_KEY );
     }
 
     /**
-    * {@inheritDoc}
-    */
+     * {@inheritDoc}
+     */
     @Override
-    public List<ViewAction> getListActions( AdminUser user, View view, String strPermission, Locale locale,
-        Plugin plugin )
+    public List<ViewAction> getListActions( AdminUser user, View view, String strPermission, Locale locale, Plugin plugin )
     {
-        List<ViewAction> listActions = new ArrayList<ViewAction>(  );
+        List<ViewAction> listActions = new ArrayList<ViewAction>( );
 
         for ( ViewAction action : _viewActionService.selectActionsList( locale, plugin ) )
         {
-            if ( !action.getPermission(  ).equals( strPermission ) )
+            if ( !action.getPermission( ).equals( strPermission ) )
             {
                 listActions.add( action );
             }
@@ -132,16 +130,15 @@ public class ViewsService implements IViewsService
     @Override
     public Map<String, List<IDashboardComponent>> getAllSetDashboards( String strViewKey, AdminUser user, Plugin plugin )
     {
-        Map<String, List<IDashboardComponent>> mapDashboardComponents = new HashMap<String, List<IDashboardComponent>>(  );
+        Map<String, List<IDashboardComponent>> mapDashboardComponents = new HashMap<String, List<IDashboardComponent>>( );
 
         // Personnalized dashboard positions
         List<IDashboardComponent> listDashboards = ViewHome.findDashboards( strViewKey, plugin );
 
         for ( IDashboardComponent dashboard : listDashboards )
         {
-            int nColumn = dashboard.getZone(  );
-            boolean bRight = user.checkRight( dashboard.getRight(  ) ) ||
-                dashboard.getRight(  ).equalsIgnoreCase( ProfilesConstants.ALL );
+            int nColumn = dashboard.getZone( );
+            boolean bRight = user.checkRight( dashboard.getRight( ) ) || dashboard.getRight( ).equalsIgnoreCase( ProfilesConstants.ALL );
 
             if ( !bRight )
             {
@@ -156,7 +153,7 @@ public class ViewsService implements IViewsService
             if ( listDashboardsColumn == null )
             {
                 // the list does not exist, create it
-                listDashboardsColumn = new ArrayList<IDashboardComponent>(  );
+                listDashboardsColumn = new ArrayList<IDashboardComponent>( );
                 mapDashboardComponents.put( strColumn, listDashboardsColumn );
             }
 
@@ -173,17 +170,15 @@ public class ViewsService implements IViewsService
     @Override
     public List<IDashboardComponent> getNotSetDashboards( String strViewKey, AdminUser user, Plugin plugin )
     {
-        List<IDashboardComponent> listDashboards = DashboardHome.findAll(  );
+        List<IDashboardComponent> listDashboards = DashboardHome.findAll( );
         List<IDashboardComponent> listPersonnalizedDashboards = ViewHome.findDashboards( strViewKey, plugin );
-        List<IDashboardComponent> listNotSetDashboards = new ArrayList<IDashboardComponent>(  );
+        List<IDashboardComponent> listNotSetDashboards = new ArrayList<IDashboardComponent>( );
 
         for ( IDashboardComponent dashboard : listDashboards )
         {
-            boolean bRight = user.checkRight( dashboard.getRight(  ) ) ||
-                dashboard.getRight(  ).equalsIgnoreCase( ProfilesConstants.ALL );
+            boolean bRight = user.checkRight( dashboard.getRight( ) ) || dashboard.getRight( ).equalsIgnoreCase( ProfilesConstants.ALL );
 
-            if ( !listPersonnalizedDashboards.contains( dashboard ) && bRight &&
-                    ( dashboard.getZone(  ) <= DashboardService.getInstance(  ).getColumnCount(  ) ) )
+            if ( !listPersonnalizedDashboards.contains( dashboard ) && bRight && ( dashboard.getZone( ) <= DashboardService.getInstance( ).getColumnCount( ) ) )
             {
                 listNotSetDashboards.add( dashboard );
             }
@@ -198,13 +193,13 @@ public class ViewsService implements IViewsService
     @Override
     public Map<String, ReferenceList> getMapAvailableOrders( Plugin plugin )
     {
-        Map<String, ReferenceList> mapAvailableOrders = new HashMap<String, ReferenceList>(  );
+        Map<String, ReferenceList> mapAvailableOrders = new HashMap<String, ReferenceList>( );
 
         // get columns
         for ( Integer nColumn : ViewHome.findColumns( plugin ) )
         {
             // get orders
-            mapAvailableOrders.put( nColumn.toString(  ), getListAvailableOrders( nColumn, plugin ) );
+            mapAvailableOrders.put( nColumn.toString( ), getListAvailableOrders( nColumn, plugin ) );
         }
 
         return mapAvailableOrders;
@@ -216,7 +211,7 @@ public class ViewsService implements IViewsService
     @Override
     public ReferenceList getListAvailableOrders( int nColumn, Plugin plugin )
     {
-        ReferenceList refList = new ReferenceList(  );
+        ReferenceList refList = new ReferenceList( );
 
         // add empty item
         refList.addItem( StringUtils.EMPTY, StringUtils.EMPTY );
@@ -235,15 +230,14 @@ public class ViewsService implements IViewsService
      * {@inheritDoc}
      */
     @Override
-    public ReferenceList getListAvailableColumns(  )
+    public ReferenceList getListAvailableColumns( )
     {
-        ReferenceList refList = new ReferenceList(  );
+        ReferenceList refList = new ReferenceList( );
 
         // add empty item
         refList.addItem( StringUtils.EMPTY, StringUtils.EMPTY );
 
-        for ( int nColumnIndex = 1; nColumnIndex <= DashboardService.getInstance(  ).getColumnCount(  );
-                nColumnIndex++ )
+        for ( int nColumnIndex = 1; nColumnIndex <= DashboardService.getInstance( ).getColumnCount( ); nColumnIndex++ )
         {
             refList.addItem( nColumnIndex, Integer.toString( nColumnIndex ) );
         }
@@ -255,29 +249,28 @@ public class ViewsService implements IViewsService
      * {@inheritDoc}
      */
     @Override
-    public void doMoveDashboard( IDashboardComponent dashboard, int nOldColumn, int nOldOrder, boolean bCreate,
-        String strViewKey, Plugin plugin )
+    public void doMoveDashboard( IDashboardComponent dashboard, int nOldColumn, int nOldOrder, boolean bCreate, String strViewKey, Plugin plugin )
     {
-        int nColumn = dashboard.getZone(  );
-        int nOrder = dashboard.getOrder(  );
+        int nColumn = dashboard.getZone( );
+        int nOrder = dashboard.getOrder( );
 
         // find the dashboard already with this order and column
-        DashboardFilter filter = new DashboardFilter(  );
+        DashboardFilter filter = new DashboardFilter( );
         filter.setFilterColumn( nColumn );
 
         List<IDashboardComponent> listColumnDashboards = ViewHome.findDashboardsByFilter( filter, strViewKey, plugin );
 
-        if ( ( listColumnDashboards != null ) && !listColumnDashboards.isEmpty(  ) )
+        if ( ( listColumnDashboards != null ) && !listColumnDashboards.isEmpty( ) )
         {
-            if ( AppLogService.isDebugEnabled(  ) )
+            if ( AppLogService.isDebugEnabled( ) )
             {
-                AppLogService.debug( "Reordering  dashboard column " + dashboard.getZone(  ) );
+                AppLogService.debug( "Reordering  dashboard column " + dashboard.getZone( ) );
             }
 
             // sort by order
             Collections.sort( listColumnDashboards );
 
-            int nMaxOrder = listColumnDashboards.get( listColumnDashboards.size(  ) - 1 ).getOrder(  );
+            int nMaxOrder = listColumnDashboards.get( listColumnDashboards.size( ) - 1 ).getOrder( );
 
             if ( ( nOldColumn == 0 ) || ( nOldColumn != nColumn ) )
             {
@@ -292,7 +285,7 @@ public class ViewsService implements IViewsService
                     {
                         if ( !dc.equals( dashboard ) )
                         {
-                            int nCurrentOrder = dc.getOrder(  );
+                            int nCurrentOrder = dc.getOrder( );
 
                             if ( ( nCurrentOrder >= nOrder ) && ( nCurrentOrder < nOldOrder ) )
                             {
@@ -302,22 +295,23 @@ public class ViewsService implements IViewsService
                         }
                     }
                 }
-                else if ( nOrder > nOldOrder )
-                {
-                    for ( IDashboardComponent dc : listColumnDashboards )
+                else
+                    if ( nOrder > nOldOrder )
                     {
-                        if ( !dc.equals( dashboard ) )
+                        for ( IDashboardComponent dc : listColumnDashboards )
                         {
-                            int nCurrentOrder = dc.getOrder(  );
-
-                            if ( ( nCurrentOrder <= nOrder ) && ( nCurrentOrder > nOldOrder ) )
+                            if ( !dc.equals( dashboard ) )
                             {
-                                dc.setOrder( nCurrentOrder - 1 );
-                                ViewHome.updateDashboard( strViewKey, dc, plugin );
+                                int nCurrentOrder = dc.getOrder( );
+
+                                if ( ( nCurrentOrder <= nOrder ) && ( nCurrentOrder > nOldOrder ) )
+                                {
+                                    dc.setOrder( nCurrentOrder - 1 );
+                                    ViewHome.updateDashboard( strViewKey, dc, plugin );
+                                }
                             }
                         }
                     }
-                }
 
                 // dashboard are singletons, values are modified by getting it from database
                 dashboard.setOrder( nOrder );
@@ -347,7 +341,7 @@ public class ViewsService implements IViewsService
     @Override
     public List<IDashboardComponent> getDashboardComponents( String strViewKey, int nColumn, Plugin plugin )
     {
-        DashboardFilter filter = new DashboardFilter(  );
+        DashboardFilter filter = new DashboardFilter( );
         filter.setFilterColumn( nColumn );
 
         List<IDashboardComponent> dashboardComponents = ViewHome.findDashboardsByFilter( filter, strViewKey, plugin );
@@ -376,12 +370,12 @@ public class ViewsService implements IViewsService
     @Override
     public Map<String, Boolean> getOrderedColumnsStatus( String strViewKey, Plugin plugin )
     {
-        Map<String, Boolean> mapOrderedStatus = new HashMap<String, Boolean>(  );
+        Map<String, Boolean> mapOrderedStatus = new HashMap<String, Boolean>( );
         List<Integer> listColumns = ViewHome.findColumns( plugin );
 
         for ( Integer nIdColumn : listColumns )
         {
-            mapOrderedStatus.put( nIdColumn.toString(  ), isWellOrdered( strViewKey, nIdColumn, plugin ) );
+            mapOrderedStatus.put( nIdColumn.toString( ), isWellOrdered( strViewKey, nIdColumn, plugin ) );
         }
 
         return mapOrderedStatus;
@@ -389,8 +383,11 @@ public class ViewsService implements IViewsService
 
     /**
      * Creation of an instance of View
-     * @param view The instance of the View which contains the informations to store
-     * @param plugin Plugin
+     * 
+     * @param view
+     *            The instance of the View which contains the informations to store
+     * @param plugin
+     *            Plugin
      * @return The instance of View which has been created with its primary key.
      */
     @Override
@@ -406,8 +403,11 @@ public class ViewsService implements IViewsService
 
     /**
      * Update of the view which is specified in parameter
-     * @param view The instance of the view which contains the new data to store
-     * @param plugin Plugin
+     * 
+     * @param view
+     *            The instance of the view which contains the new data to store
+     * @param plugin
+     *            Plugin
      * @return The instance of the view which has been updated
      */
     @Override
@@ -423,8 +423,11 @@ public class ViewsService implements IViewsService
 
     /**
      * Remove the View whose identifier is specified in parameter
-     * @param strViewKey The View object to remove
-     * @param plugin Plugin
+     * 
+     * @param strViewKey
+     *            The View object to remove
+     * @param plugin
+     *            Plugin
      */
     @Override
     public void remove( String strViewKey, Plugin plugin )
@@ -437,8 +440,11 @@ public class ViewsService implements IViewsService
 
     /**
      * Returns an instance of a profile whose identifier is specified in parameter
-     * @param strViewKey The key of the View
-     * @param plugin Plugin
+     * 
+     * @param strViewKey
+     *            The key of the View
+     * @param plugin
+     *            Plugin
      * @return An instance of View
      */
     @Override
@@ -449,7 +455,9 @@ public class ViewsService implements IViewsService
 
     /**
      * Returns a List of Views objects
-     * @param plugin Plugin
+     * 
+     * @param plugin
+     *            Plugin
      * @return A List of Views
      */
     @Override
@@ -460,8 +468,11 @@ public class ViewsService implements IViewsService
 
     /**
      * Find Views by filter
-     * @param vFilter the Filter
-     * @param plugin Plugin
+     * 
+     * @param vFilter
+     *            the Filter
+     * @param plugin
+     *            Plugin
      * @return List of Views
      */
     @Override
@@ -472,8 +483,11 @@ public class ViewsService implements IViewsService
 
     /**
      * Check if a view already exists or not
-     * @param strViewKey The view key
-     * @param plugin Plugin
+     * 
+     * @param strViewKey
+     *            The view key
+     * @param plugin
+     *            Plugin
      * @return true if it already exists, false otherwise
      */
     @Override
@@ -484,7 +498,9 @@ public class ViewsService implements IViewsService
 
     /**
      * Get the list of Views
-     * @param plugin Plugin
+     * 
+     * @param plugin
+     *            Plugin
      * @return the list of Views
      */
     @Override
@@ -497,8 +513,11 @@ public class ViewsService implements IViewsService
 
     /**
      * Get the list of profiles associated to the view
-     * @param strViewKey The view Key
-     * @param plugin Plugin
+     * 
+     * @param strViewKey
+     *            The view Key
+     * @param plugin
+     *            Plugin
      * @return The list of profile
      */
     @Override
@@ -509,8 +528,11 @@ public class ViewsService implements IViewsService
 
     /**
      * Get the view from a profile
-     * @param strProfileKey the profile key
-     * @param plugin Plugin
+     * 
+     * @param strProfileKey
+     *            the profile key
+     * @param plugin
+     *            Plugin
      * @return the view associated to the profile
      */
     @Override
@@ -521,8 +543,11 @@ public class ViewsService implements IViewsService
 
     /**
      * Check if the given profile has a view or not
-     * @param strProfileKey the profile key
-     * @param plugin Plugin
+     * 
+     * @param strProfileKey
+     *            the profile key
+     * @param plugin
+     *            Plugin
      * @return true if the profile has the view, false otherwise
      */
     @Override
@@ -533,9 +558,13 @@ public class ViewsService implements IViewsService
 
     /**
      * Add a profile for a view
-     * @param strViewKey The view Key
-     * @param strProfileKey The profile Key
-     * @param plugin Plugin
+     * 
+     * @param strViewKey
+     *            The view Key
+     * @param strProfileKey
+     *            The profile Key
+     * @param plugin
+     *            Plugin
      */
     @Override
     public void addProfileForView( String strViewKey, String strProfileKey, Plugin plugin )
@@ -545,8 +574,11 @@ public class ViewsService implements IViewsService
 
     /**
      * Remove a profile from a view
-     * @param strViewKey The view Key
-     * @param plugin Plugin
+     * 
+     * @param strViewKey
+     *            The view Key
+     * @param plugin
+     *            Plugin
      */
     @Override
     public void removeProfiles( String strViewKey, Plugin plugin )
@@ -556,9 +588,13 @@ public class ViewsService implements IViewsService
 
     /**
      * Remove a view from a profile
-     * @param strViewKey the view key
-     * @param strProfileKey the profile key
-     * @param plugin Plugin
+     * 
+     * @param strViewKey
+     *            the view key
+     * @param strProfileKey
+     *            the profile key
+     * @param plugin
+     *            Plugin
      */
     @Override
     public void removeProfileFromView( String strViewKey, String strProfileKey, Plugin plugin )
@@ -570,8 +606,11 @@ public class ViewsService implements IViewsService
 
     /**
      * Load the list of dashboards from a given view key
-     * @param strViewKey the view key
-     * @param plugin Plugin
+     * 
+     * @param strViewKey
+     *            the view key
+     * @param plugin
+     *            Plugin
      * @return a list of {@link IDashboardComponent}
      */
     @Override
@@ -582,9 +621,13 @@ public class ViewsService implements IViewsService
 
     /**
      * Load the dashboard
-     * @param strDashboardName the dashboard name
-     * @param strViewKey the view key
-     * @param plugin Plugin
+     * 
+     * @param strDashboardName
+     *            the dashboard name
+     * @param strViewKey
+     *            the view key
+     * @param plugin
+     *            Plugin
      * @return the dashboard
      */
     @Override
@@ -595,9 +638,13 @@ public class ViewsService implements IViewsService
 
     /**
      * Insert a dashboard for a view
-     * @param strViewKey the view key
-     * @param dashboard the dashboard
-     * @param plugin Plugin
+     * 
+     * @param strViewKey
+     *            the view key
+     * @param dashboard
+     *            the dashboard
+     * @param plugin
+     *            Plugin
      */
     @Override
     public void createDashboard( String strViewKey, IDashboardComponent dashboard, Plugin plugin )
@@ -607,8 +654,11 @@ public class ViewsService implements IViewsService
 
     /**
      * Delete all dashboards of a view
-     * @param strViewKey the view key
-     * @param plugin Plugin
+     * 
+     * @param strViewKey
+     *            the view key
+     * @param plugin
+     *            Plugin
      */
     @Override
     public void removeDashboards( String strViewKey, Plugin plugin )
@@ -618,9 +668,13 @@ public class ViewsService implements IViewsService
 
     /**
      * Delete a dashboard of a view
-     * @param strViewKey the view key
-     * @param strDashboardName the dashboard name
-     * @param plugin Plugin
+     * 
+     * @param strViewKey
+     *            the view key
+     * @param strDashboardName
+     *            the dashboard name
+     * @param plugin
+     *            Plugin
      */
     @Override
     public void removeDashboard( String strViewKey, String strDashboardName, Plugin plugin )
@@ -630,9 +684,13 @@ public class ViewsService implements IViewsService
 
     /**
      * Update a dashboard
-     * @param strViewKey the view key
-     * @param dashboard the dashboard
-     * @param plugin Plugin
+     * 
+     * @param strViewKey
+     *            the view key
+     * @param dashboard
+     *            the dashboard
+     * @param plugin
+     *            Plugin
      */
     @Override
     public void updateDashboard( String strViewKey, IDashboardComponent dashboard, Plugin plugin )
@@ -642,9 +700,13 @@ public class ViewsService implements IViewsService
 
     /**
      * Loads the data of all the IDashboardComponent
-     * @param filter the filter
-     * @param strViewKey the view key
-     * @param plugin Plugin
+     * 
+     * @param filter
+     *            the filter
+     * @param strViewKey
+     *            the view key
+     * @param plugin
+     *            Plugin
      * @return the list which contains the data of all the IDashboardComponent
      */
     public List<IDashboardComponent> findDashboardsByFilter( DashboardFilter filter, String strViewKey, Plugin plugin )
@@ -654,7 +716,9 @@ public class ViewsService implements IViewsService
 
     /**
      * Finds the max order for all columns.
-     * @param plugin Plugin
+     * 
+     * @param plugin
+     *            Plugin
      * @return the max order
      */
     @Override
@@ -665,8 +729,11 @@ public class ViewsService implements IViewsService
 
     /**
      * Finds the max order for the column.
-     * @param nColumn the column
-     * @param plugin Plugin
+     * 
+     * @param nColumn
+     *            the column
+     * @param plugin
+     *            Plugin
      * @return the max order
      */
     @Override
@@ -677,7 +744,9 @@ public class ViewsService implements IViewsService
 
     /**
      * Finds all columns
-     * @param plugin Plugin
+     * 
+     * @param plugin
+     *            Plugin
      * @return the list of columns
      */
     @Override
@@ -688,9 +757,13 @@ public class ViewsService implements IViewsService
 
     /**
      * Determines if the column is well ordered
-     * @param strViewKey the view key
-     * @param nColumn the column id
-     * @param plugin the plugin
+     * 
+     * @param strViewKey
+     *            the view key
+     * @param nColumn
+     *            the column id
+     * @param plugin
+     *            the plugin
      * @return true if well ordered, <code>false</code> otherwise.
      */
     private boolean isWellOrdered( String strViewKey, int nColumn, Plugin plugin )
@@ -699,7 +772,7 @@ public class ViewsService implements IViewsService
 
         for ( IDashboardComponent dc : getDashboardComponents( strViewKey, nColumn, plugin ) )
         {
-            if ( nOrder != dc.getOrder(  ) )
+            if ( nOrder != dc.getOrder( ) )
             {
                 return false;
             }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2014, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -36,7 +36,6 @@ package fr.paris.lutece.plugins.profiles.service;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.user.attribute.AdminUserFieldListenerService;
 
-
 /**
  *
  * ProfilesAdminUserFieldListenerService
@@ -44,21 +43,22 @@ import fr.paris.lutece.portal.service.user.attribute.AdminUserFieldListenerServi
  */
 public final class ProfilesAdminUserFieldListenerService
 {
-    //    private static final String SPRING_CONTEXT_NAME = "profiles";
+    // private static final String SPRING_CONTEXT_NAME = "profiles";
     private static final String BEAN_PROFILES_ADMIN_USER_FIELD_SERVICE = "profiles.profilesAdminUserFieldListenerService";
 
     /**
      * Private constructor
      */
-    private ProfilesAdminUserFieldListenerService(  )
+    private ProfilesAdminUserFieldListenerService( )
     {
     }
 
     /**
      * Get AdminUserFieldListenerService
+     * 
      * @return the service
      */
-    public static AdminUserFieldListenerService getService(  )
+    public static AdminUserFieldListenerService getService( )
     {
         return (AdminUserFieldListenerService) SpringContextService.getBean( BEAN_PROFILES_ADMIN_USER_FIELD_SERVICE );
     }

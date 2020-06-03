@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2014, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -39,7 +39,6 @@ import fr.paris.lutece.portal.service.rbac.RBACAction;
 
 import java.util.Locale;
 
-
 /**
  * Action available on a profile
  */
@@ -54,11 +53,11 @@ public class ProfileAction implements RBACAction, Localizable
     private Locale _locale;
 
     /**
-    * Returns the Url
-    *
-    * @return The Url
-    */
-    public String getUrl(  )
+     * Returns the Url
+     *
+     * @return The Url
+     */
+    public String getUrl( )
     {
         return _strUrl;
     }
@@ -66,7 +65,8 @@ public class ProfileAction implements RBACAction, Localizable
     /**
      * Sets the Url
      *
-     * @param strUrl The Url
+     * @param strUrl
+     *            The Url
      */
     public void setUrl( String strUrl )
     {
@@ -78,7 +78,7 @@ public class ProfileAction implements RBACAction, Localizable
      *
      * @return The NameKey
      */
-    public String getNameKey(  )
+    public String getNameKey( )
     {
         return _strNameKey;
     }
@@ -88,7 +88,7 @@ public class ProfileAction implements RBACAction, Localizable
      *
      * @return The Name
      */
-    public String getName(  )
+    public String getName( )
     {
         return I18nService.getLocalizedString( _strNameKey, _locale );
     }
@@ -96,7 +96,8 @@ public class ProfileAction implements RBACAction, Localizable
     /**
      * Sets the NameKey
      *
-     * @param strNameKey The NameKey
+     * @param strNameKey
+     *            The NameKey
      */
     public void setNameKey( String strNameKey )
     {
@@ -108,7 +109,7 @@ public class ProfileAction implements RBACAction, Localizable
      *
      * @return The DescriptionKey
      */
-    public String getDescriptionKey(  )
+    public String getDescriptionKey( )
     {
         return _strDescriptionKey;
     }
@@ -118,7 +119,7 @@ public class ProfileAction implements RBACAction, Localizable
      *
      * @return The Description
      */
-    public String getDescription(  )
+    public String getDescription( )
     {
         return I18nService.getLocalizedString( _strDescriptionKey, _locale );
     }
@@ -126,7 +127,8 @@ public class ProfileAction implements RBACAction, Localizable
     /**
      * Sets the DescriptionKey
      *
-     * @param strDescriptionKey The DescriptionKey
+     * @param strDescriptionKey
+     *            The DescriptionKey
      */
     public void setDescriptionKey( String strDescriptionKey )
     {
@@ -138,7 +140,7 @@ public class ProfileAction implements RBACAction, Localizable
      *
      * @return The IconUrl
      */
-    public String getIconUrl(  )
+    public String getIconUrl( )
     {
         return _strIconUrl;
     }
@@ -146,7 +148,8 @@ public class ProfileAction implements RBACAction, Localizable
     /**
      * Sets the IconUrl
      *
-     * @param strIconUrl The IconUrl
+     * @param strIconUrl
+     *            The IconUrl
      */
     public void setIconUrl( String strIconUrl )
     {
@@ -155,9 +158,10 @@ public class ProfileAction implements RBACAction, Localizable
 
     /**
      * Returns the permission associated to the action
+     * 
      * @return The permission
      */
-    public String getPermission(  )
+    public String getPermission( )
     {
         return _strPermission;
     }
@@ -165,7 +169,8 @@ public class ProfileAction implements RBACAction, Localizable
     /**
      * Sets the Permission
      *
-     * @param strPermission The Permission
+     * @param strPermission
+     *            The Permission
      */
     public void setPermission( String strPermission )
     {
@@ -174,7 +179,9 @@ public class ProfileAction implements RBACAction, Localizable
 
     /**
      * Implements Localizable
-     * @param locale The current locale
+     * 
+     * @param locale
+     *            The current locale
      */
     public void setLocale( Locale locale )
     {

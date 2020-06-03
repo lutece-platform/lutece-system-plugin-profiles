@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2014, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -48,7 +48,6 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-
 /**
  *
  * ViewDashboardListener
@@ -58,17 +57,19 @@ public class ViewDashboardListener implements DashboardListener
 {
     /**
      * Get the list of dashboards
-     * @param user the current user
-     * @param request HttpServletRequest
+     * 
+     * @param user
+     *            the current user
+     * @param request
+     *            HttpServletRequest
      * @return a list of {@link IDashboardComponent}
      */
     public List<IDashboardComponent> getDashboardComponents( AdminUser user, HttpServletRequest request )
     {
-        List<IDashboardComponent> listDashboards = new ArrayList<IDashboardComponent>(  );
+        List<IDashboardComponent> listDashboards = new ArrayList<IDashboardComponent>( );
         Plugin plugin = PluginService.getPlugin( ProfilesPlugin.PLUGIN_NAME );
 
-        if ( ( plugin.getDbPoolName(  ) != null ) &&
-                !AppConnectionService.NO_POOL_DEFINED.equals( plugin.getDbPoolName(  ) ) )
+        if ( ( plugin.getDbPoolName( ) != null ) && !AppConnectionService.NO_POOL_DEFINED.equals( plugin.getDbPoolName( ) ) )
         {
             List<Profile> listProfile = ProfileHome.findProfileByIdUser( user.getUserId( ), plugin );
 

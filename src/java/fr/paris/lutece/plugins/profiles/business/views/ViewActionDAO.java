@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2014, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -39,7 +39,6 @@ import fr.paris.lutece.util.sql.DAOUtil;
 import java.util.ArrayList;
 import java.util.List;
 
-
 /**
  *
  * ProfileActionDAO
@@ -47,8 +46,8 @@ import java.util.List;
  */
 public class ViewActionDAO implements IViewActionDAO
 {
-    private static final String SQL_QUERY_SELECT_ACTIONS = " SELECT name_key, description_key, action_url, icon_url, action_permission " +
-        " FROM profile_view_action ";
+    private static final String SQL_QUERY_SELECT_ACTIONS = " SELECT name_key, description_key, action_url, icon_url, action_permission "
+            + " FROM profile_view_action ";
 
     /**
      * {@inheritDoc}
@@ -56,13 +55,13 @@ public class ViewActionDAO implements IViewActionDAO
     @Override
     public List<ViewAction> selectActionsList( Plugin plugin )
     {
-        List<ViewAction> listActions = new ArrayList<ViewAction>(  );
+        List<ViewAction> listActions = new ArrayList<ViewAction>( );
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_ACTIONS, plugin );
-        daoUtil.executeQuery(  );
+        daoUtil.executeQuery( );
 
-        while ( daoUtil.next(  ) )
+        while ( daoUtil.next( ) )
         {
-            ViewAction action = new ViewAction(  );
+            ViewAction action = new ViewAction( );
             action.setNameKey( daoUtil.getString( 1 ) );
             action.setDescriptionKey( daoUtil.getString( 2 ) );
             action.setUrl( daoUtil.getString( 3 ) );
@@ -71,7 +70,7 @@ public class ViewActionDAO implements IViewActionDAO
             listActions.add( action );
         }
 
-        daoUtil.free(  );
+        daoUtil.free( );
 
         return listActions;
     }

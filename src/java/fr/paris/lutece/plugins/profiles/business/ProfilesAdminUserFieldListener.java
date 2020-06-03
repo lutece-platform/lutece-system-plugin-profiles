@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2014, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -50,7 +50,6 @@ import fr.paris.lutece.portal.service.plugin.PluginService;
 import java.util.List;
 import java.util.Locale;
 
-
 /**
  *
  * ProfilesAdminUserFieldListener
@@ -80,8 +79,7 @@ public class ProfilesAdminUserFieldListener extends SimpleAdminUserFieldListener
                 {
                     right = RightHome.findByPrimaryKey( right.getId( ) );
 
-                    if ( !AdminUserHome.hasRight( user, right.getId( ) )
-                            && ( user.getUserLevel( ) <= right.getLevel( ) ) )
+                    if ( !AdminUserHome.hasRight( user, right.getId( ) ) && ( user.getUserLevel( ) <= right.getLevel( ) ) )
                     {
                         AdminUserHome.createRightForUser( nIdUser, right.getId( ) );
                     }
@@ -116,8 +114,7 @@ public class ProfilesAdminUserFieldListener extends SimpleAdminUserFieldListener
      * {@inheritDoc}
      */
     @Override
-    public void doModifyUserFields( AdminUser user, List<AdminUserField> listUserFields, Locale locale,
-            AdminUser currentUser )
+    public void doModifyUserFields( AdminUser user, List<AdminUserField> listUserFields, Locale locale, AdminUser currentUser )
     {
         Plugin plugin = PluginService.getPlugin( ProfilesPlugin.PLUGIN_NAME );
         // Check if the user has a profile
@@ -172,8 +169,8 @@ public class ProfilesAdminUserFieldListener extends SimpleAdminUserFieldListener
         // For each selected profiles
         for ( AdminUserField userField : listUserFields )
         {
-            String strProfileKey = userField.getValue(  );
-            int nIdUser = user.getUserId(  );
+            String strProfileKey = userField.getValue( );
+            int nIdUser = user.getUserId( );
 
             if ( !ProfileHome.hasProfile( strProfileKey, nIdUser, plugin ) )
             {
@@ -182,34 +179,33 @@ public class ProfilesAdminUserFieldListener extends SimpleAdminUserFieldListener
                 // Add rights to the user
                 for ( Right right : ProfileHome.getRightsListForProfile( strProfileKey, plugin ) )
                 {
-                    right = RightHome.findByPrimaryKey( right.getId(  ) );
+                    right = RightHome.findByPrimaryKey( right.getId( ) );
 
-                    if ( right != null && !AdminUserHome.hasRight( user, right.getId(  ) ) &&
-                            ( user.getUserLevel(  ) <= right.getLevel(  ) ) )
+                    if ( right != null && !AdminUserHome.hasRight( user, right.getId( ) ) && ( user.getUserLevel( ) <= right.getLevel( ) ) )
                     {
-                        AdminUserHome.createRightForUser( nIdUser, right.getId(  ) );
+                        AdminUserHome.createRightForUser( nIdUser, right.getId( ) );
                     }
                 }
 
                 // Add roles to the user
                 for ( AdminRole role : ProfileHome.getRolesListForProfile( strProfileKey, plugin ) )
                 {
-                    role = AdminRoleHome.findByPrimaryKey( role.getKey(  ) );
+                    role = AdminRoleHome.findByPrimaryKey( role.getKey( ) );
 
-                    if ( role != null && !AdminUserHome.hasRole( user, role.getKey(  ) ) )
+                    if ( role != null && !AdminUserHome.hasRole( user, role.getKey( ) ) )
                     {
-                        AdminUserHome.createRoleForUser( nIdUser, role.getKey(  ) );
+                        AdminUserHome.createRoleForUser( nIdUser, role.getKey( ) );
                     }
                 }
 
                 // Add workgroups to the user
                 for ( AdminWorkgroup workgroup : ProfileHome.getWorkgroupsListForProfile( strProfileKey, plugin ) )
                 {
-                    workgroup = AdminWorkgroupHome.findByPrimaryKey( workgroup.getKey(  ) );
+                    workgroup = AdminWorkgroupHome.findByPrimaryKey( workgroup.getKey( ) );
 
-                    if ( workgroup != null && !AdminWorkgroupHome.isUserInWorkgroup( user, workgroup.getKey(  ) ) )
+                    if ( workgroup != null && !AdminWorkgroupHome.isUserInWorkgroup( user, workgroup.getKey( ) ) )
                     {
-                        AdminWorkgroupHome.addUserForWorkgroup( user, workgroup.getKey(  ) );
+                        AdminWorkgroupHome.addUserForWorkgroup( user, workgroup.getKey( ) );
                     }
                 }
             }

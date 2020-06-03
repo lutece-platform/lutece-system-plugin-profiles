@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2014, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -42,7 +42,6 @@ import fr.paris.lutece.portal.service.plugin.PluginDefaultImplementation;
 import fr.paris.lutece.portal.service.rbac.RBACRemovalListenerService;
 import fr.paris.lutece.portal.service.workgroup.WorkgroupRemovalListenerService;
 
-
 /**
  * class ProfilesPlugin
  */
@@ -53,14 +52,14 @@ public class ProfilesPlugin extends PluginDefaultImplementation
     /**
      * Initialize the plugin form
      */
-    public void init(  )
+    public void init( )
     {
         // Add dashboards
-        ProfilesAdminUserFieldListenerService.getService(  ).registerListener( new ProfilesAdminUserFieldListener(  ) );
-        ViewDashboardListenerService.getService(  ).registerListener( new ViewDashboardListener(  ) );
+        ProfilesAdminUserFieldListenerService.getService( ).registerListener( new ProfilesAdminUserFieldListener( ) );
+        ViewDashboardListenerService.getService( ).registerListener( new ViewDashboardListener( ) );
 
         // Add removal listeners
-        WorkgroupRemovalListenerService.getService(  ).registerListener( new ProfileWorkgroupRemovalListener(  ) );
-        RBACRemovalListenerService.getService(  ).registerListener( new ProfileRBACRemovalListener(  ) );
+        WorkgroupRemovalListenerService.getService( ).registerListener( new ProfileWorkgroupRemovalListener( ) );
+        RBACRemovalListenerService.getService( ).registerListener( new ProfileRBACRemovalListener( ) );
     }
 }

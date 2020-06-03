@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2014, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -45,7 +45,6 @@ import fr.paris.lutece.util.ReferenceList;
 
 import java.util.Locale;
 
-
 /**
  *
  * Class ProfileResourceIdService
@@ -74,57 +73,57 @@ public class ProfilesResourceIdService extends ResourceIdService
     /**
      * Create a new instance of ProfilesResourceIdService
      */
-    public ProfilesResourceIdService(  )
+    public ProfilesResourceIdService( )
     {
         setPluginName( ProfilesPlugin.PLUGIN_NAME );
     }
 
     /**
-    * Initializes the service
-    */
-    public void register(  )
+     * Initializes the service
+     */
+    public void register( )
     {
-        ResourceType rt = new ResourceType(  );
-        rt.setResourceIdServiceClass( ProfilesResourceIdService.class.getName(  ) );
+        ResourceType rt = new ResourceType( );
+        rt.setResourceIdServiceClass( ProfilesResourceIdService.class.getName( ) );
         rt.setResourceTypeKey( Profile.RESOURCE_TYPE );
         rt.setResourceTypeLabelKey( PROPERTY_LABEL_RESOURCE_TYPE );
 
-        Permission p = new Permission(  );
+        Permission p = new Permission( );
         p.setPermissionKey( PERMISSION_CREATE_PROFILE );
         p.setPermissionTitleKey( PROPERTY_LABEL_CREATE_PROFILE );
         rt.registerPermission( p );
 
-        p = new Permission(  );
+        p = new Permission( );
         p.setPermissionKey( PERMISSION_MODIFY_PROFILE );
         p.setPermissionTitleKey( PROPERTY_LABEL_MODIFY_PROFILE );
         rt.registerPermission( p );
 
-        p = new Permission(  );
+        p = new Permission( );
         p.setPermissionKey( PERMISSION_DELETE_PROFILE );
         p.setPermissionTitleKey( PROPERTY_LABEL_DELETE_PROFILE );
         rt.registerPermission( p );
 
-        p = new Permission(  );
+        p = new Permission( );
         p.setPermissionKey( PERMISSION_MANAGE_USERS_ASSIGNMENT );
         p.setPermissionTitleKey( PROPERTY_LABEL_MANAGE_USERS_ASSIGNMENT );
         rt.registerPermission( p );
 
-        p = new Permission(  );
+        p = new Permission( );
         p.setPermissionKey( PERMISSION_MANAGE_RIGHTS_ASSIGNMENT );
         p.setPermissionTitleKey( PROPERTY_LABEL_MANAGE_RIGHTS_ASSIGNMENT );
         rt.registerPermission( p );
 
-        p = new Permission(  );
+        p = new Permission( );
         p.setPermissionKey( PERMISSION_MANAGE_ROLES_ASSIGNMENT );
         p.setPermissionTitleKey( PROPERTY_LABEL_MANAGE_ROLES_ASSIGNMENT );
         rt.registerPermission( p );
 
-        p = new Permission(  );
+        p = new Permission( );
         p.setPermissionKey( PERMISSION_MANAGE_WORKGROUPS_ASSIGNMENT );
         p.setPermissionTitleKey( PROPERTY_LABEL_MANAGE_WORKGROUPS_ASSIGNMENT );
         rt.registerPermission( p );
 
-        p = new Permission(  );
+        p = new Permission( );
         p.setPermissionKey( PERMISSION_MANAGE_VIEW_ASSIGNMENT );
         p.setPermissionTitleKey( PROPERTY_LABEL_MANAGE_VIEW_ASSIGNMENT );
         rt.registerPermission( p );
@@ -133,10 +132,12 @@ public class ProfilesResourceIdService extends ResourceIdService
     }
 
     /**
-    * Returns a list of profiles resource ids
-    * @param locale The current locale
-    * @return A list of resource ids
-    */
+     * Returns a list of profiles resource ids
+     * 
+     * @param locale
+     *            The current locale
+     * @return A list of resource ids
+     */
     public ReferenceList getResourceIdList( Locale locale )
     {
         Plugin plugin = PluginService.getPlugin( ProfilesPlugin.PLUGIN_NAME );
@@ -145,11 +146,14 @@ public class ProfilesResourceIdService extends ResourceIdService
     }
 
     /**
-    * Returns the Title of a given resource
-    * @param strProfileKey the profile key
-    * @param locale The current locale
-    * @return The Title of a given resource
-    */
+     * Returns the Title of a given resource
+     * 
+     * @param strProfileKey
+     *            the profile key
+     * @param locale
+     *            The current locale
+     * @return The Title of a given resource
+     */
     public String getTitle( String strProfileKey, Locale locale )
     {
         return strProfileKey;

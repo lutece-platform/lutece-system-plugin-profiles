@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2014, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -46,7 +46,6 @@ import java.net.URLEncoder;
 
 import javax.servlet.http.HttpServletRequest;
 
-
 /**
  *
  * ViewFilter
@@ -60,14 +59,14 @@ public class ViewFilter
     /**
      * Constructor
      */
-    public ViewFilter(  )
+    public ViewFilter( )
     {
     }
 
     /**
      * Initialize each component of the object
      */
-    public void init(  )
+    public void init( )
     {
         _strKey = StringUtils.EMPTY;
         _strDescription = StringUtils.EMPTY;
@@ -75,9 +74,10 @@ public class ViewFilter
 
     /**
      * Gets the view key
+     * 
      * @return Returns the Key.
      */
-    public String getKey(  )
+    public String getKey( )
     {
         return _strKey;
     }
@@ -85,7 +85,8 @@ public class ViewFilter
     /**
      * Sets the view key
      *
-     * @param strKey The Key
+     * @param strKey
+     *            The Key
      */
     public void setKey( String strKey )
     {
@@ -94,9 +95,10 @@ public class ViewFilter
 
     /**
      * Returns the view's description
+     * 
      * @return Returns the Description.
      */
-    public String getDescription(  )
+    public String getDescription( )
     {
         return _strDescription;
     }
@@ -104,7 +106,8 @@ public class ViewFilter
     /**
      * Sets the view's description
      *
-     * @param strDescription The view's description
+     * @param strDescription
+     *            The view's description
      */
     public void setDescription( String strDescription )
     {
@@ -113,7 +116,9 @@ public class ViewFilter
 
     /**
      * Set the value of the ViewFilter
-     * @param request HttpServletRequest
+     * 
+     * @param request
+     *            HttpServletRequest
      * @return true if there is a search
      */
     public boolean setFilter( HttpServletRequest request )
@@ -129,7 +134,7 @@ public class ViewFilter
         }
         else
         {
-            init(  );
+            init( );
         }
 
         return bIsSearch;
@@ -137,21 +142,22 @@ public class ViewFilter
 
     /**
      * Build url attributes
-     * @param url the url
+     * 
+     * @param url
+     *            the url
      */
     public void setUrlAttributes( UrlItem url )
     {
-        url.addParameter( ProfilesConstants.PARAMETER_SEARCH_IS_SEARCH, Boolean.TRUE.toString(  ) );
+        url.addParameter( ProfilesConstants.PARAMETER_SEARCH_IS_SEARCH, Boolean.TRUE.toString( ) );
 
         try
         {
             url.addParameter( ProfilesConstants.PARAMETER_SEARCH_KEY,
-                URLEncoder.encode( _strKey, AppPropertiesService.getProperty( ProfilesConstants.PROPERTY_ENCODING_URL ) ) );
+                    URLEncoder.encode( _strKey, AppPropertiesService.getProperty( ProfilesConstants.PROPERTY_ENCODING_URL ) ) );
             url.addParameter( ProfilesConstants.PARAMETER_SEARCH_DESCRIPTION,
-                URLEncoder.encode( _strDescription,
-                    AppPropertiesService.getProperty( ProfilesConstants.PROPERTY_ENCODING_URL ) ) );
+                    URLEncoder.encode( _strDescription, AppPropertiesService.getProperty( ProfilesConstants.PROPERTY_ENCODING_URL ) ) );
         }
-        catch ( UnsupportedEncodingException e )
+        catch( UnsupportedEncodingException e )
         {
             AppLogService.error( e );
         }
@@ -159,28 +165,26 @@ public class ViewFilter
 
     /**
      * Build url attributes
+     * 
      * @return the url attributes
      */
-    public String getUrlAttributes(  )
+    public String getUrlAttributes( )
     {
-        StringBuilder sbUrlAttributes = new StringBuilder(  );
+        StringBuilder sbUrlAttributes = new StringBuilder( );
         sbUrlAttributes.append( ProfilesConstants.PARAMETER_SEARCH_IS_SEARCH + ProfilesConstants.EQUAL + Boolean.TRUE );
 
         try
         {
-            sbUrlAttributes.append( ProfilesConstants.AMPERSAND + ProfilesConstants.PARAMETER_SEARCH_KEY +
-                ProfilesConstants.EQUAL +
-                URLEncoder.encode( _strKey, AppPropertiesService.getProperty( ProfilesConstants.PROPERTY_ENCODING_URL ) ) );
-            sbUrlAttributes.append( ProfilesConstants.AMPERSAND + ProfilesConstants.PARAMETER_SEARCH_DESCRIPTION +
-                ProfilesConstants.EQUAL +
-                URLEncoder.encode( _strDescription,
-                    AppPropertiesService.getProperty( ProfilesConstants.PROPERTY_ENCODING_URL ) ) );
+            sbUrlAttributes.append( ProfilesConstants.AMPERSAND + ProfilesConstants.PARAMETER_SEARCH_KEY + ProfilesConstants.EQUAL
+                    + URLEncoder.encode( _strKey, AppPropertiesService.getProperty( ProfilesConstants.PROPERTY_ENCODING_URL ) ) );
+            sbUrlAttributes.append( ProfilesConstants.AMPERSAND + ProfilesConstants.PARAMETER_SEARCH_DESCRIPTION + ProfilesConstants.EQUAL
+                    + URLEncoder.encode( _strDescription, AppPropertiesService.getProperty( ProfilesConstants.PROPERTY_ENCODING_URL ) ) );
         }
-        catch ( UnsupportedEncodingException e )
+        catch( UnsupportedEncodingException e )
         {
             AppLogService.error( e );
         }
 
-        return sbUrlAttributes.toString(  );
+        return sbUrlAttributes.toString( );
     }
 }

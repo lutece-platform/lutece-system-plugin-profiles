@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2014, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -44,7 +44,6 @@ import org.apache.commons.lang.StringUtils;
 import java.util.Collection;
 import java.util.Locale;
 
-
 /**
  *
  * ProfileRoleRemovalListener
@@ -56,7 +55,9 @@ public class ProfileRBACRemovalListener implements RemovalListener
 
     /**
      * Check if the object can be safely removed
-     * @param strId The object id
+     * 
+     * @param strId
+     *            The object id
      * @return true if the object can be removed otherwise false
      */
     public boolean canBeRemoved( String strId )
@@ -68,11 +69,11 @@ public class ProfileRBACRemovalListener implements RemovalListener
             Plugin plugin = PluginService.getPlugin( ProfilesPlugin.PLUGIN_NAME );
             Collection<Profile> listProfiles = ProfileHome.findAll( plugin );
 
-            if ( ( listProfiles != null ) && !listProfiles.isEmpty(  ) )
+            if ( ( listProfiles != null ) && !listProfiles.isEmpty( ) )
             {
                 for ( Profile profile : listProfiles )
                 {
-                    if ( ( profile != null ) && ProfileHome.hasRole( profile.getKey(  ), strId, plugin ) )
+                    if ( ( profile != null ) && ProfileHome.hasRole( profile.getKey( ), strId, plugin ) )
                     {
                         bCanBeRemoved = false;
 
@@ -87,13 +88,16 @@ public class ProfileRBACRemovalListener implements RemovalListener
 
     /**
      * Gives a message explaining why the object can't be removed
-     * @param strId The object id
-     * @param locale The current locale
+     * 
+     * @param strId
+     *            The object id
+     * @param locale
+     *            The current locale
      * @return The message
      */
     public String getRemovalRefusedMessage( String strId, Locale locale )
     {
-        // Build a message mailing list for using this workgroup 
+        // Build a message mailing list for using this workgroup
         return I18nService.getLocalizedString( PROPERTY_ROLE_CANNOT_BE_REMOVED, locale );
     }
 }

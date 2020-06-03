@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2014, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -93,7 +93,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
 
-
 /**
  *
  * ProfilesJspBean
@@ -132,7 +131,7 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
     private int _nItemsPerPage;
     private int _nDefaultItemsPerPage;
     private String _strCurrentPageIndex;
-    private Map<String, ItemNavigator> _itemNavigators = new HashMap<String, ItemNavigator>(  );
+    private Map<String, ItemNavigator> _itemNavigators = new HashMap<String, ItemNavigator>( );
     private IProfilesService _profilesService = (IProfilesService) SpringContextService.getBean( ProfilesConstants.BEAN_PROFILES_SERVICE );
     private IProfileActionService _profileActionService = (IProfileActionService) SpringContextService.getBean( ProfilesConstants.BEAN_PROFILE_ACTION_SERVICE );
     private IViewsService _viewsService = (IViewsService) SpringContextService.getBean( ProfilesConstants.BEAN_VIEWS_SERVICE );
@@ -140,7 +139,9 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
 
     /**
      * Return management page of plugin profiles
-     * @param request The Http request
+     * 
+     * @param request
+     *            The Http request
      * @return Html management page of plugin profiles
      */
     public String getManageProfiles( HttpServletRequest request )
@@ -148,14 +149,14 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
         setPageTitleProperty( ProfilesConstants.PROPERTY_MANAGE_PROFILES_PAGETITLE );
 
         // Reinit item navigator
-        reinitItemNavigators(  );
+        reinitItemNavigators( );
 
         // FILTER
-        _pFilter = new ProfileFilter(  );
+        _pFilter = new ProfileFilter( );
 
         boolean bIsSearch = _pFilter.setFilter( request );
 
-        List<Profile> filteredProfiles = _profilesService.findProfilesByFilter( _pFilter, getPlugin(  ) );
+        List<Profile> filteredProfiles = _profilesService.findProfilesByFilter( _pFilter, getPlugin( ) );
 
         // SORT
         String strSortedAttributeName = request.getParameter( Parameters.SORTED_ATTRIBUTE_NAME );
@@ -172,8 +173,7 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
 
         _strCurrentPageIndex = Paginator.getPageIndex( request, Paginator.PARAMETER_PAGE_INDEX, _strCurrentPageIndex );
         _nDefaultItemsPerPage = AppPropertiesService.getPropertyInt( ProfilesConstants.PROPERTY_ITEM_PER_PAGE, 50 );
-        _nItemsPerPage = Paginator.getItemsPerPage( request, Paginator.PARAMETER_ITEMS_PER_PAGE, _nItemsPerPage,
-                _nDefaultItemsPerPage );
+        _nItemsPerPage = Paginator.getItemsPerPage( request, Paginator.PARAMETER_ITEMS_PER_PAGE, _nItemsPerPage, _nDefaultItemsPerPage );
 
         String strURL = getHomeUrl( request );
         UrlItem url = new UrlItem( strURL );
@@ -193,37 +193,36 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
         if ( bIsSearch )
         {
             _pFilter.setUrlAttributes( url );
-            strSortSearchAttribute = ProfilesConstants.AMPERSAND + _pFilter.getUrlAttributes(  );
+            strSortSearchAttribute = ProfilesConstants.AMPERSAND + _pFilter.getUrlAttributes( );
         }
 
         // PAGINATOR
-        LocalizedPaginator<Profile> paginator = new LocalizedPaginator<Profile>( filteredProfiles, _nItemsPerPage,
-                url.getUrl(  ), Paginator.PARAMETER_PAGE_INDEX, _strCurrentPageIndex, getLocale(  ) );
+        LocalizedPaginator<Profile> paginator = new LocalizedPaginator<Profile>( filteredProfiles, _nItemsPerPage, url.getUrl( ),
+                Paginator.PARAMETER_PAGE_INDEX, _strCurrentPageIndex, getLocale( ) );
 
         // PERMISSIONS
         for ( Profile profile : filteredProfiles )
         {
-            List<ProfileAction> listActions = _profileActionService.selectActionsList( getLocale(  ), getPlugin(  ) );
-            listActions = (List<ProfileAction>) RBACService.getAuthorizedActionsCollection( listActions, profile,
-                    getUser(  ) );
+            List<ProfileAction> listActions = _profileActionService.selectActionsList( getLocale( ), getPlugin( ) );
+            listActions = (List<ProfileAction>) RBACService.getAuthorizedActionsCollection( listActions, profile, getUser( ) );
             profile.setActions( listActions );
         }
 
-        boolean bPermission = RBACService.isAuthorized( Profile.RESOURCE_TYPE, RBAC.WILDCARD_RESOURCES_ID,
-                ProfilesResourceIdService.PERMISSION_CREATE_PROFILE, getUser(  ) );
+        boolean bPermission = RBACService.isAuthorized( Profile.RESOURCE_TYPE, RBAC.WILDCARD_RESOURCES_ID, ProfilesResourceIdService.PERMISSION_CREATE_PROFILE,
+                getUser( ) );
 
-        Map<String, Object> model = new HashMap<String, Object>(  );
+        Map<String, Object> model = new HashMap<String, Object>( );
         model.put( ProfilesConstants.MARK_NB_ITEMS_PER_PAGE, StringUtils.EMPTY + _nItemsPerPage );
         model.put( ProfilesConstants.MARK_PAGINATOR, paginator );
-        model.put( ProfilesConstants.MARK_LIST_PROFILES, paginator.getPageItems(  ) );
+        model.put( ProfilesConstants.MARK_LIST_PROFILES, paginator.getPageItems( ) );
         model.put( ProfilesConstants.MARK_SEARCH_FILTER, _pFilter );
         model.put( ProfilesConstants.MARK_SEARCH_IS_SEARCH, bIsSearch );
         model.put( ProfilesConstants.MARK_SORT_SEARCH_ATTRIBUTE, strSortSearchAttribute );
         model.put( ProfilesConstants.MARK_PERMISSION, bPermission );
 
-        HtmlTemplate templateList = AppTemplateService.getTemplate( TEMPLATE_MANAGE_PROFILES, getLocale(  ), model );
+        HtmlTemplate templateList = AppTemplateService.getTemplate( TEMPLATE_MANAGE_PROFILES, getLocale( ), model );
 
-        return getAdminPage( templateList.getHtml(  ) );
+        return getAdminPage( templateList.getHtml( ) );
     }
 
     /* CREATE PROFILE */
@@ -231,30 +230,31 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
     /**
      * Returns the profile creation form
      *
-     * @param request The Http request
+     * @param request
+     *            The Http request
      * @return Html creation form
      */
     public String getCreateProfile( HttpServletRequest request )
     {
         setPageTitleProperty( ProfilesConstants.PROPERTY_CREATE_PROFILE_PAGETITLE );
 
-        Map<String, Object> model = new HashMap<String, Object>(  );
+        Map<String, Object> model = new HashMap<String, Object>( );
 
-        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_CREATE_PROFILE, getLocale(  ), model );
+        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_CREATE_PROFILE, getLocale( ), model );
 
-        return getAdminPage( template.getHtml(  ) );
+        return getAdminPage( template.getHtml( ) );
     }
 
     /**
      * Process the data capture form of a new profile
      *
-     * @param request The HTTP Request
+     * @param request
+     *            The HTTP Request
      * @return The Jsp URL of the process result
      */
     public String doCreateProfile( HttpServletRequest request )
     {
-        if ( !RBACService.isAuthorized( Profile.RESOURCE_TYPE, RBAC.WILDCARD_RESOURCES_ID,
-                    ProfilesResourceIdService.PERMISSION_CREATE_PROFILE, getUser(  ) ) )
+        if ( !RBACService.isAuthorized( Profile.RESOURCE_TYPE, RBAC.WILDCARD_RESOURCES_ID, ProfilesResourceIdService.PERMISSION_CREATE_PROFILE, getUser( ) ) )
         {
             return AdminMessageService.getMessageUrl( request, Messages.USER_ACCESS_DENIED, AdminMessage.TYPE_STOP );
         }
@@ -273,23 +273,21 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
         }
 
         // Check if profile already exist
-        if ( _profilesService.checkExistProfile( strKey, getPlugin(  ) ) )
+        if ( _profilesService.checkExistProfile( strKey, getPlugin( ) ) )
         {
-            return AdminMessageService.getMessageUrl( request, ProfilesConstants.MESSAGE_PROFILE_ALREADY_EXISTS,
-                AdminMessage.TYPE_STOP );
+            return AdminMessageService.getMessageUrl( request, ProfilesConstants.MESSAGE_PROFILE_ALREADY_EXISTS, AdminMessage.TYPE_STOP );
         }
 
         // Check if strKey contains accentuated characters
         if ( !StringUtil.checkCodeKey( strKey ) )
         {
-            return AdminMessageService.getMessageUrl( request, ProfilesConstants.MESSAGE_ACCENTUATED_CHARACTER,
-                AdminMessage.TYPE_STOP );
+            return AdminMessageService.getMessageUrl( request, ProfilesConstants.MESSAGE_ACCENTUATED_CHARACTER, AdminMessage.TYPE_STOP );
         }
 
-        Profile profile = new Profile(  );
-        profile.setKey( strKey.trim(  ) );
+        Profile profile = new Profile( );
+        profile.setKey( strKey.trim( ) );
         profile.setDescription( strDescription );
-        _profilesService.create( profile, getLocale(  ), getPlugin(  ) );
+        _profilesService.create( profile, getLocale( ), getPlugin( ) );
 
         return JSP_MANAGE_PROFILES;
     }
@@ -299,7 +297,8 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
     /**
      * Returns the confirmation to remove the profile
      *
-     * @param request The Http request
+     * @param request
+     *            The Http request
      * @return the confirmation page
      */
     public String getConfirmRemoveProfile( HttpServletRequest request )
@@ -309,38 +308,36 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
         UrlItem url = new UrlItem( JSP_URL_DO_REMOVE_PROFILE );
         url.addParameter( ProfilesConstants.PARAMETER_PROFILE_KEY, strProfileKey );
 
-        return AdminMessageService.getMessageUrl( request, ProfilesConstants.MESSAGE_CONFIRM_REMOVE_PROFILE,
-            url.getUrl(  ), AdminMessage.TYPE_CONFIRMATION );
+        return AdminMessageService.getMessageUrl( request, ProfilesConstants.MESSAGE_CONFIRM_REMOVE_PROFILE, url.getUrl( ), AdminMessage.TYPE_CONFIRMATION );
     }
 
     /**
      * Remove a profile
      *
-     * @param request The Http request
+     * @param request
+     *            The Http request
      * @return Html form
      */
     public String doRemoveProfile( HttpServletRequest request )
     {
         String strProfileKey = request.getParameter( ProfilesConstants.PARAMETER_PROFILE_KEY );
 
-        if ( !RBACService.isAuthorized( Profile.RESOURCE_TYPE, strProfileKey,
-                    ProfilesResourceIdService.PERMISSION_DELETE_PROFILE, getUser(  ) ) )
+        if ( !RBACService.isAuthorized( Profile.RESOURCE_TYPE, strProfileKey, ProfilesResourceIdService.PERMISSION_DELETE_PROFILE, getUser( ) ) )
         {
             return AdminMessageService.getMessageUrl( request, Messages.USER_ACCESS_DENIED, AdminMessage.TYPE_STOP );
         }
 
-        // check that no user has this profile 
-        if ( _profilesService.checkProfileAttributed( strProfileKey, getPlugin(  ) ) )
+        // check that no user has this profile
+        if ( _profilesService.checkProfileAttributed( strProfileKey, getPlugin( ) ) )
         {
-            return AdminMessageService.getMessageUrl( request, ProfilesConstants.PROPERTY_PROFILE_ATTRIBUTED,
-                AdminMessage.TYPE_STOP );
+            return AdminMessageService.getMessageUrl( request, ProfilesConstants.PROPERTY_PROFILE_ATTRIBUTED, AdminMessage.TYPE_STOP );
         }
 
-        _profilesService.removeRights( strProfileKey, getPlugin(  ) );
-        _profilesService.removeWorkgroups( strProfileKey, getPlugin(  ) );
-        _profilesService.removeRoles( strProfileKey, getPlugin(  ) );
-        _profilesService.removeView( strProfileKey, getPlugin(  ) );
-        _profilesService.remove( strProfileKey, getLocale(  ), getPlugin(  ) );
+        _profilesService.removeRights( strProfileKey, getPlugin( ) );
+        _profilesService.removeWorkgroups( strProfileKey, getPlugin( ) );
+        _profilesService.removeRoles( strProfileKey, getPlugin( ) );
+        _profilesService.removeView( strProfileKey, getPlugin( ) );
+        _profilesService.remove( strProfileKey, getLocale( ), getPlugin( ) );
 
         return JSP_MANAGE_PROFILES;
     }
@@ -350,7 +347,8 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
     /**
      * Returns the form for profile modification
      *
-     * @param request The Http request
+     * @param request
+     *            The Http request
      * @return Html form
      */
     public String getModifyProfile( HttpServletRequest request )
@@ -358,10 +356,10 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
         setPageTitleProperty( ProfilesConstants.PROPERTY_MODIFY_PROFILE_PAGETITLE );
 
         String strProfileKey = request.getParameter( ProfilesConstants.PARAMETER_PROFILE_KEY );
-        Profile profile = _profilesService.findByPrimaryKey( strProfileKey, getPlugin(  ) );
+        Profile profile = _profilesService.findByPrimaryKey( strProfileKey, getPlugin( ) );
 
         String strPermission = ProfilesResourceIdService.PERMISSION_MODIFY_PROFILE;
-        boolean bPermission = RBACService.isAuthorized( Profile.RESOURCE_TYPE, strProfileKey, strPermission, getUser(  ) );
+        boolean bPermission = RBACService.isAuthorized( Profile.RESOURCE_TYPE, strProfileKey, strPermission, getUser( ) );
         String strBaseUrl = AppPathService.getBaseUrl( request ) + JSP_URL_MODIFY_PROFILE;
         UrlItem url = new UrlItem( strBaseUrl );
 
@@ -369,32 +367,31 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
         setItemNavigator( ProfilesConstants.PARAMETER_MODIFY_PROFILE, profile, url );
 
         // PERMISSIONS
-        List<ProfileAction> listActions = _profilesService.getListActions( getUser(  ), profile, strPermission,
-                getLocale(  ), getPlugin(  ) );
+        List<ProfileAction> listActions = _profilesService.getListActions( getUser( ), profile, strPermission, getLocale( ), getPlugin( ) );
         profile.setActions( listActions );
 
-        Map<String, Object> model = new HashMap<String, Object>(  );
+        Map<String, Object> model = new HashMap<String, Object>( );
         model.put( ProfilesConstants.MARK_PROFILE, profile );
-        model.put( ProfilesConstants.MARK_ITEM_NAVIGATOR,
-            _itemNavigators.get( ProfilesConstants.PARAMETER_MODIFY_PROFILE ) );
+        model.put( ProfilesConstants.MARK_ITEM_NAVIGATOR, _itemNavigators.get( ProfilesConstants.PARAMETER_MODIFY_PROFILE ) );
         model.put( ProfilesConstants.MARK_PERMISSION, bPermission );
 
-        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_MODIFY_PROFILE, getLocale(  ), model );
+        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_MODIFY_PROFILE, getLocale( ), model );
 
-        return getAdminPage( template.getHtml(  ) );
+        return getAdminPage( template.getHtml( ) );
     }
 
     /**
      * Update a profile
-     * @param request The Http request
+     * 
+     * @param request
+     *            The Http request
      * @return Html form
      */
     public String doModifyProfile( HttpServletRequest request )
     {
         String strProfileKey = request.getParameter( ProfilesConstants.PARAMETER_PROFILE_KEY );
 
-        if ( !RBACService.isAuthorized( Profile.RESOURCE_TYPE, strProfileKey,
-                    ProfilesResourceIdService.PERMISSION_MODIFY_PROFILE, getUser(  ) ) )
+        if ( !RBACService.isAuthorized( Profile.RESOURCE_TYPE, strProfileKey, ProfilesResourceIdService.PERMISSION_MODIFY_PROFILE, getUser( ) ) )
         {
             return AdminMessageService.getMessageUrl( request, Messages.USER_ACCESS_DENIED, AdminMessage.TYPE_STOP );
         }
@@ -406,10 +403,10 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
             return AdminMessageService.getMessageUrl( request, Messages.MANDATORY_FIELDS, AdminMessage.TYPE_STOP );
         }
 
-        Profile profile = new Profile(  );
-        profile.setKey( strProfileKey.trim(  ) );
+        Profile profile = new Profile( );
+        profile.setKey( strProfileKey.trim( ) );
         profile.setDescription( strDescription );
-        _profilesService.update( profile, getLocale(  ), getPlugin(  ) );
+        _profilesService.update( profile, getLocale( ), getPlugin( ) );
 
         return JSP_MANAGE_PROFILES;
     }
@@ -419,52 +416,52 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
     /**
      * Returns the right assignation form
      *
-     * @param request The Http request
+     * @param request
+     *            The Http request
      * @return the html code for display the modes list
      */
     public String getAssignRightsProfile( HttpServletRequest request )
     {
-        Map<String, Object> model = new HashMap<String, Object>(  );
+        Map<String, Object> model = new HashMap<String, Object>( );
         setPageTitleProperty( ProfilesConstants.PROPERTY_ASSIGN_RIGHTS_PROFILE_PAGETITLE );
 
         // PROFILE
         String strProfileKey = request.getParameter( ProfilesConstants.PARAMETER_PROFILE_KEY );
-        Profile profile = _profilesService.findByPrimaryKey( strProfileKey, getPlugin(  ) );
+        Profile profile = _profilesService.findByPrimaryKey( strProfileKey, getPlugin( ) );
 
         // ASSIGNED RIGHTS
-        List<Right> listAssignedRights = new ArrayList<Right>(  );
+        List<Right> listAssignedRights = new ArrayList<Right>( );
 
-        for ( Right right : _profilesService.getRightsListForProfile( strProfileKey, getPlugin(  ) ) )
+        for ( Right right : _profilesService.getRightsListForProfile( strProfileKey, getPlugin( ) ) )
         {
-            right = RightHome.findByPrimaryKey( right.getId(  ) );
+            right = RightHome.findByPrimaryKey( right.getId( ) );
 
-            //Add right with higher level then connected user or add all rights if connected user is administrator
-            if ( ( right != null ) &&
-                    ( ( right.getLevel(  ) > getUser(  ).getUserLevel(  ) ) || ( getUser(  ).isAdmin(  ) ) ) )
+            // Add right with higher level then connected user or add all rights if connected user is administrator
+            if ( ( right != null ) && ( ( right.getLevel( ) > getUser( ).getUserLevel( ) ) || ( getUser( ).isAdmin( ) ) ) )
             {
-                right.setLocale( getLocale(  ) );
+                right.setLocale( getLocale( ) );
                 listAssignedRights.add( right );
             }
         }
 
         // AVAILABLE RIGHTS
-        ReferenceList listAvailableRights = new ReferenceList(  );
+        ReferenceList listAvailableRights = new ReferenceList( );
         ReferenceItem itemRight = null;
         boolean bAssigned;
 
-        for ( Right right : RightHome.getRightsList(  ) )
+        for ( Right right : RightHome.getRightsList( ) )
         {
-            right.setLocale( getLocale(  ) );
-            itemRight = new ReferenceItem(  );
-            itemRight.setCode( right.getId(  ) );
-            itemRight.setName( right.getName(  ) + ProfilesConstants.SPACE + ProfilesConstants.OPEN_BRACKET +
-                I18nService.getLocalizedString( ProfilesConstants.PROPERTY_ASSIGN_RIGHTS_PROFILE_LABEL_LEVEL,
-                    getLocale(  ) ) + ProfilesConstants.SPACE + right.getLevel(  ) + ProfilesConstants.CLOSED_BRACKET );
+            right.setLocale( getLocale( ) );
+            itemRight = new ReferenceItem( );
+            itemRight.setCode( right.getId( ) );
+            itemRight.setName( right.getName( ) + ProfilesConstants.SPACE + ProfilesConstants.OPEN_BRACKET
+                    + I18nService.getLocalizedString( ProfilesConstants.PROPERTY_ASSIGN_RIGHTS_PROFILE_LABEL_LEVEL, getLocale( ) ) + ProfilesConstants.SPACE
+                    + right.getLevel( ) + ProfilesConstants.CLOSED_BRACKET );
             bAssigned = false;
 
             for ( Right assignedRight : listAssignedRights )
             {
-                if ( assignedRight.getId(  ).equals( itemRight.getCode(  ) ) )
+                if ( assignedRight.getId( ).equals( itemRight.getCode( ) ) )
                 {
                     bAssigned = true;
 
@@ -472,15 +469,15 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
                 }
             }
 
-            //Add right with higher level then connected user or add all users if connected user is administrator
-            if ( !bAssigned && ( ( right.getLevel(  ) > getUser(  ).getUserLevel(  ) ) || ( getUser(  ).isAdmin(  ) ) ) )
+            // Add right with higher level then connected user or add all users if connected user is administrator
+            if ( !bAssigned && ( ( right.getLevel( ) > getUser( ).getUserLevel( ) ) || ( getUser( ).isAdmin( ) ) ) )
             {
                 listAvailableRights.add( itemRight );
             }
         }
 
         String strPermission = ProfilesResourceIdService.PERMISSION_MANAGE_RIGHTS_ASSIGNMENT;
-        boolean bPermission = RBACService.isAuthorized( Profile.RESOURCE_TYPE, strProfileKey, strPermission, getUser(  ) );
+        boolean bPermission = RBACService.isAuthorized( Profile.RESOURCE_TYPE, strProfileKey, strPermission, getUser( ) );
         String strBaseUrl = AppPathService.getBaseUrl( request ) + JSP_URL_ASSIGN_RIGHTS_PROFILE;
         UrlItem url = new UrlItem( strBaseUrl );
 
@@ -488,27 +485,26 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
         setItemNavigator( ProfilesConstants.PARAMETER_ASSIGN_RIGHT, profile, url );
 
         // PERMISSIONS
-        List<ProfileAction> listActions = _profilesService.getListActions( getUser(  ), profile, strPermission,
-                getLocale(  ), getPlugin(  ) );
+        List<ProfileAction> listActions = _profilesService.getListActions( getUser( ), profile, strPermission, getLocale( ), getPlugin( ) );
         profile.setActions( listActions );
 
         model.put( ProfilesConstants.MARK_PROFILE, profile );
         model.put( ProfilesConstants.MARK_AVAILABLE_LIST, listAvailableRights );
         model.put( ProfilesConstants.MARK_ASSIGNED_LIST, listAssignedRights );
-        model.put( ProfilesConstants.MARK_ASSIGNED_NUMBER, listAssignedRights.size(  ) );
-        model.put( ProfilesConstants.MARK_ITEM_NAVIGATOR,
-            _itemNavigators.get( ProfilesConstants.PARAMETER_ASSIGN_RIGHT ) );
+        model.put( ProfilesConstants.MARK_ASSIGNED_NUMBER, listAssignedRights.size( ) );
+        model.put( ProfilesConstants.MARK_ITEM_NAVIGATOR, _itemNavigators.get( ProfilesConstants.PARAMETER_ASSIGN_RIGHT ) );
         model.put( ProfilesConstants.MARK_PERMISSION, bPermission );
 
-        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_ASSIGN_RIGHTS_PROFILE, getLocale(  ), model );
+        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_ASSIGN_RIGHTS_PROFILE, getLocale( ), model );
 
-        return getAdminPage( template.getHtml(  ) );
+        return getAdminPage( template.getHtml( ) );
     }
 
     /**
      * Process the data capture form for assign rights to a profile
      *
-     * @param request The HTTP Request
+     * @param request
+     *            The HTTP Request
      * @return The Jsp URL of the process result
      */
     public String doAssignRightsProfile( HttpServletRequest request )
@@ -525,40 +521,38 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
         {
             String strProfileKey = request.getParameter( ProfilesConstants.PARAMETER_PROFILE_KEY );
 
-            if ( !RBACService.isAuthorized( Profile.RESOURCE_TYPE, strProfileKey,
-                        ProfilesResourceIdService.PERMISSION_MANAGE_RIGHTS_ASSIGNMENT, getUser(  ) ) )
+            if ( !RBACService.isAuthorized( Profile.RESOURCE_TYPE, strProfileKey, ProfilesResourceIdService.PERMISSION_MANAGE_RIGHTS_ASSIGNMENT, getUser( ) ) )
             {
                 return AdminMessageService.getMessageUrl( request, Messages.USER_ACCESS_DENIED, AdminMessage.TYPE_STOP );
             }
 
-            //retrieve the selected portlets ids
-            String[] arrayRightsIds = request.getParameterValues( ProfilesConstants.PARAMETER_RIGHTS_LIST );
+            // retrieve the selected portlets ids
+            String [ ] arrayRightsIds = request.getParameterValues( ProfilesConstants.PARAMETER_RIGHTS_LIST );
 
             if ( ( arrayRightsIds != null ) )
             {
                 for ( int i = 0; i < arrayRightsIds.length; i++ )
                 {
-                    if ( !_profilesService.hasRight( strProfileKey, arrayRightsIds[i], getPlugin(  ) ) )
+                    if ( !_profilesService.hasRight( strProfileKey, arrayRightsIds [i], getPlugin( ) ) )
                     {
-                        _profilesService.addRightForProfile( strProfileKey, arrayRightsIds[i], getPlugin(  ) );
+                        _profilesService.addRightForProfile( strProfileKey, arrayRightsIds [i], getPlugin( ) );
 
                         // Update users rights
-                        Right right = RightHome.findByPrimaryKey( arrayRightsIds[i] );
+                        Right right = RightHome.findByPrimaryKey( arrayRightsIds [i] );
 
-                        for ( AdminUser user : _profilesService.getUsersListForProfile( strProfileKey, getPlugin(  ) ) )
+                        for ( AdminUser user : _profilesService.getUsersListForProfile( strProfileKey, getPlugin( ) ) )
                         {
-                            if ( !AdminUserHome.hasRight( user, right.getId(  ) ) &&
-                                    ( user.getUserLevel(  ) <= right.getLevel(  ) ) )
+                            if ( !AdminUserHome.hasRight( user, right.getId( ) ) && ( user.getUserLevel( ) <= right.getLevel( ) ) )
                             {
-                                AdminUserHome.createRightForUser( user.getUserId(  ), right.getId(  ) );
+                                AdminUserHome.createRightForUser( user.getUserId( ), right.getId( ) );
                             }
                         }
                     }
                 }
             }
 
-            strReturn = JSP_ASSIGN_RIGHTS_PROFILE + ProfilesConstants.INTERROGATION_MARK +
-                ProfilesConstants.PARAMETER_PROFILE_KEY + ProfilesConstants.EQUAL + strProfileKey;
+            strReturn = JSP_ASSIGN_RIGHTS_PROFILE + ProfilesConstants.INTERROGATION_MARK + ProfilesConstants.PARAMETER_PROFILE_KEY + ProfilesConstants.EQUAL
+                    + strProfileKey;
         }
 
         return strReturn;
@@ -566,15 +560,16 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
 
     /**
      * unassigns right from profile
-     * @param request The HttpRequest
+     * 
+     * @param request
+     *            The HttpRequest
      * @return the HTML code of list assignations
      */
     public String doUnassignRightProfile( HttpServletRequest request )
     {
         String strProfileKey = request.getParameter( ProfilesConstants.PARAMETER_PROFILE_KEY );
 
-        if ( !RBACService.isAuthorized( Profile.RESOURCE_TYPE, strProfileKey,
-                    ProfilesResourceIdService.PERMISSION_MANAGE_RIGHTS_ASSIGNMENT, getUser(  ) ) )
+        if ( !RBACService.isAuthorized( Profile.RESOURCE_TYPE, strProfileKey, ProfilesResourceIdService.PERMISSION_MANAGE_RIGHTS_ASSIGNMENT, getUser( ) ) )
         {
             return AdminMessageService.getMessageUrl( request, Messages.USER_ACCESS_DENIED, AdminMessage.TYPE_STOP );
         }
@@ -582,23 +577,21 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
         String strIdRight = request.getParameter( ProfilesConstants.PARAMETER_ID_RIGHT );
         String strAnchor = request.getParameter( ProfilesConstants.PARAMETER_ANCHOR );
 
-        _profilesService.removeRightFromProfile( strProfileKey, strIdRight, getPlugin(  ) );
+        _profilesService.removeRightFromProfile( strProfileKey, strIdRight, getPlugin( ) );
 
         // Update users rights
         Right right = RightHome.findByPrimaryKey( strIdRight );
 
-        for ( AdminUser user : _profilesService.getUsersListForProfile( strProfileKey, getPlugin(  ) ) )
+        for ( AdminUser user : _profilesService.getUsersListForProfile( strProfileKey, getPlugin( ) ) )
         {
-            if ( AdminUserHome.hasRight( user, right.getId(  ) ) &&
-                    ( ( user.getUserLevel(  ) > getUser(  ).getUserLevel(  ) ) || getUser(  ).isAdmin(  ) ) )
+            if ( AdminUserHome.hasRight( user, right.getId( ) ) && ( ( user.getUserLevel( ) > getUser( ).getUserLevel( ) ) || getUser( ).isAdmin( ) ) )
             {
-                AdminUserHome.removeRightForUser( user.getUserId(  ), right.getId(  ) );
+                AdminUserHome.removeRightForUser( user.getUserId( ), right.getId( ) );
             }
         }
 
-        return JSP_ASSIGN_RIGHTS_PROFILE + ProfilesConstants.INTERROGATION_MARK +
-        ProfilesConstants.PARAMETER_PROFILE_KEY + ProfilesConstants.EQUAL + strProfileKey + ProfilesConstants.SHARP +
-        strAnchor;
+        return JSP_ASSIGN_RIGHTS_PROFILE + ProfilesConstants.INTERROGATION_MARK + ProfilesConstants.PARAMETER_PROFILE_KEY + ProfilesConstants.EQUAL
+                + strProfileKey + ProfilesConstants.SHARP + strAnchor;
     }
 
     /* ASSIGN WORKGROUPS */
@@ -606,24 +599,25 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
     /**
      * Returns the workgroup assignation form
      *
-     * @param request The Http request
+     * @param request
+     *            The Http request
      * @return the html code for display the modes list
      */
     public String getAssignWorkgroupsProfile( HttpServletRequest request )
     {
-        Map<String, Object> model = new HashMap<String, Object>(  );
+        Map<String, Object> model = new HashMap<String, Object>( );
         setPageTitleProperty( ProfilesConstants.PROPERTY_ASSIGN_WORKGROUPS_PROFILE_PAGETITLE );
 
         // PROFILE
         String strProfileKey = request.getParameter( ProfilesConstants.PARAMETER_PROFILE_KEY );
-        Profile profile = _profilesService.findByPrimaryKey( strProfileKey, getPlugin(  ) );
+        Profile profile = _profilesService.findByPrimaryKey( strProfileKey, getPlugin( ) );
 
         // ASSIGNED WORKGROUPS
-        List<AdminWorkgroup> listAssignedWorkgroups = new ArrayList<AdminWorkgroup>(  );
+        List<AdminWorkgroup> listAssignedWorkgroups = new ArrayList<AdminWorkgroup>( );
 
-        for ( AdminWorkgroup workgroup : _profilesService.getWorkgroupsListForProfile( strProfileKey, getPlugin(  ) ) )
+        for ( AdminWorkgroup workgroup : _profilesService.getWorkgroupsListForProfile( strProfileKey, getPlugin( ) ) )
         {
-            workgroup = AdminWorkgroupHome.findByPrimaryKey( workgroup.getKey(  ) );
+            workgroup = AdminWorkgroupHome.findByPrimaryKey( workgroup.getKey( ) );
 
             if ( workgroup != null )
             {
@@ -632,8 +626,8 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
         }
 
         // FILTER
-        AdminWorkgroupFilter awFilter = new AdminWorkgroupFilter(  );
-        List<AdminWorkgroup> listFilteredWorkgroups = new ArrayList<AdminWorkgroup>(  );
+        AdminWorkgroupFilter awFilter = new AdminWorkgroupFilter( );
+        List<AdminWorkgroup> listFilteredWorkgroups = new ArrayList<AdminWorkgroup>( );
         boolean bIsSearch = awFilter.setAdminWorkgroupFilter( request );
         boolean bIsFiltered;
 
@@ -643,7 +637,7 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
 
             for ( AdminWorkgroup assignedWorkgroup : listAssignedWorkgroups )
             {
-                if ( assignedWorkgroup.getKey(  ).equals( filteredWorkgroup.getKey(  ) ) )
+                if ( assignedWorkgroup.getKey( ).equals( filteredWorkgroup.getKey( ) ) )
                 {
                     bIsFiltered = true;
 
@@ -657,27 +651,27 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
             }
         }
 
-        if ( !getUser(  ).isAdmin(  ) )
+        if ( !getUser( ).isAdmin( ) )
         {
-            listFilteredWorkgroups = (List<AdminWorkgroup>) AdminWorkgroupService.getAuthorizedCollection( (Collection<?extends AdminWorkgroupResource>) listFilteredWorkgroups,
-                    getUser(  ) );
+            listFilteredWorkgroups = (List<AdminWorkgroup>) AdminWorkgroupService
+                    .getAuthorizedCollection( (Collection<? extends AdminWorkgroupResource>) listFilteredWorkgroups, getUser( ) );
         }
 
         // AVAILABLE WORKGROUPS
-        ReferenceList listAvailableWorkgroups = new ReferenceList(  );
+        ReferenceList listAvailableWorkgroups = new ReferenceList( );
         ReferenceItem itemWorkgroup = null;
         boolean bAssigned;
 
-        for ( AdminWorkgroup workgroup : AdminWorkgroupHome.findAll(  ) )
+        for ( AdminWorkgroup workgroup : AdminWorkgroupHome.findAll( ) )
         {
-            itemWorkgroup = new ReferenceItem(  );
-            itemWorkgroup.setCode( workgroup.getKey(  ) );
-            itemWorkgroup.setName( workgroup.getKey(  ) );
+            itemWorkgroup = new ReferenceItem( );
+            itemWorkgroup.setCode( workgroup.getKey( ) );
+            itemWorkgroup.setName( workgroup.getKey( ) );
             bAssigned = false;
 
             for ( AdminWorkgroup assignedWorkgroup : listAssignedWorkgroups )
             {
-                if ( assignedWorkgroup.getKey(  ).equals( itemWorkgroup.getCode(  ) ) )
+                if ( assignedWorkgroup.getKey( ).equals( itemWorkgroup.getCode( ) ) )
                 {
                     bAssigned = true;
                 }
@@ -704,8 +698,7 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
 
         _strCurrentPageIndex = Paginator.getPageIndex( request, Paginator.PARAMETER_PAGE_INDEX, _strCurrentPageIndex );
         _nDefaultItemsPerPage = AppPropertiesService.getPropertyInt( ProfilesConstants.PROPERTY_ITEM_PER_PAGE, 50 );
-        _nItemsPerPage = Paginator.getItemsPerPage( request, Paginator.PARAMETER_ITEMS_PER_PAGE, _nItemsPerPage,
-                _nDefaultItemsPerPage );
+        _nItemsPerPage = Paginator.getItemsPerPage( request, Paginator.PARAMETER_ITEMS_PER_PAGE, _nItemsPerPage, _nDefaultItemsPerPage );
 
         String strBaseUrl = AppPathService.getBaseUrl( request ) + JSP_URL_ASSIGN_WORKGROUPS_PROFILE;
         UrlItem url = new UrlItem( strBaseUrl );
@@ -725,32 +718,30 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
         if ( bIsSearch )
         {
             awFilter.setUrlAttributes( url );
-            strSortSearchAttribute = ProfilesConstants.AMPERSAND + awFilter.getUrlAttributes(  );
+            strSortSearchAttribute = ProfilesConstants.AMPERSAND + awFilter.getUrlAttributes( );
         }
 
         String strPermission = ProfilesResourceIdService.PERMISSION_MANAGE_WORKGROUPS_ASSIGNMENT;
-        boolean bPermission = RBACService.isAuthorized( Profile.RESOURCE_TYPE, strProfileKey, strPermission, getUser(  ) );
+        boolean bPermission = RBACService.isAuthorized( Profile.RESOURCE_TYPE, strProfileKey, strPermission, getUser( ) );
 
         // ITEM NAVIGATION
         setItemNavigator( ProfilesConstants.PARAMETER_ASSIGN_WORKGROUP, profile, url );
 
         // PAGINATOR
-        url.addParameter( ProfilesConstants.PARAMETER_PROFILE_KEY, profile.getKey(  ) );
+        url.addParameter( ProfilesConstants.PARAMETER_PROFILE_KEY, profile.getKey( ) );
 
-        LocalizedPaginator<AdminWorkgroup> paginator = new LocalizedPaginator<AdminWorkgroup>( listFilteredWorkgroups,
-                _nItemsPerPage, url.getUrl(  ), Paginator.PARAMETER_PAGE_INDEX, _strCurrentPageIndex, getLocale(  ) );
+        LocalizedPaginator<AdminWorkgroup> paginator = new LocalizedPaginator<AdminWorkgroup>( listFilteredWorkgroups, _nItemsPerPage, url.getUrl( ),
+                Paginator.PARAMETER_PAGE_INDEX, _strCurrentPageIndex, getLocale( ) );
 
         // PERMISSIONS
-        List<ProfileAction> listActions = _profilesService.getListActions( getUser(  ), profile, strPermission,
-                getLocale(  ), getPlugin(  ) );
+        List<ProfileAction> listActions = _profilesService.getListActions( getUser( ), profile, strPermission, getLocale( ), getPlugin( ) );
         profile.setActions( listActions );
 
         model.put( ProfilesConstants.MARK_PROFILE, profile );
         model.put( ProfilesConstants.MARK_AVAILABLE_LIST, listAvailableWorkgroups );
-        model.put( ProfilesConstants.MARK_ASSIGNED_LIST, paginator.getPageItems(  ) );
-        model.put( ProfilesConstants.MARK_ASSIGNED_NUMBER, listAssignedWorkgroups.size(  ) );
-        model.put( ProfilesConstants.MARK_ITEM_NAVIGATOR,
-            _itemNavigators.get( ProfilesConstants.PARAMETER_ASSIGN_WORKGROUP ) );
+        model.put( ProfilesConstants.MARK_ASSIGNED_LIST, paginator.getPageItems( ) );
+        model.put( ProfilesConstants.MARK_ASSIGNED_NUMBER, listAssignedWorkgroups.size( ) );
+        model.put( ProfilesConstants.MARK_ITEM_NAVIGATOR, _itemNavigators.get( ProfilesConstants.PARAMETER_ASSIGN_WORKGROUP ) );
         model.put( ProfilesConstants.MARK_NB_ITEMS_PER_PAGE, StringUtils.EMPTY + _nItemsPerPage );
         model.put( ProfilesConstants.MARK_PAGINATOR, paginator );
         model.put( ProfilesConstants.MARK_SEARCH_IS_SEARCH, bIsSearch );
@@ -758,15 +749,16 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
         model.put( ProfilesConstants.MARK_SORT_SEARCH_ATTRIBUTE, strSortSearchAttribute );
         model.put( ProfilesConstants.MARK_PERMISSION, bPermission );
 
-        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_ASSIGN_WORKGROUPS_PROFILE, getLocale(  ), model );
+        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_ASSIGN_WORKGROUPS_PROFILE, getLocale( ), model );
 
-        return getAdminPage( template.getHtml(  ) );
+        return getAdminPage( template.getHtml( ) );
     }
 
     /**
      * Process the data capture form for assign workgroups to a profile
      *
-     * @param request The HTTP Request
+     * @param request
+     *            The HTTP Request
      * @return The Jsp URL of the process result
      */
     public String doAssignWorkgroupsProfile( HttpServletRequest request )
@@ -783,39 +775,39 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
         {
             String strProfileKey = request.getParameter( ProfilesConstants.PARAMETER_PROFILE_KEY );
 
-            if ( !RBACService.isAuthorized( Profile.RESOURCE_TYPE, strProfileKey,
-                        ProfilesResourceIdService.PERMISSION_MANAGE_WORKGROUPS_ASSIGNMENT, getUser(  ) ) )
+            if ( !RBACService.isAuthorized( Profile.RESOURCE_TYPE, strProfileKey, ProfilesResourceIdService.PERMISSION_MANAGE_WORKGROUPS_ASSIGNMENT,
+                    getUser( ) ) )
             {
                 return AdminMessageService.getMessageUrl( request, Messages.USER_ACCESS_DENIED, AdminMessage.TYPE_STOP );
             }
 
-            //retrieve the selected portlets ids
-            String[] arrayWorkgroupsIds = request.getParameterValues( ProfilesConstants.PARAMETER_WORKGROUPS_LIST );
+            // retrieve the selected portlets ids
+            String [ ] arrayWorkgroupsIds = request.getParameterValues( ProfilesConstants.PARAMETER_WORKGROUPS_LIST );
 
             if ( ( arrayWorkgroupsIds != null ) )
             {
                 for ( int i = 0; i < arrayWorkgroupsIds.length; i++ )
                 {
-                    if ( !_profilesService.hasWorkgroup( strProfileKey, arrayWorkgroupsIds[i], getPlugin(  ) ) )
+                    if ( !_profilesService.hasWorkgroup( strProfileKey, arrayWorkgroupsIds [i], getPlugin( ) ) )
                     {
-                        _profilesService.addWorkgroupForProfile( strProfileKey, arrayWorkgroupsIds[i], getPlugin(  ) );
+                        _profilesService.addWorkgroupForProfile( strProfileKey, arrayWorkgroupsIds [i], getPlugin( ) );
 
                         // Update users workgroups
-                        AdminWorkgroup workgroup = AdminWorkgroupHome.findByPrimaryKey( arrayWorkgroupsIds[i] );
+                        AdminWorkgroup workgroup = AdminWorkgroupHome.findByPrimaryKey( arrayWorkgroupsIds [i] );
 
-                        for ( AdminUser user : _profilesService.getUsersListForProfile( strProfileKey, getPlugin(  ) ) )
+                        for ( AdminUser user : _profilesService.getUsersListForProfile( strProfileKey, getPlugin( ) ) )
                         {
-                            if ( !AdminWorkgroupHome.isUserInWorkgroup( user, workgroup.getKey(  ) ) )
+                            if ( !AdminWorkgroupHome.isUserInWorkgroup( user, workgroup.getKey( ) ) )
                             {
-                                AdminWorkgroupHome.addUserForWorkgroup( user, workgroup.getKey(  ) );
+                                AdminWorkgroupHome.addUserForWorkgroup( user, workgroup.getKey( ) );
                             }
                         }
                     }
                 }
             }
 
-            strReturn = JSP_ASSIGN_WORKGROUPS_PROFILE + ProfilesConstants.INTERROGATION_MARK +
-                ProfilesConstants.PARAMETER_PROFILE_KEY + ProfilesConstants.EQUAL + strProfileKey;
+            strReturn = JSP_ASSIGN_WORKGROUPS_PROFILE + ProfilesConstants.INTERROGATION_MARK + ProfilesConstants.PARAMETER_PROFILE_KEY + ProfilesConstants.EQUAL
+                    + strProfileKey;
         }
 
         return strReturn;
@@ -823,15 +815,16 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
 
     /**
      * unassigns workgroup from profile
-     * @param request The HttpRequest
+     * 
+     * @param request
+     *            The HttpRequest
      * @return the HTML code of list assignations
      */
     public String doUnassignWorkgroupProfile( HttpServletRequest request )
     {
         String strProfileKey = request.getParameter( ProfilesConstants.PARAMETER_PROFILE_KEY );
 
-        if ( !RBACService.isAuthorized( Profile.RESOURCE_TYPE, strProfileKey,
-                    ProfilesResourceIdService.PERMISSION_MANAGE_WORKGROUPS_ASSIGNMENT, getUser(  ) ) )
+        if ( !RBACService.isAuthorized( Profile.RESOURCE_TYPE, strProfileKey, ProfilesResourceIdService.PERMISSION_MANAGE_WORKGROUPS_ASSIGNMENT, getUser( ) ) )
         {
             return AdminMessageService.getMessageUrl( request, Messages.USER_ACCESS_DENIED, AdminMessage.TYPE_STOP );
         }
@@ -839,22 +832,21 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
         String strWorkgroupKey = request.getParameter( ProfilesConstants.PARAMETER_WORKGROUP_KEY );
         String strAnchor = request.getParameter( ProfilesConstants.PARAMETER_ANCHOR );
 
-        _profilesService.removeWorkgroupFromProfile( strProfileKey, strWorkgroupKey, getPlugin(  ) );
+        _profilesService.removeWorkgroupFromProfile( strProfileKey, strWorkgroupKey, getPlugin( ) );
 
         // Update users workgroups
         AdminWorkgroup workgroup = AdminWorkgroupHome.findByPrimaryKey( strWorkgroupKey );
 
-        for ( AdminUser user : _profilesService.getUsersListForProfile( strProfileKey, getPlugin(  ) ) )
+        for ( AdminUser user : _profilesService.getUsersListForProfile( strProfileKey, getPlugin( ) ) )
         {
-            if ( AdminWorkgroupHome.isUserInWorkgroup( user, workgroup.getKey(  ) ) )
+            if ( AdminWorkgroupHome.isUserInWorkgroup( user, workgroup.getKey( ) ) )
             {
-                AdminWorkgroupHome.removeUserFromWorkgroup( user, workgroup.getKey(  ) );
+                AdminWorkgroupHome.removeUserFromWorkgroup( user, workgroup.getKey( ) );
             }
         }
 
-        return JSP_ASSIGN_WORKGROUPS_PROFILE + ProfilesConstants.INTERROGATION_MARK +
-        ProfilesConstants.PARAMETER_PROFILE_KEY + ProfilesConstants.EQUAL + strProfileKey + ProfilesConstants.SHARP +
-        strAnchor;
+        return JSP_ASSIGN_WORKGROUPS_PROFILE + ProfilesConstants.INTERROGATION_MARK + ProfilesConstants.PARAMETER_PROFILE_KEY + ProfilesConstants.EQUAL
+                + strProfileKey + ProfilesConstants.SHARP + strAnchor;
     }
 
     /* ASSIGN ROLES */
@@ -862,24 +854,25 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
     /**
      * Returns the role assignation form
      *
-     * @param request The Http request
+     * @param request
+     *            The Http request
      * @return the html code for display the modes list
      */
     public String getAssignRolesProfile( HttpServletRequest request )
     {
-        Map<String, Object> model = new HashMap<String, Object>(  );
+        Map<String, Object> model = new HashMap<String, Object>( );
         setPageTitleProperty( ProfilesConstants.PROPERTY_ASSIGN_ROLES_PROFILE_PAGETITLE );
 
         // PROFILE
         String strProfileKey = request.getParameter( ProfilesConstants.PARAMETER_PROFILE_KEY );
-        Profile profile = _profilesService.findByPrimaryKey( strProfileKey, getPlugin(  ) );
+        Profile profile = _profilesService.findByPrimaryKey( strProfileKey, getPlugin( ) );
 
         // ASSIGNED ROLES
-        List<AdminRole> listAssignedRoles = new ArrayList<AdminRole>(  );
+        List<AdminRole> listAssignedRoles = new ArrayList<AdminRole>( );
 
-        for ( AdminRole role : _profilesService.getRolesListForProfile( strProfileKey, getPlugin(  ) ) )
+        for ( AdminRole role : _profilesService.getRolesListForProfile( strProfileKey, getPlugin( ) ) )
         {
-            role = AdminRoleHome.findByPrimaryKey( role.getKey(  ) );
+            role = AdminRoleHome.findByPrimaryKey( role.getKey( ) );
 
             if ( role != null )
             {
@@ -888,20 +881,20 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
         }
 
         // AVAILABLE ROLES
-        ReferenceList listAvailableRoles = new ReferenceList(  );
+        ReferenceList listAvailableRoles = new ReferenceList( );
         ReferenceItem itemRole = null;
         boolean bAssigned;
 
-        for ( AdminRole role : AdminRoleHome.findAll(  ) )
+        for ( AdminRole role : AdminRoleHome.findAll( ) )
         {
-            itemRole = new ReferenceItem(  );
-            itemRole.setCode( role.getKey(  ) );
-            itemRole.setName( role.getKey(  ) );
+            itemRole = new ReferenceItem( );
+            itemRole.setCode( role.getKey( ) );
+            itemRole.setName( role.getKey( ) );
             bAssigned = false;
 
             for ( AdminRole assignedRole : listAssignedRoles )
             {
-                if ( assignedRole.getKey(  ).equals( itemRole.getCode(  ) ) )
+                if ( assignedRole.getKey( ).equals( itemRole.getCode( ) ) )
                 {
                     bAssigned = true;
 
@@ -930,8 +923,7 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
 
         _strCurrentPageIndex = Paginator.getPageIndex( request, Paginator.PARAMETER_PAGE_INDEX, _strCurrentPageIndex );
         _nDefaultItemsPerPage = AppPropertiesService.getPropertyInt( ProfilesConstants.PROPERTY_ITEM_PER_PAGE, 50 );
-        _nItemsPerPage = Paginator.getItemsPerPage( request, Paginator.PARAMETER_ITEMS_PER_PAGE, _nItemsPerPage,
-                _nDefaultItemsPerPage );
+        _nItemsPerPage = Paginator.getItemsPerPage( request, Paginator.PARAMETER_ITEMS_PER_PAGE, _nItemsPerPage, _nDefaultItemsPerPage );
 
         String strBaseUrl = AppPathService.getBaseUrl( request ) + JSP_URL_ASSIGN_ROLES_PROFILE;
         UrlItem url = new UrlItem( strBaseUrl );
@@ -947,40 +939,40 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
         }
 
         String strPermission = ProfilesResourceIdService.PERMISSION_MANAGE_ROLES_ASSIGNMENT;
-        boolean bPermission = RBACService.isAuthorized( Profile.RESOURCE_TYPE, strProfileKey, strPermission, getUser(  ) );
+        boolean bPermission = RBACService.isAuthorized( Profile.RESOURCE_TYPE, strProfileKey, strPermission, getUser( ) );
 
         // ITEM NAVIGATION
         setItemNavigator( ProfilesConstants.PARAMETER_ASSIGN_ROLE, profile, url );
 
         // PAGINATOR
-        url.addParameter( ProfilesConstants.PARAMETER_PROFILE_KEY, profile.getKey(  ) );
+        url.addParameter( ProfilesConstants.PARAMETER_PROFILE_KEY, profile.getKey( ) );
 
-        LocalizedPaginator<AdminRole> paginator = new LocalizedPaginator<AdminRole>( listAssignedRoles, _nItemsPerPage,
-                url.getUrl(  ), Paginator.PARAMETER_PAGE_INDEX, _strCurrentPageIndex, getLocale(  ) );
+        LocalizedPaginator<AdminRole> paginator = new LocalizedPaginator<AdminRole>( listAssignedRoles, _nItemsPerPage, url.getUrl( ),
+                Paginator.PARAMETER_PAGE_INDEX, _strCurrentPageIndex, getLocale( ) );
 
         // PERMISSIONS
-        List<ProfileAction> listActions = _profilesService.getListActions( getUser(  ), profile, strPermission,
-                getLocale(  ), getPlugin(  ) );
+        List<ProfileAction> listActions = _profilesService.getListActions( getUser( ), profile, strPermission, getLocale( ), getPlugin( ) );
         profile.setActions( listActions );
 
         model.put( ProfilesConstants.MARK_PROFILE, profile );
         model.put( ProfilesConstants.MARK_AVAILABLE_LIST, listAvailableRoles );
-        model.put( ProfilesConstants.MARK_ASSIGNED_LIST, paginator.getPageItems(  ) );
-        model.put( ProfilesConstants.MARK_ASSIGNED_NUMBER, listAssignedRoles.size(  ) );
+        model.put( ProfilesConstants.MARK_ASSIGNED_LIST, paginator.getPageItems( ) );
+        model.put( ProfilesConstants.MARK_ASSIGNED_NUMBER, listAssignedRoles.size( ) );
         model.put( ProfilesConstants.MARK_ITEM_NAVIGATOR, _itemNavigators.get( ProfilesConstants.PARAMETER_ASSIGN_ROLE ) );
         model.put( ProfilesConstants.MARK_NB_ITEMS_PER_PAGE, StringUtils.EMPTY + _nItemsPerPage );
         model.put( ProfilesConstants.MARK_PAGINATOR, paginator );
         model.put( ProfilesConstants.MARK_PERMISSION, bPermission );
 
-        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_ASSIGN_ROLES_PROFILE, getLocale(  ), model );
+        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_ASSIGN_ROLES_PROFILE, getLocale( ), model );
 
-        return getAdminPage( template.getHtml(  ) );
+        return getAdminPage( template.getHtml( ) );
     }
 
     /**
      * Process the data capture form for assign roles to a profile
      *
-     * @param request The HTTP Request
+     * @param request
+     *            The HTTP Request
      * @return The Jsp URL of the process result
      */
     public String doAssignRolesProfile( HttpServletRequest request )
@@ -997,39 +989,38 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
         {
             String strProfileKey = request.getParameter( ProfilesConstants.PARAMETER_PROFILE_KEY );
 
-            if ( !RBACService.isAuthorized( Profile.RESOURCE_TYPE, strProfileKey,
-                        ProfilesResourceIdService.PERMISSION_MANAGE_ROLES_ASSIGNMENT, getUser(  ) ) )
+            if ( !RBACService.isAuthorized( Profile.RESOURCE_TYPE, strProfileKey, ProfilesResourceIdService.PERMISSION_MANAGE_ROLES_ASSIGNMENT, getUser( ) ) )
             {
                 return AdminMessageService.getMessageUrl( request, Messages.USER_ACCESS_DENIED, AdminMessage.TYPE_STOP );
             }
 
-            //retrieve the selected portlets ids
-            String[] arrayRoleIds = request.getParameterValues( ProfilesConstants.PARAMETER_ROLES_LIST );
+            // retrieve the selected portlets ids
+            String [ ] arrayRoleIds = request.getParameterValues( ProfilesConstants.PARAMETER_ROLES_LIST );
 
             if ( ( arrayRoleIds != null ) )
             {
                 for ( int i = 0; i < arrayRoleIds.length; i++ )
                 {
-                    if ( !_profilesService.hasRole( strProfileKey, arrayRoleIds[i], getPlugin(  ) ) )
+                    if ( !_profilesService.hasRole( strProfileKey, arrayRoleIds [i], getPlugin( ) ) )
                     {
-                        _profilesService.addRoleForProfile( strProfileKey, arrayRoleIds[i], getPlugin(  ) );
+                        _profilesService.addRoleForProfile( strProfileKey, arrayRoleIds [i], getPlugin( ) );
 
                         // Update users roles
-                        AdminRole role = AdminRoleHome.findByPrimaryKey( arrayRoleIds[i] );
+                        AdminRole role = AdminRoleHome.findByPrimaryKey( arrayRoleIds [i] );
 
-                        for ( AdminUser user : _profilesService.getUsersListForProfile( strProfileKey, getPlugin(  ) ) )
+                        for ( AdminUser user : _profilesService.getUsersListForProfile( strProfileKey, getPlugin( ) ) )
                         {
-                            if ( !AdminUserHome.hasRole( user, role.getKey(  ) ) )
+                            if ( !AdminUserHome.hasRole( user, role.getKey( ) ) )
                             {
-                                AdminUserHome.createRoleForUser( user.getUserId(  ), role.getKey(  ) );
+                                AdminUserHome.createRoleForUser( user.getUserId( ), role.getKey( ) );
                             }
                         }
                     }
                 }
             }
 
-            strReturn = JSP_ASSIGN_ROLES_PROFILE + ProfilesConstants.INTERROGATION_MARK +
-                ProfilesConstants.PARAMETER_PROFILE_KEY + ProfilesConstants.EQUAL + strProfileKey;
+            strReturn = JSP_ASSIGN_ROLES_PROFILE + ProfilesConstants.INTERROGATION_MARK + ProfilesConstants.PARAMETER_PROFILE_KEY + ProfilesConstants.EQUAL
+                    + strProfileKey;
         }
 
         return strReturn;
@@ -1037,15 +1028,16 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
 
     /**
      * unassigns roles from profile
-     * @param request The HttpRequest
+     * 
+     * @param request
+     *            The HttpRequest
      * @return the HTML code of list assignations
      */
     public String doUnassignRoleProfile( HttpServletRequest request )
     {
         String strProfileKey = request.getParameter( ProfilesConstants.PARAMETER_PROFILE_KEY );
 
-        if ( !RBACService.isAuthorized( Profile.RESOURCE_TYPE, strProfileKey,
-                    ProfilesResourceIdService.PERMISSION_MANAGE_ROLES_ASSIGNMENT, getUser(  ) ) )
+        if ( !RBACService.isAuthorized( Profile.RESOURCE_TYPE, strProfileKey, ProfilesResourceIdService.PERMISSION_MANAGE_ROLES_ASSIGNMENT, getUser( ) ) )
         {
             return AdminMessageService.getMessageUrl( request, Messages.USER_ACCESS_DENIED, AdminMessage.TYPE_STOP );
         }
@@ -1053,22 +1045,21 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
         String strRoleKey = request.getParameter( ProfilesConstants.PARAMETER_ROLE_KEY );
         String strAnchor = request.getParameter( ProfilesConstants.PARAMETER_ANCHOR );
 
-        _profilesService.removeRoleFromProfile( strProfileKey, strRoleKey, getPlugin(  ) );
+        _profilesService.removeRoleFromProfile( strProfileKey, strRoleKey, getPlugin( ) );
 
         // Update users roles
         AdminRole role = AdminRoleHome.findByPrimaryKey( strRoleKey );
 
-        for ( AdminUser user : _profilesService.getUsersListForProfile( strProfileKey, getPlugin(  ) ) )
+        for ( AdminUser user : _profilesService.getUsersListForProfile( strProfileKey, getPlugin( ) ) )
         {
-            if ( AdminUserHome.hasRole( user, role.getKey(  ) ) )
+            if ( AdminUserHome.hasRole( user, role.getKey( ) ) )
             {
-                AdminUserHome.removeRoleForUser( user.getUserId(  ), role.getKey(  ) );
+                AdminUserHome.removeRoleForUser( user.getUserId( ), role.getKey( ) );
             }
         }
 
-        return JSP_ASSIGN_ROLES_PROFILE + ProfilesConstants.INTERROGATION_MARK +
-        ProfilesConstants.PARAMETER_PROFILE_KEY + ProfilesConstants.EQUAL + strProfileKey + ProfilesConstants.SHARP +
-        strAnchor;
+        return JSP_ASSIGN_ROLES_PROFILE + ProfilesConstants.INTERROGATION_MARK + ProfilesConstants.PARAMETER_PROFILE_KEY + ProfilesConstants.EQUAL
+                + strProfileKey + ProfilesConstants.SHARP + strAnchor;
     }
 
     /* ASSIGN USERS */
@@ -1076,12 +1067,13 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
     /**
      * Returns the user assignation form
      *
-     * @param request The Http request
+     * @param request
+     *            The Http request
      * @return the html code for display the modes list
      */
     public String getAssignUsersProfile( HttpServletRequest request )
     {
-        Map<String, Object> model = new HashMap<String, Object>(  );
+        Map<String, Object> model = new HashMap<String, Object>( );
         setPageTitleProperty( ProfilesConstants.PROPERTY_ASSIGN_USERS_PROFILE_PAGETITLE );
 
         String strBaseUrl = AppPathService.getBaseUrl( request ) + JSP_URL_ASSIGN_USERS_PROFILE;
@@ -1089,18 +1081,17 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
 
         // PROFILE
         String strProfileKey = request.getParameter( ProfilesConstants.PARAMETER_PROFILE_KEY );
-        Profile profile = _profilesService.findByPrimaryKey( strProfileKey, getPlugin(  ) );
+        Profile profile = _profilesService.findByPrimaryKey( strProfileKey, getPlugin( ) );
 
         // ASSIGNED USERS
-        List<AdminUser> listAssignedUsers = new ArrayList<AdminUser>(  );
+        List<AdminUser> listAssignedUsers = new ArrayList<AdminUser>( );
 
-        for ( AdminUser user : _profilesService.getUsersListForProfile( strProfileKey, getPlugin(  ) ) )
+        for ( AdminUser user : _profilesService.getUsersListForProfile( strProfileKey, getPlugin( ) ) )
         {
-            user = AdminUserHome.findByPrimaryKey( user.getUserId(  ) );
+            user = AdminUserHome.findByPrimaryKey( user.getUserId( ) );
 
-            //Add users with higher level then connected user or add all users if connected user is administrator
-            if ( ( user != null ) &&
-                    ( ( user.getUserLevel(  ) > getUser(  ).getUserLevel(  ) ) || ( getUser(  ).isAdmin(  ) ) ) )
+            // Add users with higher level then connected user or add all users if connected user is administrator
+            if ( ( user != null ) && ( ( user.getUserLevel( ) > getUser( ).getUserLevel( ) ) || ( getUser( ).isAdmin( ) ) ) )
             {
                 listAssignedUsers.add( user );
             }
@@ -1108,26 +1099,24 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
 
         Collections.sort( listAssignedUsers, new AttributeComparator( ProfilesConstants.LAST_NAME, true ) );
 
-        List<AdminUser> listFilteredUsers = AdminUserService.getFilteredUsersInterface( listAssignedUsers, request,
-                model, url );
+        List<AdminUser> listFilteredUsers = AdminUserService.getFilteredUsersInterface( listAssignedUsers, request, model, url );
 
         // AVAILABLE USERS
-        ReferenceList listAvailableUsers = new ReferenceList(  );
+        ReferenceList listAvailableUsers = new ReferenceList( );
         ReferenceItem itemUser = null;
         boolean bAssigned;
 
-        for ( AdminUser user : AdminUserHome.findUserList(  ) )
+        for ( AdminUser user : AdminUserHome.findUserList( ) )
         {
-            itemUser = new ReferenceItem(  );
-            itemUser.setCode( Integer.toString( user.getUserId(  ) ) );
-            itemUser.setName( user.getLastName(  ) + ProfilesConstants.SPACE + user.getFirstName(  ) +
-                ProfilesConstants.SPACE + ProfilesConstants.OPEN_BRACKET + user.getAccessCode(  ) +
-                ProfilesConstants.CLOSED_BRACKET );
+            itemUser = new ReferenceItem( );
+            itemUser.setCode( Integer.toString( user.getUserId( ) ) );
+            itemUser.setName( user.getLastName( ) + ProfilesConstants.SPACE + user.getFirstName( ) + ProfilesConstants.SPACE + ProfilesConstants.OPEN_BRACKET
+                    + user.getAccessCode( ) + ProfilesConstants.CLOSED_BRACKET );
             bAssigned = false;
 
             for ( AdminUser assignedUser : listAssignedUsers )
             {
-                if ( Integer.toString( assignedUser.getUserId(  ) ).equals( itemUser.getCode(  ) ) )
+                if ( Integer.toString( assignedUser.getUserId( ) ).equals( itemUser.getCode( ) ) )
                 {
                     bAssigned = true;
 
@@ -1135,9 +1124,8 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
                 }
             }
 
-            //Add user with higher level then connected user or add all users if connected user is administrator
-            if ( !bAssigned &&
-                    ( ( user.getUserLevel(  ) > getUser(  ).getUserLevel(  ) ) || ( getUser(  ).isAdmin(  ) ) ) )
+            // Add user with higher level then connected user or add all users if connected user is administrator
+            if ( !bAssigned && ( ( user.getUserLevel( ) > getUser( ).getUserLevel( ) ) || ( getUser( ).isAdmin( ) ) ) )
             {
                 listAvailableUsers.add( itemUser );
             }
@@ -1158,8 +1146,7 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
 
         _strCurrentPageIndex = Paginator.getPageIndex( request, Paginator.PARAMETER_PAGE_INDEX, _strCurrentPageIndex );
         _nDefaultItemsPerPage = AppPropertiesService.getPropertyInt( ProfilesConstants.PROPERTY_ITEM_PER_PAGE, 50 );
-        _nItemsPerPage = Paginator.getItemsPerPage( request, Paginator.PARAMETER_ITEMS_PER_PAGE, _nItemsPerPage,
-                _nDefaultItemsPerPage );
+        _nItemsPerPage = Paginator.getItemsPerPage( request, Paginator.PARAMETER_ITEMS_PER_PAGE, _nItemsPerPage, _nDefaultItemsPerPage );
 
         if ( strSortedAttributeName != null )
         {
@@ -1172,56 +1159,52 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
         }
 
         String strPermission = ProfilesResourceIdService.PERMISSION_MANAGE_USERS_ASSIGNMENT;
-        boolean bPermission = RBACService.isAuthorized( Profile.RESOURCE_TYPE, strProfileKey, strPermission, getUser(  ) );
+        boolean bPermission = RBACService.isAuthorized( Profile.RESOURCE_TYPE, strProfileKey, strPermission, getUser( ) );
 
         // ITEM NAVIGATION
         setItemNavigator( ProfilesConstants.PARAMETER_ASSIGN_USER, profile, url );
 
         // PAGINATOR
-        url.addParameter( ProfilesConstants.PARAMETER_PROFILE_KEY, profile.getKey(  ) );
+        url.addParameter( ProfilesConstants.PARAMETER_PROFILE_KEY, profile.getKey( ) );
 
-        LocalizedPaginator<AdminUser> paginator = new LocalizedPaginator<AdminUser>( listFilteredUsers, _nItemsPerPage,
-                url.getUrl(  ), Paginator.PARAMETER_PAGE_INDEX, _strCurrentPageIndex, getLocale(  ) );
+        LocalizedPaginator<AdminUser> paginator = new LocalizedPaginator<AdminUser>( listFilteredUsers, _nItemsPerPage, url.getUrl( ),
+                Paginator.PARAMETER_PAGE_INDEX, _strCurrentPageIndex, getLocale( ) );
 
         // USER LEVEL
-        Collection<Level> filteredLevels = new ArrayList<Level>(  );
+        Collection<Level> filteredLevels = new ArrayList<Level>( );
 
-        for ( Level level : LevelHome.getLevelsList(  ) )
+        for ( Level level : LevelHome.getLevelsList( ) )
         {
-            if ( getUser(  ).isAdmin(  ) || getUser(  ).hasRights( level.getId(  ) ) )
+            if ( getUser( ).isAdmin( ) || getUser( ).hasRights( level.getId( ) ) )
             {
                 filteredLevels.add( level );
             }
         }
 
         // PERMISSIONS
-        List<ProfileAction> listActions = _profilesService.getListActions( getUser(  ), profile, strPermission,
-                getLocale(  ), getPlugin(  ) );
+        List<ProfileAction> listActions = _profilesService.getListActions( getUser( ), profile, strPermission, getLocale( ), getPlugin( ) );
         profile.setActions( listActions );
 
         // Attribute
-        List<IAttribute> listAttributes = AttributeService.getInstance(  )
-                                                          .getPluginAttributesWithFields( ProfilesPlugin.PLUGIN_NAME,
-                getLocale(  ) );
-        AttributeField attributeField = new AttributeField(  );
-        attributeField.setTitle( profile.getKey(  ) );
-        attributeField.setValue( profile.getDescription(  ) );
+        List<IAttribute> listAttributes = AttributeService.getInstance( ).getPluginAttributesWithFields( ProfilesPlugin.PLUGIN_NAME, getLocale( ) );
+        AttributeField attributeField = new AttributeField( );
+        attributeField.setTitle( profile.getKey( ) );
+        attributeField.setValue( profile.getDescription( ) );
         attributeField.setDefaultValue( false );
         attributeField.setAttribute( listAttributes.get( 0 ) );
 
         for ( IAttribute attribute : listAttributes )
         {
-            if ( ( attribute == null ) || ( attribute.getListAttributeFields(  ) == null ) ||
-                    attribute.getListAttributeFields(  ).isEmpty(  ) )
+            if ( ( attribute == null ) || ( attribute.getListAttributeFields( ) == null ) || attribute.getListAttributeFields( ).isEmpty( ) )
             {
                 continue;
             }
 
-            for ( AttributeField aField : attribute.getListAttributeFields(  ) )
+            for ( AttributeField aField : attribute.getListAttributeFields( ) )
             {
-                if ( strProfileKey.equals( aField.getTitle(  ) ) )
+                if ( strProfileKey.equals( aField.getTitle( ) ) )
                 {
-                    attributeField.setIdField( aField.getIdField(  ) );
+                    attributeField.setIdField( aField.getIdField( ) );
 
                     break;
                 }
@@ -1231,8 +1214,8 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
         model.put( ProfilesConstants.MARK_USER_LEVELS, filteredLevels );
         model.put( ProfilesConstants.MARK_PROFILE, profile );
         model.put( ProfilesConstants.MARK_AVAILABLE_LIST, listAvailableUsers );
-        model.put( ProfilesConstants.MARK_ASSIGNED_LIST, paginator.getPageItems(  ) );
-        model.put( ProfilesConstants.MARK_ASSIGNED_NUMBER, listAssignedUsers.size(  ) );
+        model.put( ProfilesConstants.MARK_ASSIGNED_LIST, paginator.getPageItems( ) );
+        model.put( ProfilesConstants.MARK_ASSIGNED_NUMBER, listAssignedUsers.size( ) );
         model.put( ProfilesConstants.MARK_ITEM_NAVIGATOR, _itemNavigators.get( ProfilesConstants.PARAMETER_ASSIGN_USER ) );
         model.put( ProfilesConstants.MARK_NB_ITEMS_PER_PAGE, StringUtils.EMPTY + _nItemsPerPage );
         model.put( ProfilesConstants.MARK_PAGINATOR, paginator );
@@ -1240,15 +1223,16 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
         model.put( ProfilesConstants.MARK_ATTRIBUTE, listAttributes.get( 0 ) );
         model.put( ProfilesConstants.MARK_ATTRIBUTE_FIELD, attributeField );
 
-        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_ASSIGN_USERS_PROFILE, getLocale(  ), model );
+        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_ASSIGN_USERS_PROFILE, getLocale( ), model );
 
-        return getAdminPage( template.getHtml(  ) );
+        return getAdminPage( template.getHtml( ) );
     }
 
     /**
      * Process the data capture form for assign users to a profile
      *
-     * @param request The HTTP Request
+     * @param request
+     *            The HTTP Request
      * @return The Jsp URL of the process result
      */
     public String doAssignUsersProfile( HttpServletRequest request )
@@ -1265,26 +1249,25 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
         {
             String strProfileKey = request.getParameter( ProfilesConstants.PARAMETER_PROFILE_KEY );
 
-            if ( !RBACService.isAuthorized( Profile.RESOURCE_TYPE, strProfileKey,
-                        ProfilesResourceIdService.PERMISSION_MANAGE_USERS_ASSIGNMENT, getUser(  ) ) )
+            if ( !RBACService.isAuthorized( Profile.RESOURCE_TYPE, strProfileKey, ProfilesResourceIdService.PERMISSION_MANAGE_USERS_ASSIGNMENT, getUser( ) ) )
             {
                 return AdminMessageService.getMessageUrl( request, Messages.USER_ACCESS_DENIED, AdminMessage.TYPE_STOP );
             }
 
-            //retrieve the selected user ids
-            String[] arrayUserIds = request.getParameterValues( ProfilesConstants.PARAMETER_USERS_LIST );
+            // retrieve the selected user ids
+            String [ ] arrayUserIds = request.getParameterValues( ProfilesConstants.PARAMETER_USERS_LIST );
 
             if ( ( arrayUserIds != null ) )
             {
                 for ( int i = 0; i < arrayUserIds.length; i++ )
                 {
-                    int nIdUser = Integer.parseInt( arrayUserIds[i] );
+                    int nIdUser = Integer.parseInt( arrayUserIds [i] );
                     _profilesService.doAssignUserToProfile( nIdUser, request, getLocale( ) );
                 }
             }
 
-            strReturn = JSP_ASSIGN_USERS_PROFILE + ProfilesConstants.INTERROGATION_MARK +
-                ProfilesConstants.PARAMETER_PROFILE_KEY + ProfilesConstants.EQUAL + strProfileKey;
+            strReturn = JSP_ASSIGN_USERS_PROFILE + ProfilesConstants.INTERROGATION_MARK + ProfilesConstants.PARAMETER_PROFILE_KEY + ProfilesConstants.EQUAL
+                    + strProfileKey;
         }
 
         return strReturn;
@@ -1292,15 +1275,16 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
 
     /**
      * unassigns users from profile
-     * @param request The HttpRequest
+     * 
+     * @param request
+     *            The HttpRequest
      * @return the HTML code of list assignations
      */
     public String doUnassignUserProfile( HttpServletRequest request )
     {
         String strProfileKey = request.getParameter( ProfilesConstants.PARAMETER_PROFILE_KEY );
 
-        if ( !RBACService.isAuthorized( Profile.RESOURCE_TYPE, strProfileKey,
-                    ProfilesResourceIdService.PERMISSION_MANAGE_USERS_ASSIGNMENT, getUser(  ) ) )
+        if ( !RBACService.isAuthorized( Profile.RESOURCE_TYPE, strProfileKey, ProfilesResourceIdService.PERMISSION_MANAGE_USERS_ASSIGNMENT, getUser( ) ) )
         {
             return AdminMessageService.getMessageUrl( request, Messages.USER_ACCESS_DENIED, AdminMessage.TYPE_STOP );
         }
@@ -1309,12 +1293,10 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
         int nIdUser = Integer.parseInt( strIdUser );
         String strAnchor = request.getParameter( ProfilesConstants.PARAMETER_ANCHOR );
 
-        _profilesService.doUnassignUserFromProfile( nIdUser, strProfileKey, getUser(  ), request, getLocale(  ),
-            getPlugin(  ) );
+        _profilesService.doUnassignUserFromProfile( nIdUser, strProfileKey, getUser( ), request, getLocale( ), getPlugin( ) );
 
-        return JSP_ASSIGN_USERS_PROFILE + ProfilesConstants.INTERROGATION_MARK +
-        ProfilesConstants.PARAMETER_PROFILE_KEY + ProfilesConstants.EQUAL + strProfileKey + ProfilesConstants.SHARP +
-        strAnchor;
+        return JSP_ASSIGN_USERS_PROFILE + ProfilesConstants.INTERROGATION_MARK + ProfilesConstants.PARAMETER_PROFILE_KEY + ProfilesConstants.EQUAL
+                + strProfileKey + ProfilesConstants.SHARP + strAnchor;
     }
 
     /* ASSIGN VIEW */
@@ -1322,25 +1304,26 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
     /**
      * Returns the view assignation form
      *
-     * @param request HttpServletRequest
+     * @param request
+     *            HttpServletRequest
      * @return the html code
      */
     public String getAssignViewProfile( HttpServletRequest request )
     {
-        Map<String, Object> model = new HashMap<String, Object>(  );
+        Map<String, Object> model = new HashMap<String, Object>( );
         setPageTitleProperty( ProfilesConstants.PROPERTY_ASSIGN_VIEW_PROFILE_PAGETITLE );
 
         // PROFILE
         String strProfileKey = request.getParameter( ProfilesConstants.PARAMETER_PROFILE_KEY );
-        Profile profile = _profilesService.findByPrimaryKey( strProfileKey, getPlugin(  ) );
+        Profile profile = _profilesService.findByPrimaryKey( strProfileKey, getPlugin( ) );
 
         // ASSIGNED VIEW
-        View assignedView = _profilesService.getViewForProfile( strProfileKey, getPlugin(  ) );
+        View assignedView = _profilesService.getViewForProfile( strProfileKey, getPlugin( ) );
 
-        ReferenceList listViews = _viewsService.getViewsList( getPlugin(  ) );
+        ReferenceList listViews = _viewsService.getViewsList( getPlugin( ) );
 
         String strPermission = ProfilesResourceIdService.PERMISSION_MANAGE_VIEW_ASSIGNMENT;
-        boolean bPermission = RBACService.isAuthorized( Profile.RESOURCE_TYPE, strProfileKey, strPermission, getUser(  ) );
+        boolean bPermission = RBACService.isAuthorized( Profile.RESOURCE_TYPE, strProfileKey, strPermission, getUser( ) );
 
         String strBaseUrl = AppPathService.getBaseUrl( request ) + JSP_URL_ASSIGN_VIEW_PROFILE;
         UrlItem url = new UrlItem( strBaseUrl );
@@ -1349,8 +1332,7 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
         setItemNavigator( ProfilesConstants.PARAMETER_ASSIGN_VIEW, profile, url );
 
         // PERMISSIONS
-        List<ProfileAction> listActions = _profilesService.getListActions( getUser(  ), profile, strPermission,
-                getLocale(  ), getPlugin(  ) );
+        List<ProfileAction> listActions = _profilesService.getListActions( getUser( ), profile, strPermission, getLocale( ), getPlugin( ) );
         profile.setActions( listActions );
 
         model.put( ProfilesConstants.MARK_PROFILE, profile );
@@ -1359,15 +1341,16 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
         model.put( ProfilesConstants.MARK_PERMISSION, bPermission );
         model.put( ProfilesConstants.MARK_ASSIGNED_VIEW, assignedView );
 
-        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_ASSIGN_VIEW_PROFILE, getLocale(  ), model );
+        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_ASSIGN_VIEW_PROFILE, getLocale( ), model );
 
-        return getAdminPage( template.getHtml(  ) );
+        return getAdminPage( template.getHtml( ) );
     }
 
     /**
      * Process the data capture form for assign a view to a profile
      *
-     * @param request HttpServletRequest
+     * @param request
+     *            HttpServletRequest
      * @return The Jsp URL of the process result
      */
     public String doAssignViewProfile( HttpServletRequest request )
@@ -1384,8 +1367,7 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
         {
             String strProfileKey = request.getParameter( ProfilesConstants.PARAMETER_PROFILE_KEY );
 
-            if ( !RBACService.isAuthorized( Profile.RESOURCE_TYPE, strProfileKey,
-                        ProfilesResourceIdService.PERMISSION_MANAGE_VIEW_ASSIGNMENT, getUser(  ) ) )
+            if ( !RBACService.isAuthorized( Profile.RESOURCE_TYPE, strProfileKey, ProfilesResourceIdService.PERMISSION_MANAGE_VIEW_ASSIGNMENT, getUser( ) ) )
             {
                 return AdminMessageService.getMessageUrl( request, Messages.USER_ACCESS_DENIED, AdminMessage.TYPE_STOP );
             }
@@ -1396,17 +1378,17 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
             {
                 if ( StringUtils.isBlank( strViewKey ) )
                 {
-                    _profilesService.removeView( strProfileKey, getPlugin(  ) );
+                    _profilesService.removeView( strProfileKey, getPlugin( ) );
                 }
                 else
                 {
-                    _profilesService.removeView( strProfileKey, getPlugin(  ) );
-                    _viewsService.addProfileForView( strViewKey, strProfileKey, getPlugin(  ) );
+                    _profilesService.removeView( strProfileKey, getPlugin( ) );
+                    _viewsService.addProfileForView( strViewKey, strProfileKey, getPlugin( ) );
                 }
             }
 
-            strReturn = JSP_ASSIGN_VIEW_PROFILE + ProfilesConstants.INTERROGATION_MARK +
-                ProfilesConstants.PARAMETER_PROFILE_KEY + ProfilesConstants.EQUAL + strProfileKey;
+            strReturn = JSP_ASSIGN_VIEW_PROFILE + ProfilesConstants.INTERROGATION_MARK + ProfilesConstants.PARAMETER_PROFILE_KEY + ProfilesConstants.EQUAL
+                    + strProfileKey;
         }
 
         return strReturn;
@@ -1414,9 +1396,13 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
 
     /**
      * Get the item navigator
-     * @param strItemNavigatorKey the item navigator key
-     * @param profile the profile
-     * @param url the url
+     * 
+     * @param strItemNavigatorKey
+     *            the item navigator key
+     * @param profile
+     *            the profile
+     * @param url
+     *            the url
      */
     private void setItemNavigator( String strItemNavigatorKey, Profile profile, UrlItem url )
     {
@@ -1426,14 +1412,14 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
         {
             if ( _pFilter == null )
             {
-                _pFilter = new ProfileFilter(  );
+                _pFilter = new ProfileFilter( );
             }
 
             itemNavigator = _profilesService.getItemNavigator( _pFilter, profile, url );
         }
         else
         {
-            itemNavigator.setCurrentItemId( profile.getKey(  ) );
+            itemNavigator.setCurrentItemId( profile.getKey( ) );
         }
 
         _itemNavigators.put( strItemNavigatorKey, itemNavigator );
@@ -1442,8 +1428,8 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
     /**
      * Reinit the item navigator
      */
-    private void reinitItemNavigators(  )
+    private void reinitItemNavigators( )
     {
-        _itemNavigators = new HashMap<String, ItemNavigator>(  );
+        _itemNavigators = new HashMap<String, ItemNavigator>( );
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2014, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -37,7 +37,6 @@ import fr.paris.lutece.portal.service.rbac.RBACResource;
 
 import java.util.List;
 
-
 /**
  *
  * This class provides the object Profile
@@ -55,7 +54,7 @@ public class Profile implements RBACResource
      *
      * @return Returns the Key.
      */
-    public String getKey(  )
+    public String getKey( )
     {
         return _strKey;
     }
@@ -63,7 +62,8 @@ public class Profile implements RBACResource
     /**
      * Sets the profile key
      *
-     * @param strKey The Key
+     * @param strKey
+     *            The Key
      */
     public void setKey( String strKey )
     {
@@ -75,7 +75,7 @@ public class Profile implements RBACResource
      *
      * @return Returns the Description.
      */
-    public String getDescription(  )
+    public String getDescription( )
     {
         return _strDescription;
     }
@@ -83,7 +83,8 @@ public class Profile implements RBACResource
     /**
      * Sets the profile's description
      *
-     * @param strDescription The profile's description
+     * @param strDescription
+     *            The profile's description
      */
     public void setDescription( String strDescription )
     {
@@ -95,17 +96,17 @@ public class Profile implements RBACResource
      *
      * @return The resource type code
      */
-    public String getResourceId(  )
+    public String getResourceId( )
     {
         return _strKey;
     }
 
     /**
-    * RBAC resource implementation
-    *
-    * @return The resourceId
-    */
-    public String getResourceTypeCode(  )
+     * RBAC resource implementation
+     *
+     * @return The resourceId
+     */
+    public String getResourceTypeCode( )
     {
         return RESOURCE_TYPE;
     }
@@ -114,14 +115,16 @@ public class Profile implements RBACResource
      *
      * @return a list of action can be use for the profile
      */
-    public List<ProfileAction> getActions(  )
+    public List<ProfileAction> getActions( )
     {
         return _listActions;
     }
 
     /**
      * set a list of action can be use for the directory
-     * @param profileActions a list of action must be use for the profile
+     * 
+     * @param profileActions
+     *            a list of action must be use for the profile
      */
     public void setActions( List<ProfileAction> profileActions )
     {

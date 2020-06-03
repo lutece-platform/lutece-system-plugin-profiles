@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2014, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -39,7 +39,6 @@ import fr.paris.lutece.util.sql.DAOUtil;
 import java.util.ArrayList;
 import java.util.List;
 
-
 /**
  *
  * ProfileActionDAO
@@ -47,22 +46,22 @@ import java.util.List;
  */
 public class ProfileActionDAO implements IProfileActionDAO
 {
-    private static final String SQL_QUERY_SELECT_ACTIONS = " SELECT name_key, description_key, action_url, icon_url, action_permission " +
-        " FROM profile_action ";
+    private static final String SQL_QUERY_SELECT_ACTIONS = " SELECT name_key, description_key, action_url, icon_url, action_permission "
+            + " FROM profile_action ";
 
     /**
-    * {@inheritDoc}
-    */
+     * {@inheritDoc}
+     */
     @Override
     public List<ProfileAction> selectActionsList( Plugin plugin )
     {
-        List<ProfileAction> listActions = new ArrayList<ProfileAction>(  );
+        List<ProfileAction> listActions = new ArrayList<ProfileAction>( );
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_ACTIONS, plugin );
-        daoUtil.executeQuery(  );
+        daoUtil.executeQuery( );
 
-        while ( daoUtil.next(  ) )
+        while ( daoUtil.next( ) )
         {
-            ProfileAction action = new ProfileAction(  );
+            ProfileAction action = new ProfileAction( );
             action.setNameKey( daoUtil.getString( 1 ) );
             action.setDescriptionKey( daoUtil.getString( 2 ) );
             action.setUrl( daoUtil.getString( 3 ) );
@@ -71,7 +70,7 @@ public class ProfileActionDAO implements IProfileActionDAO
             listActions.add( action );
         }
 
-        daoUtil.free(  );
+        daoUtil.free( );
 
         return listActions;
     }

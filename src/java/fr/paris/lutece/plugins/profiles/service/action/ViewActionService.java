@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2014, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -40,7 +40,6 @@ import fr.paris.lutece.portal.service.plugin.Plugin;
 
 import java.util.List;
 import java.util.Locale;
-
 
 /**
  *

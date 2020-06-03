@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2014, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -45,7 +45,6 @@ import fr.paris.lutece.util.sql.DAOUtil;
 
 import java.util.ArrayList;
 import java.util.List;
-
 
 /**
  * 
@@ -403,9 +402,13 @@ public class ViewDAO implements IViewDAO
 
     /**
      * Load the dashboard
-     * @param strDashboardName the dashboard name
-     * @param strViewKey the view key
-     * @param plugin Plugin
+     * 
+     * @param strDashboardName
+     *            the dashboard name
+     * @param strViewKey
+     *            the view key
+     * @param plugin
+     *            Plugin
      * @return the dashboard
      */
     @Override
@@ -574,8 +577,8 @@ public class ViewDAO implements IViewDAO
     {
         StringBuilder sbSQL = new StringBuilder( SQL_QUERY_SELECT_DASHBOARDS );
         buildSQLFilter( sbSQL, filter );
-        sbSQL.append( SQL_QUERY_KEYWORD_AND + ProfilesConstants.SPACE + ProfilesConstants.PARAMETER_VIEW_KEY
-                + ProfilesConstants.EQUAL + ProfilesConstants.INTERROGATION_MARK );
+        sbSQL.append( SQL_QUERY_KEYWORD_AND + ProfilesConstants.SPACE + ProfilesConstants.PARAMETER_VIEW_KEY + ProfilesConstants.EQUAL
+                + ProfilesConstants.INTERROGATION_MARK );
         sbSQL.append( SQL_QUERY_ORDER_BY_COLUMN_AND_ORDER );
 
         DAOUtil daoUtil = new DAOUtil( sbSQL.toString( ), plugin );
@@ -613,8 +616,11 @@ public class ViewDAO implements IViewDAO
 
     /**
      * Builds sql filter
-     * @param sbSQL the buffer
-     * @param filter the filter
+     * 
+     * @param sbSQL
+     *            the buffer
+     * @param filter
+     *            the filter
      */
     private void buildSQLFilter( StringBuilder sbSQL, DashboardFilter filter )
     {
@@ -654,9 +660,13 @@ public class ViewDAO implements IViewDAO
 
     /**
      * Add daoUtil parameters
-     * @param daoUtil daoUtil
-     * @param nStartIndex start index
-     * @param filter the filter to apply
+     * 
+     * @param daoUtil
+     *            daoUtil
+     * @param nStartIndex
+     *            start index
+     * @param filter
+     *            the filter to apply
      * @return end index
      */
     private int applySQLFilter( DAOUtil daoUtil, int nStartIndex, DashboardFilter filter )
@@ -678,8 +688,11 @@ public class ViewDAO implements IViewDAO
 
     /**
      * Loads compenent data from daoUtil
-     * @param component the component
-     * @param daoUtil the daoutil
+     * 
+     * @param component
+     *            the component
+     * @param daoUtil
+     *            the daoutil
      */
     private void load( IDashboardComponent component, DAOUtil daoUtil )
     {

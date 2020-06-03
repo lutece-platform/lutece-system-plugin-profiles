@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2014, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -46,7 +46,6 @@ import fr.paris.lutece.util.ReferenceList;
 
 import java.util.Locale;
 
-
 /**
  *
  * Class ProfileResourceIdService
@@ -69,42 +68,42 @@ public class ViewsResourceIdService extends ResourceIdService
     /**
      * Create a new instance of ProfilesResourceIdService
      */
-    public ViewsResourceIdService(  )
+    public ViewsResourceIdService( )
     {
         setPluginName( ProfilesPlugin.PLUGIN_NAME );
     }
 
     /**
-    * Initializes the service
-    */
-    public void register(  )
+     * Initializes the service
+     */
+    public void register( )
     {
-        ResourceType rt = new ResourceType(  );
-        rt.setResourceIdServiceClass( ViewsResourceIdService.class.getName(  ) );
+        ResourceType rt = new ResourceType( );
+        rt.setResourceIdServiceClass( ViewsResourceIdService.class.getName( ) );
         rt.setResourceTypeKey( View.RESOURCE_TYPE );
         rt.setResourceTypeLabelKey( PROPERTY_LABEL_RESOURCE_TYPE );
 
-        Permission p = new Permission(  );
+        Permission p = new Permission( );
         p.setPermissionKey( PERMISSION_CREATE_VIEW );
         p.setPermissionTitleKey( PROPERTY_LABEL_CREATE_VIEW );
         rt.registerPermission( p );
 
-        p = new Permission(  );
+        p = new Permission( );
         p.setPermissionKey( PERMISSION_MODIFY_VIEW );
         p.setPermissionTitleKey( PROPERTY_LABEL_MODIFY_VIEW );
         rt.registerPermission( p );
 
-        p = new Permission(  );
+        p = new Permission( );
         p.setPermissionKey( PERMISSION_DELETE_VIEW );
         p.setPermissionTitleKey( PROPERTY_LABEL_DELETE_VIEW );
         rt.registerPermission( p );
 
-        p = new Permission(  );
+        p = new Permission( );
         p.setPermissionKey( PERMISSION_MANAGE_PROFILES_ASSIGNMENT );
         p.setPermissionTitleKey( PROPERTY_LABEL_MANAGE_PROFILES_ASSIGNMENT );
         rt.registerPermission( p );
 
-        p = new Permission(  );
+        p = new Permission( );
         p.setPermissionKey( PERMISSION_MANAGE_DASHBOARDS );
         p.setPermissionTitleKey( PROPERTY_LABEL_MANAGE_DASHBOARDS );
         rt.registerPermission( p );
@@ -113,10 +112,12 @@ public class ViewsResourceIdService extends ResourceIdService
     }
 
     /**
-    * Returns a list of profiles resource ids
-    * @param locale The current locale
-    * @return A list of resource ids
-    */
+     * Returns a list of profiles resource ids
+     * 
+     * @param locale
+     *            The current locale
+     * @return A list of resource ids
+     */
     public ReferenceList getResourceIdList( Locale locale )
     {
         Plugin plugin = PluginService.getPlugin( ProfilesPlugin.PLUGIN_NAME );
@@ -125,16 +126,19 @@ public class ViewsResourceIdService extends ResourceIdService
     }
 
     /**
-    * Returns the Title of a given resource
-    * @param strViewKey the view key
-    * @param locale The current locale
-    * @return The Title of a given resource
-    */
+     * Returns the Title of a given resource
+     * 
+     * @param strViewKey
+     *            the view key
+     * @param locale
+     *            The current locale
+     * @return The Title of a given resource
+     */
     public String getTitle( String strViewKey, Locale locale )
     {
         Plugin plugin = PluginService.getPlugin( ProfilesPlugin.PLUGIN_NAME );
         View view = ViewHome.findByPrimaryKey( strViewKey, plugin );
 
-        return ( view != null ) ? view.getKey(  ) : null;
+        return ( view != null ) ? view.getKey( ) : null;
     }
 }
