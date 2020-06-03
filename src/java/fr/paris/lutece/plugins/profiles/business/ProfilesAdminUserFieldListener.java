@@ -34,8 +34,8 @@
 package fr.paris.lutece.plugins.profiles.business;
 
 import fr.paris.lutece.plugins.profiles.service.ProfilesPlugin;
-import fr.paris.lutece.portal.business.rbac.AdminRole;
-import fr.paris.lutece.portal.business.rbac.AdminRoleHome;
+import fr.paris.lutece.portal.business.rbac.RBACRole;
+import fr.paris.lutece.portal.business.rbac.RBACRoleHome;
 import fr.paris.lutece.portal.business.right.Right;
 import fr.paris.lutece.portal.business.right.RightHome;
 import fr.paris.lutece.portal.business.user.AdminUser;
@@ -86,9 +86,9 @@ public class ProfilesAdminUserFieldListener extends SimpleAdminUserFieldListener
                 }
 
                 // Add roles to the user
-                for ( AdminRole role : ProfileHome.getRolesListForProfile( strProfileKey, plugin ) )
+                for ( RBACRole role : ProfileHome.getRolesListForProfile( strProfileKey, plugin ) )
                 {
-                    role = AdminRoleHome.findByPrimaryKey( role.getKey( ) );
+                    role = RBACRoleHome.findByPrimaryKey( role.getKey( ) );
 
                     if ( !AdminUserHome.hasRole( user, role.getKey( ) ) )
                     {
@@ -143,9 +143,9 @@ public class ProfilesAdminUserFieldListener extends SimpleAdminUserFieldListener
                 }
 
                 // Remove roles to the user
-                for ( AdminRole role : ProfileHome.getRolesListForProfile( strKey, plugin ) )
+                for ( RBACRole role : ProfileHome.getRolesListForProfile( strKey, plugin ) )
                 {
-                    role = AdminRoleHome.findByPrimaryKey( role.getKey( ) );
+                    role = RBACRoleHome.findByPrimaryKey( role.getKey( ) );
 
                     if ( AdminUserHome.hasRole( user, role.getKey( ) ) )
                     {
@@ -188,9 +188,9 @@ public class ProfilesAdminUserFieldListener extends SimpleAdminUserFieldListener
                 }
 
                 // Add roles to the user
-                for ( AdminRole role : ProfileHome.getRolesListForProfile( strProfileKey, plugin ) )
+                for ( RBACRole role : ProfileHome.getRolesListForProfile( strProfileKey, plugin ) )
                 {
-                    role = AdminRoleHome.findByPrimaryKey( role.getKey( ) );
+                    role = RBACRoleHome.findByPrimaryKey( role.getKey(  ) );
 
                     if ( role != null && !AdminUserHome.hasRole( user, role.getKey( ) ) )
                     {

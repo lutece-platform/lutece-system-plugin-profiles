@@ -34,7 +34,7 @@
 package fr.paris.lutece.plugins.profiles.business;
 
 import fr.paris.lutece.plugins.profiles.business.views.View;
-import fr.paris.lutece.portal.business.rbac.AdminRole;
+import fr.paris.lutece.portal.business.rbac.RBACRole;
 import fr.paris.lutece.portal.business.right.Right;
 import fr.paris.lutece.portal.business.user.AdminUser;
 import fr.paris.lutece.portal.business.workgroup.AdminWorkgroup;
@@ -284,7 +284,7 @@ public interface IProfileDAO
      *            Plugin
      * @return The list of roles
      */
-    List<AdminRole> selectRolesListForProfile( String strProfileKey, Plugin plugin );
+    List<RBACRole> selectRolesListForProfile( String strProfileKey, Plugin plugin );
 
     /**
      * Check if a profile has the given role.

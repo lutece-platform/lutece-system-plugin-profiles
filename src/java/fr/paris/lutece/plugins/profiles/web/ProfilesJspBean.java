@@ -43,9 +43,9 @@ import fr.paris.lutece.plugins.profiles.service.ProfilesResourceIdService;
 import fr.paris.lutece.plugins.profiles.service.action.IProfileActionService;
 import fr.paris.lutece.plugins.profiles.service.views.IViewsService;
 import fr.paris.lutece.plugins.profiles.utils.constants.ProfilesConstants;
-import fr.paris.lutece.portal.business.rbac.AdminRole;
-import fr.paris.lutece.portal.business.rbac.AdminRoleHome;
 import fr.paris.lutece.portal.business.rbac.RBAC;
+import fr.paris.lutece.portal.business.rbac.RBACRole;
+import fr.paris.lutece.portal.business.rbac.RBACRoleHome;
 import fr.paris.lutece.portal.business.right.Level;
 import fr.paris.lutece.portal.business.right.LevelHome;
 import fr.paris.lutece.portal.business.right.Right;
@@ -868,11 +868,11 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
         Profile profile = _profilesService.findByPrimaryKey( strProfileKey, getPlugin( ) );
 
         // ASSIGNED ROLES
-        List<AdminRole> listAssignedRoles = new ArrayList<AdminRole>( );
+        List<RBACRole> listAssignedRoles = new ArrayList<RBACRole>(  );
 
-        for ( AdminRole role : _profilesService.getRolesListForProfile( strProfileKey, getPlugin( ) ) )
+        for ( RBACRole role : _profilesService.getRolesListForProfile( strProfileKey, getPlugin(  ) ) )
         {
-            role = AdminRoleHome.findByPrimaryKey( role.getKey( ) );
+            role = RBACRoleHome.findByPrimaryKey( role.getKey(  ) );
 
             if ( role != null )
             {
@@ -885,14 +885,14 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
         ReferenceItem itemRole = null;
         boolean bAssigned;
 
-        for ( AdminRole role : AdminRoleHome.findAll( ) )
+        for ( RBACRole role : RBACRoleHome.findAll(  ) )
         {
             itemRole = new ReferenceItem( );
             itemRole.setCode( role.getKey( ) );
             itemRole.setName( role.getKey( ) );
             bAssigned = false;
 
-            for ( AdminRole assignedRole : listAssignedRoles )
+            for ( RBACRole assignedRole : listAssignedRoles )
             {
                 if ( assignedRole.getKey( ).equals( itemRole.getCode( ) ) )
                 {
@@ -947,8 +947,8 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
         // PAGINATOR
         url.addParameter( ProfilesConstants.PARAMETER_PROFILE_KEY, profile.getKey( ) );
 
-        LocalizedPaginator<AdminRole> paginator = new LocalizedPaginator<AdminRole>( listAssignedRoles, _nItemsPerPage, url.getUrl( ),
-                Paginator.PARAMETER_PAGE_INDEX, _strCurrentPageIndex, getLocale( ) );
+        LocalizedPaginator<RBACRole> paginator = new LocalizedPaginator<RBACRole>( listAssignedRoles, _nItemsPerPage,
+                url.getUrl(  ), Paginator.PARAMETER_PAGE_INDEX, _strCurrentPageIndex, getLocale( ) );
 
         // PERMISSIONS
         List<ProfileAction> listActions = _profilesService.getListActions( getUser( ), profile, strPermission, getLocale( ), getPlugin( ) );
@@ -1006,7 +1006,7 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
                         _profilesService.addRoleForProfile( strProfileKey, arrayRoleIds [i], getPlugin( ) );
 
                         // Update users roles
-                        AdminRole role = AdminRoleHome.findByPrimaryKey( arrayRoleIds [i] );
+                        RBACRole role = RBACRoleHome.findByPrimaryKey( arrayRoleIds[i] );
 
                         for ( AdminUser user : _profilesService.getUsersListForProfile( strProfileKey, getPlugin( ) ) )
                         {
@@ -1048,7 +1048,7 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
         _profilesService.removeRoleFromProfile( strProfileKey, strRoleKey, getPlugin( ) );
 
         // Update users roles
-        AdminRole role = AdminRoleHome.findByPrimaryKey( strRoleKey );
+        RBACRole role = RBACRoleHome.findByPrimaryKey( strRoleKey );
 
         for ( AdminUser user : _profilesService.getUsersListForProfile( strProfileKey, getPlugin( ) ) )
         {
