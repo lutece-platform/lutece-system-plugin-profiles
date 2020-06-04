@@ -7,9 +7,9 @@
 
 ## Introduction
 
-This plugin allows to define user profiles based a set of roles and rights.
+Ce plugin permet de définir des profils d'utilisateurs basés sur un ensemble de rôles et de droits.
 
-It thus facilitates the management of authorizations
+Il permet ainsi de faciliter la gestion des habilitations
 
 
 [Maven documentation and reports](https://dev.lutece.paris.fr/plugins/plugin-profiles/)
