@@ -1,52 +1,35 @@
-<div class="row">
-	<div class="col-xs-12 col-sm-12 col-md-12">
-		<div class="box box-success">
-			<div class="box-header">
-				<h3 class="box-title">#i18n{profiles.modify_view.titleModificationForm} : ${view.key}</h3>
-				<div class="box-tools pull-right">
-				<#if view.actions?exists>
-					<#list view.actions as action>
-						<a class="btn  <#if action.permission!='DELETE_VIEW'>btn-primary<#else>btn-danger</#if> btn-xs btn-flat ${action.permission}" href="${action.url}?view_key=${view.key}"  title="${action.description}" >
-							<i class="${action.iconUrl} icon-white"></i>
-						</a>
-					</#list>
-				</#if>
-				</div>
-            </div>
-            <div class="box-body">
-				<form class="form-horizontal" method="post" action="jsp/admin/plugins/profiles/DoModifyView.jsp" >
-					<input type="hidden" id="view_key" name="view_key" value="${view.key}">
-					<div class="form-group">
-					<label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3" for="view_key">#i18n{profiles.modify_view.labelKey} *</label>
-						<div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
-							<p class="form-control-static">${view.key}</p>
-						</div>	
-					</div>	
-					<div class="form-group">
-					<label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3" for="view_description">#i18n{profiles.modify_view.labelDescription} *</label>
+<@row>
+	<@columns>
+		<@box>
+			<@boxHeader title='#i18n{profiles.modify_view.titleModificationForm} : ${view.key}'>
+			<#if view.actions?exists>
+				<#list view.actions as action>
+					<#if action.permission!='DELETE_VIEW'><#assign color='primary' /><#else><#assign color='danger' /></#if>
+					<@aButton href='${action.url}?view_key=${view.key}' title='${action.description}' hideTitle=['all'] buttonIcon='${action.iconUrl}' color=color size='sm' />
+				</#list>
+			</#if>
+			</@boxHeader>
+            <@boxBody>
+				<@tform method='post' action='jsp/admin/plugins/profiles/DoModifyView.jsp'>
+					<@input type='hidden' id='view_key' name='view_key' value='${view.key}' />
+					<@formGroup labelFor='view_key' labelKey='#i18n{profiles.modify_view.labelKey}' mandatory=true>
+						<@staticText>${view.key}</@staticText>
+					</@formGroup>
+					<@formGroup labelFor='view_description' labelKey='#i18n{profiles.modify_view.labelDescription}' mandatory=true>
 					<#if permission>
-						<div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
-							<input type="text" id="view_description" name="view_description" value="${view.description}" class="form-control"  maxlength="250">
-						</div>
-					</div>
+						<@input type='text' id='view_description' name='view_description' value='${view.description}' maxlength=250 />
 					<#else>
-						<p class="form-control-static">${view.description}</p>
+						<@staticText>${view.description}</@staticText>
 					</#if>
-					<div class="form-group">
-						<div class="col-xs-12 col-sm-12 col-md-9 col-md-offset-3">
+					</@formGroup>
+					<@formGroup>
 						<#if permission>
-							<button class="btn btn-primary btn-flat" type="submit" >
-							<i class="fa fa-check"></i>&nbsp;
-							#i18n{profiles.modify_view.buttonLabelModify}</button>
+							<@button type='submit' title='#i18n{profiles.modify_view.buttonLabelModify}' buttonIcon='save' />
 						</#if>
-						<a class="btn btn-default  btn-flat" href="jsp/admin/plugins/profiles/ManageViews.jsp" >
-							<i class="fa fa-remove"></i>&nbsp;
-							#i18n{portal.admin.message.buttonCancel}
-						</a>
-						</div>
-					</div>
-				</form>
-			</div>
-		</div>
-	</div>
-</div>
+						<@aButton href='jsp/admin/plugins/profiles/ManageViews.jsp' title='#i18n{portal.admin.message.buttonCancel}' buttonIcon='times' color='default' />
+					</@formGroup>
+				</@tform>
+			</@boxBody>
+		</@box>
+	</@columns>
+</@row>

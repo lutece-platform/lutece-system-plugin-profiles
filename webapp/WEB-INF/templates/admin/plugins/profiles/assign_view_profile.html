@@ -1,54 +1,34 @@
-<div class="row">
-	<div class="col-xs-12 col-sm-12 col-md-12">
-		<div class="box box-success">
-			<div class="box-header">
-				<h3 class="box-title">#i18n{profiles.assign_rights_profile.profileKey} : ${profile.key}</h3>
-				<div class="box-tools pull-right">
-					<#if profile.actions?exists>
-						<#list profile.actions as action>
-							<a class="btn  <#if action.permission!='DELETE_DELETE'>btn-primary<#else>btn-danger</#if> btn-xs btn-flat" href="${action.url}?profile_key=${profile.key}"  title="${action.description}" >
-								<i class="${action.iconUrl}"></i>
-							</a>
-						</#list>
-					</#if>
-				</div>
-			</div>
-			 <div class="box-body">	
+<@row>	<@columns>		<@box>			<@boxHeader title='#i18n{profiles.assign_rights_profile.profileKey} : ${profile.key}'>
+				<#if profile.actions?exists>
+					<#list profile.actions as action>
+						<#if action.permission!='DELETE_DELETE'><#assign color='primary' /><#else><#assign color='danger' /></#if>
+						<@aButton href='${action.url}?profile_key=${profile.key}' title='${action.description}' hideTitle=['all'] buttonIcon='${action.iconUrl}' color=color size='sm' />
+					</#list>
+				</#if>
+			</@boxHeader>
+			 <@boxBody>	
 				<@item_navigation item_navigator=item_navigator />
 				<#if available_list?size &gt; 0 >
-					<form class="form-horizontal" name="assign-view-profile" method="post" action="jsp/admin/plugins/profiles/DoAssignViewProfile.jsp">
-						<input type="hidden" name="profile_key" value="${profile.key}">
-						<div class="form-group">
-							<label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3" for="view_key"></label>
-							<div class="col-xs-12 col-sm-12 col-md-6">
+					<@tform name='assign-view-profile' method='post' action='jsp/admin/plugins/profiles/DoAssignViewProfile.jsp'>
+						<@input type='hidden' name='profile_key' value='${profile.key}' />
+						<@formGroup labelFor='view_key'>
 							<#list available_list as available_item>
-							<div class="radio">
-								<label>
-									<input type="radio" name="view_key" value="${available_item.code}" <#if assigned_view?exists && available_item.code == assigned_view.key> checked="checked"</#if>/> ${available_item.code}
-								</label>	
-							</div>	
+								<#assign checked = false />
+								<#if assigned_view?exists && available_item.code == assigned_view.key><#assign checked = true /></#if>
+								<@radioButton labelFor='view_key' labelKey='${available_item.code}' name='view_key' id='' value='${available_item.code}' checked=checked />
 							</#list>
-							<div class="radio">
-								<label>
-									<input type="radio" name="view_key" value="" <#if !assigned_view?exists>checked="checked"</#if>/> #i18n{profiles.assign_view_profile.noValue}
-								</label>	
-							</div>
-							</div>
-						</div>
-						<div class="form-group">
-							<div class="col-xs-12 col-sm-12 col-md-6 col-md-offset-3 ">
-							<#if permission>
-								<button class="btn btn-primary btn-flat" type="submit" >
-									#i18n{profiles.assign_view_profile.labelButtonValidate}
-								</button>
-							</#if>
-							</div>
-						</div>
-					</form>
+							<@radioButton labelFor='' labelKey='#i18n{profiles.assign_view_profile.noValue}' name='view_key' id='' value='' checked=!assigned_view?exists />
+						</@formGroup>
+						<#if permission>
+							<@formGroup>
+								<@button type='submit' title='#i18n{profiles.assign_view_profile.labelButtonValidate}' buttonIcon='check' />
+							</@formGroup>
+						</#if>
+					</@tform>
 				<#else>
-					<p class="label label-warning">#i18n{profiles.assign_view_profile.noViewToAssign}</p>
+					<@alert color='warning'>#i18n{profiles.assign_view_profile.noViewToAssign}</@alert>
 				</#if>
-			</div>	
-		</div>	
-    </div>	
-</div>
+			</@boxBody>
+		</@box>
+	</@columns>
+</@row>

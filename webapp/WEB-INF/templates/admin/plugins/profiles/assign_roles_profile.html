@@ -1,64 +1,56 @@
-<div class="row">
-	<div class="col-xs-12 col-sm-3 col-md-3">
-		<div class="box box-success">
-			<div class="box-header">
-				<h3 class="box-title">#i18n{profiles.assign_rights_profile.profileKey} : ${profile.key}</h3>
-				<div class="box-tools pull-right">
-					<@item_navigation item_navigator=item_navigator />
-				</div>
-			</div>
-			<div class="box-body">
+<@row>
+	<@columns md=3>
+		<@box>
+			<@boxHeader title='#i18n{profiles.assign_rights_profile.profileKey} : ${profile.key}'>
+				<@item_navigation item_navigator=item_navigator />
+			</@boxHeader>
+			<@boxBody>
 				<#if available_list?size &gt; 0 >
-					<p class="lead" >#i18n{profiles.assign_roles_profile.labelAvailableRoles}</p>
-					<form class="form" name="assign-roles-profile" method="post" action="jsp/admin/plugins/profiles/DoAssignRolesProfile.jsp">
-					<input type="hidden" name="profile_key" value="${profile.key}">
-					<div class="form-group">
-						<label for="profile_key" class="sr-only">#i18n{profiles.assign_roles_profile.labelAvailableRoles}</label>
-						<@comboWithParamsAndLength name="roles_list" default_value="" additionalParameters="multiple=\"multiple\" size=\"15\" class=\"form-control\"" items=available_list?sort_by('name') max_length=175 />
-					</div>
-					<#if permission>
-						<div class="form-group">
-							<button class="btn btn-primary btn-small" type="submit"><i class="icon-ok icon-white"></i>&nbsp;#i18n{profiles.assign_roles_profile.labelButtonValidate}</button>
-						</div>
-					</#if>
-					</form>
+					<h4>#i18n{profiles.assign_roles_profile.labelAvailableRoles}</h4>
+					<@tform name='assign-roles-profile' method='post' action='jsp/admin/plugins/profiles/DoAssignRolesProfile.jsp'>
+						<@input type='hidden' name='profile_key' value='${profile.key}' />
+						<@formGroup labelFor='profile_key' labelKey='#i18n{profiles.assign_roles_profile.labelAvailableRoles}' rows=2>
+							<@select name='roles_list' default_value='' multiple=15 items=available_list?sort_by('name') />
+						</@formGroup>
+						<#if permission>
+							<@formGroup rows=2>
+								<@button type='submit' title='#i18n{profiles.assign_roles_profile.labelButtonValidate}' buttonIcon='check' />
+							</@formGroup>
+						</#if>
+					</@tform>
 				<#else>
-					<p class="label label-warning">#i18n{profiles.assign_roles_profile.noRoleToAssign}</p>
+					<@alert color='warning'>#i18n{profiles.assign_roles_profile.noRoleToAssign}</@alert>
 				</#if>
-			</div>
-		</div>
-	</div>
-	<div class="col-xs-12 col-sm-9 col-md-9">
-		<div class="box box-solid box-success">
-			<div class="box-header">
-				<h3 class="box-title">#i18n{profiles.assign_roles_profile.pageTitle}</h3>
-				<div class="box-tools pull-right">
-					<#if profile.actions?exists>
-						<#list profile.actions as action>
-							<a class="btn  <#if action.permission!='DELETE_DELETE'>btn-primary<#else>btn-danger</#if> btn-xs btn-flat" href="${action.url}?profile_key=${profile.key}"  title="${action.description}" >
-								<i class="${action.iconUrl}"></i>
-							</a>
-						</#list>
-					</#if>
-				</div>
-			</div>	
-			<div class="box-body">
-				<p class="lead">#i18n{profiles.assign_roles_profile.labelAssignedRoles}</p>	
+			</@boxBody>
+		</@box>
+	</@columns>
+	<@columns md=9>
+		<@box>
+			<@boxHeader title='#i18n{profiles.assign_roles_profile.pageTitle}'>
+				<#if profile.actions?exists>
+					<#list profile.actions as action>
+						<#if action.permission!='DELETE_DELETE'><#assign color='primary' /><#else><#assign color='danger' /></#if>
+						<@aButton href='${action.url}?profile_key=${profile.key}' title='${action.description}' hideTitle=['all'] buttonIcon='${action.iconUrl}' color=color size='sm' />
+					</#list>
+				</#if>
+			</@boxHeader>
+			<@boxBody>
+				<h4>#i18n{profiles.assign_roles_profile.labelAssignedRoles}</h4>	
 				<#if assigned_list?size &gt; 0 >
-				<form class="form-inline" method="post" action="jsp/admin/plugins/profiles/AssignRolesProfile.jsp">
-				<input type="hidden" name="profile_key" value="${profile.key}" />
-				<@paginationAdmin paginator=paginator combo=1 form=0 />
-				</form>
-				<table class="table table-hover">
+				<@tform type='inline' method='post' action='jsp/admin/plugins/profiles/AssignRolesProfile.jsp'>
+					<@input type='hidden' name='profile_key' value='${profile.key}' />
+					<@paginationAdmin paginator=paginator combo=1 form=0 />
+				</@tform>
+				<@table class="table table-hover">
 					<tr>            
 						<th>
 							#i18n{profiles.assign_roles_profile.columnTitleKey}
 							<@sort jsp_url="jsp/admin/plugins/profiles/AssignRolesProfile.jsp" attribute="key&profile_key=${profile.key}" />
 						</th>
-						<th>
+						<@th hide=['xs']>
 							#i18n{profiles.assign_roles_profile.columnTitleDescription}
 							<@sort jsp_url="jsp/admin/plugins/profiles/AssignRolesProfile.jsp" attribute="description&profile_key=${profile.key}" />
-						</th>
+						</@th>
 							<th>#i18n{profiles.assign_roles_profile.actions}</th>
 						</tr>
 						<#list assigned_list as assigned_item>
@@ -69,25 +61,21 @@
 							</#if>
 							<tr id="anchor-${assigned_item_index}">
 								<td>${assigned_item.key}</td>
-								<td>${assigned_item.description}</td>
+								<@td hide=['xs']>${assigned_item.description}</@td>
 								<td>
-									<a class="btn btn-primary btn-xs btn-flat" href="jsp/admin/rbac/ViewRoleDescription.jsp?role_key=${assigned_item.key}" title="#i18n{profiles.actions.labelModify}" >
-										<i class="fa fa-edit"></i>
-									</a>
+									<@aButton href='jsp/admin/rbac/ViewRoleDescription.jsp?role_key=${assigned_item.key}' title='#i18n{profiles.actions.labelModify}' hideTitle=['all'] buttonIcon='edit' size='sm' />
 									<#if permission>
-										<a class="btn btn-danger btn-xs btn-flat" href="jsp/admin/plugins/profiles/DoUnassignRoleProfile.jsp?profile_key=${profile.key}&role_key=${assigned_item.key}&anchor=anchor-${anchor}"  title="#i18n{profiles.assign_roles_profile.actionUnassign}" >
-											<i class="fa fa-trash"></i>
-										</a>
+										<@aButton href='jsp/admin/plugins/profiles/DoUnassignRoleProfile.jsp?profile_key=${profile.key}&role_key=${assigned_item.key}&anchor=anchor-${anchor}' title='#i18n{profiles.assign_roles_profile.actionUnassign}' hideTitle=['all'] buttonIcon='trash' color='danger' size='sm' />
 									</#if>
 								</td>
 							</tr>
 						</#list>
-					</table>
+					</@table>
 					<@paginationAdmin paginator=paginator />
 				<#else>
-					<p class="label label-warning">#i18n{profiles.assign_roles_profile.noAssignedList}</p>
+					<@alert color='warning'>#i18n{profiles.assign_roles_profile.noAssignedList}</@alert>
 				</#if>	    
-			</div>
-		</div>
-	</div>
-</div>
+			</@boxBody>
+		</@box>
+	</@columns>
+</@row>

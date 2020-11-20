@@ -1,61 +1,47 @@
-<div class="row">
-	<div class="col-xs-12 col-sm-3 col-md-3">
-		<div class="box box-success">
-			<div class="box-header">
-				<h3 class="box-title">#i18n{profiles.assign_rights_profile.profileKey} : ${profile.key}</h3>
-				<div class="box-tools pull-right">
-					<@item_navigation item_navigator=item_navigator />
-				</div>
-			</div>
-			<div class="box-body">
+<@row>
+	<@columns md=3>
+		<@box>
+			<@boxHeader title='#i18n{profiles.modify_profile.titleModificationForm} : ${profile.key}'>
+				<@item_navigation item_navigator=item_navigator />
+			</@boxHeader>
+			<@boxBody>
 				<p><strong>#i18n{profiles.assign_rights_profile.profileDescription}</strong></p>
 				<p>${profile.description}</p>
-			</div>
-		</div>
-	</div>
-	<div class="col-xs-12 col-sm-9 col-md-9">
-		<div class="box box-solid box-success">
-			<div class="box-header">
-				<h3 class="box-title">#i18n{profiles.assign_rights_profile.pageTitle}</h3>
-				<div class="box-tools pull-right">
-					<#if profile.actions?exists>
-						<#list profile.actions as action>
-							<a class="btn  <#if action.permission!='DELETE_DELETE'>btn-primary<#else>btn-danger</#if> btn-xs btn-flat" href="${action.url}?profile_key=${profile.key}"  title="${action.description}" >
-								<i class="${action.iconUrl}"></i>
-							</a>
-						</#list>
-					</#if>
-				</div>
-			</div>	
-			<div class="box-body">#i18n{profiles.modify_profile.titleModificationForm}</legend>
-				<form class="form-horizontal" method="post" action="jsp/admin/plugins/profiles/DoModifyProfile.jsp" >
-					<input type="hidden" id="profile_key" name="profile_key" value="${profile.key}">
-					<div class="form-group">
-					<label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3" for="profile_key">#i18n{profiles.modify_profile.labelKey} * </label>
-						<div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
-							<p class="form-control-static">${profile.key}</p>
-					   </div>
-					</div>
-					<div class="form-group">
-					<label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3" for="profile_description">#i18n{profiles.modify_profile.labelDescription} *</label>
-						<div class="col-xs-12 col-sm-12 col-md-96 col-lg-6">
-						<#if permission>
-							<input type="text" id="profile_description" name="profile_description" value="${profile.description}"  maxlength="250" class="form-control">
-						<#else>
-							<p class="form-control-static">${profile.description}</p>
-						</#if>
-						</div>
-					</div>
-					<div class="form-group">
-						<div class="col-xs-12 col-sm-12 col-md-9 col-md-offset-3">
-						<#if permission>
-							<button class="btn btn-primary btn-flat" type="submit" >
-								<i class="fa fa-check"></i>&nbsp;#i18n{profiles.modify_profile.buttonLabelModify}
-							</button>
-						</#if>
-					</div>
-				</form>
-			</div>
-		</div>
-	</div>
-</div>
+			</@boxBody>
+		</@box>
+	</@columns>
+	<@columns md=9>
+		<@box>
+			<@boxHeader title='#i18n{profiles.modify_profile.titleModificationForm} : ${profile.key}'>
+				<#if profile.actions?exists>
+					<#list profile.actions as action>
+						<#if action.permission!='DELETE_DELETE'><#assign color='primary' /><#else><#assign color='danger' /></#if>
+						<@aButton href='${action.url}?profile_key=${profile.key}' title='${action.description}' hideTitle=['all'] buttonIcon='${action.iconUrl}' color=color size='sm' />
+					</#list>
+				</#if>
+			</@boxHeader>
+			<@boxBody>
+				<@tform method='post' action='jsp/admin/plugins/profiles/DoModifyProfile.jsp'>
+					<@input type='hidden' id='profile_key' name='profile_key' value='${profile.key}' />
+					<@fieldSet legend='#i18n{profiles.modify_profile.titleModificationForm}' hideLegend=['all']>
+						<@formGroup labelFor='profile_key' labelKey='#i18n{profiles.modify_profile.labelKey}' mandatory=true>
+							<@staticText>${profile.key}</@staticText>
+						</@formGroup>
+						<@formGroup labelFor='profile_description' labelKey='#i18n{profiles.modify_profile.labelDescription}' mandatory=true>
+							<#if permission>
+								<@input type='text' id='profile_description' name='profile_description' value='${profile.description}' maxlength=250 />
+							<#else>
+								<@staticText>${profile.description}</@staticText>
+							</#if>
+						</@formGroup>
+						<@formGroup>
+							<#if permission>
+								<@button type='submit' title='#i18n{profiles.modify_profile.buttonLabelModify}' buttonIcon='save' />
+							</#if>
+						</@formGroup>
+					</@fieldSet>
+				</@tform>
+			</@boxBody>
+		</@box>
+	</@columns>
+</@row>

@@ -1,56 +1,45 @@
-<div class="row">
-	<div class="col-xs-12 col-sm-3 col-md-3">
-		<div class="box box-success">
-			<div class="box-header">
-				<h3 class="box-title">#i18n{profiles.assign_rights_profile.profileKey} : ${profile.key}</h3>
-				<div class="box-tools pull-right">
-					<@item_navigation item_navigator=item_navigator />
-				</div>
-			</div>
-			<div class="box-body">
+<@row>
+	<@columns md=3>
+		<@box>
+			<@boxHeader title='#i18n{profiles.assign_rights_profile.profileKey} : ${profile.key}'>
+				<@item_navigation item_navigator=item_navigator />
+			</@boxHeader>
+			<@boxBody>
 			   <#if available_list?size &gt; 0 >#i18n{profiles.assign_rights_profile.labelAvailableRights}</p>
-					<p class="lead">
-					<form class="form-" name="assign-rights-profile" method="post" action="jsp/admin/plugins/profiles/DoAssignRightsProfile.jsp">
-					<input type="hidden" name="profile_key" value="${profile.key}" />
-					<div class="form-group">
-						<label class="sr-only" for="profile_key" >#i18n{profiles.assign_rights_profile.labelAvailableRights}</label>
-						<@comboWithParamsAndLength name="rights_list" default_value="" additionalParameters="multiple=\"multiple\" size=\"15\" class=\"form-control\"" items=available_list?sort_by('name') max_length=175 />
-					</div>
-					<#if permission>
-						<div class="form-group">	
-							<center>
-								<button class="btn btn-primary btn-flat" type="submit"><i class="icon-ok icon-white"></i>&nbsp;#i18n{profiles.assign_rights_profile.labelButtonValidate}</button>
-							</center>
-						</div>
-					</#if>
-					</form>
+					<@tform name='assign-rights-profile' method='post' action='jsp/admin/plugins/profiles/DoAssignRightsProfile.jsp'>
+						<@input type='hidden' name='profile_key' value='${profile.key}' />
+						<@formGroup labelFor='profile_key' labelKey='#i18n{profiles.assign_rights_profile.labelAvailableRights}' rows=2>
+							<@select name='rights_list' default_value='' multiple=15 items=available_list?sort_by('name') />
+						</@formGroup>
+						<#if permission>
+							<@formGroup rows=2>
+								<@button type='submit' title='#i18n{profiles.assign_rights_profile.labelButtonValidate}' buttonIcon='check' />
+							</@formGroup>
+						</#if>
+					</@tform>
 				<#else>
-					<p class="label label-warning">#i18n{profiles.assign_rights_profile.noRightToAssign}</p>
+					<@alert color='warning'>#i18n{profiles.assign_rights_profile.noRightToAssign}</@alert>
 				</#if>
-       		</div>
-		</div>
-	</div>
-	<div class="col-xs-12 col-sm-9 col-md-9">
-		<div class="box box-solid box-success">
-			<div class="box-header">
-				<h3 class="box-title">#i18n{profiles.assign_rights_profile.pageTitle}</h3>
-				<div class="box-tools pull-right">
-					<#if profile.actions?exists>
-						<#list profile.actions as action>
-							<a class="btn  <#if action.permission!='DELETE_DELETE'>btn-primary<#else>btn-danger</#if> btn-xs btn-flat" href="${action.url}?profile_key=${profile.key}"  title="${action.description}" >
-								<i class="${action.iconUrl}"></i>
-							</a>
-						</#list>
-					</#if>
-				</div>
-			</div>	
-			<div class="box-body">
-				<p class="lead">#i18n{profiles.assign_rights_profile.labelAssignedRights}</p>
+       		</@boxBody>
+		</@box>
+	</@columns>
+	<@columns md=9>
+		<@box>
+			<@boxHeader title='#i18n{profiles.assign_rights_profile.pageTitle}'>
+				<#if profile.actions?exists>
+					<#list profile.actions as action>
+						<#if action.permission!='DELETE_DELETE'><#assign color='primary' /><#else><#assign color='danger' /></#if>
+						<@aButton href='${action.url}?profile_key=${profile.key}' title='${action.description}' hideTitle=['all'] buttonIcon='${action.iconUrl}' color=color size='sm' />
+					</#list>
+				</#if>
+			</@boxHeader>
+			<@boxBody>
+				<h4>#i18n{profiles.assign_rights_profile.labelAssignedRights}</h4>
 				<#if assigned_list?size &gt; 0 >
-					<table class="table table-hover">
+					<@table>
 						 <tr>            
 							<th>#i18n{profiles.assign_rights_profile.columnTitleName}</th>
-							<th>#i18n{profiles.assign_rights_profile.columnTitleDescription}</th>
+							<@th hide=['xs']>#i18n{profiles.assign_rights_profile.columnTitleDescription}</@th>
 							<th>#i18n{profiles.assign_rights_profile.columnTitleLevel}</th>        
 							<th>#i18n{profiles.assign_rights_profile.actions}</th>
 						</tr>
@@ -62,22 +51,20 @@
 							</#if>
 							<tr id="anchor-${assigned_item_index}">
 								<td>${assigned_item.name}</td>
-								<td>${assigned_item.description}</td>
+								<@td hide=['xs']>${assigned_item.description}</@td>
 								<td>${assigned_item.level}</td>
 								<td>
 									<#if permission>
-										<a class="btn btn-danger btn-xs btn-flat" href="jsp/admin/plugins/profiles/DoUnassignRightProfile.jsp?profile_key=${profile.key}&id_right=${assigned_item.id}&anchor=anchor-${anchor}"  title="#i18n{profiles.assign_rights_profile.actionUnassign}" >
-											<i class="fa fa-trash"></i>
-										</a>
+										<@aButton href='jsp/admin/plugins/profiles/DoUnassignRightProfile.jsp?profile_key=${profile.key}&id_right=${assigned_item.id}&anchor=anchor-${anchor}' title='#i18n{profiles.assign_rights_profile.actionUnassign}' hideTitle=['all'] buttonIcon='trash' color='danger' size='sm' />
 									</#if>
 								</td>
 							</tr>
 						</#list>
-					</table>
+					</@table>
 				<#else>
-					<p class="label label-warning">#i18n{profiles.assign_rights_profile.noAssignedList}</p>
+					<@alert color='warning'>#i18n{profiles.assign_rights_profile.noAssignedList}</@alert>
 				</#if>	
-			</div>
-		</div>
-	</div>
-</div>
+			</@boxBody>
+		</@box>
+	</@columns>
+</@row>
