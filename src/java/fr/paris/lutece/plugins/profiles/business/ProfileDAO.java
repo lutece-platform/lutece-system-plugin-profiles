@@ -98,7 +98,7 @@ public class ProfileDAO implements IProfileDAO
         {
             daoUtil.setString( 1, profile.getKey( ) );
             daoUtil.setString( 2, profile.getDescription( ) );
-    
+
             daoUtil.executeUpdate( );
         }
     }
@@ -114,7 +114,7 @@ public class ProfileDAO implements IProfileDAO
         {
             daoUtil.setString( 1, strProfileKey );
             daoUtil.executeQuery( );
-    
+
             if ( daoUtil.next( ) )
             {
                 profile = new Profile( );
@@ -167,7 +167,7 @@ public class ProfileDAO implements IProfileDAO
                 Profile profile = new Profile( );
                 profile.setKey( daoUtil.getString( 1 ) );
                 profile.setDescription( daoUtil.getString( 2 ) );
-    
+
                 listProfiles.add( profile );
             }
         }
@@ -185,15 +185,15 @@ public class ProfileDAO implements IProfileDAO
         {
             daoUtil.setString( 1, ProfilesConstants.PERCENT + pFilter.getKey( ) + ProfilesConstants.PERCENT );
             daoUtil.setString( 2, ProfilesConstants.PERCENT + pFilter.getDescription( ) + ProfilesConstants.PERCENT );
-    
+
             daoUtil.executeQuery( );
-    
+
             while ( daoUtil.next( ) )
             {
                 Profile profile = new Profile( );
                 profile.setKey( daoUtil.getString( 1 ) );
                 profile.setDescription( daoUtil.getString( 2 ) );
-    
+
                 listFilteredProfiles.add( profile );
             }
         }
@@ -211,8 +211,8 @@ public class ProfileDAO implements IProfileDAO
         {
             daoUtil.setString( 1, strProfileKey );
             daoUtil.executeQuery( );
-           
-            bResult =  daoUtil.next( ) ;
+
+            bResult = daoUtil.next( );
         }
         return bResult;
     }
@@ -227,13 +227,13 @@ public class ProfileDAO implements IProfileDAO
         try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECTALL, plugin ) )
         {
             daoUtil.executeQuery( );
-    
+
             while ( daoUtil.next( ) )
             {
                 Profile profile = new Profile( );
                 profile.setKey( daoUtil.getString( 1 ) );
                 profile.setDescription( daoUtil.getString( 2 ) );
-    
+
                 listProfiles.addItem( profile.getKey( ), profile.getKey( ) );
             }
         }
@@ -251,7 +251,7 @@ public class ProfileDAO implements IProfileDAO
         {
             daoUtil.setString( 1, strProfileKey );
             daoUtil.executeQuery( );
-    
+
             bInUse = daoUtil.next( );
         }
         return bInUse;
@@ -268,7 +268,7 @@ public class ProfileDAO implements IProfileDAO
         {
             daoUtil.setInt( 1, nIdUser );
             daoUtil.executeQuery( );
-    
+
             while ( daoUtil.next( ) )
             {
                 Profile profile = new Profile( );
@@ -297,7 +297,7 @@ public class ProfileDAO implements IProfileDAO
             {
                 Right right = new Right( );
                 right.setId( daoUtil.getString( 1 ) );
-    
+
                 listRights.add( right );
             }
         }
@@ -332,7 +332,7 @@ public class ProfileDAO implements IProfileDAO
         {
             daoUtil.setString( 1, strProfileKey );
             daoUtil.setString( 2, strIdRight );
-    
+
             daoUtil.executeUpdate( );
         }
     }
@@ -347,7 +347,7 @@ public class ProfileDAO implements IProfileDAO
         {
             daoUtil.setString( 1, strProfileKey );
             daoUtil.setString( 2, strIdRight );
-    
+
             daoUtil.executeUpdate( );
         }
     }
@@ -377,14 +377,14 @@ public class ProfileDAO implements IProfileDAO
         try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_WORKGROUPS_LIST_FOR_PROFILE, plugin ) )
         {
             daoUtil.setString( 1, strProfileKey );
-    
+
             daoUtil.executeQuery( );
-    
+
             while ( daoUtil.next( ) )
             {
                 AdminWorkgroup workgroup = new AdminWorkgroup( );
                 workgroup.setKey( daoUtil.getString( 1 ) );
-    
+
                 listWorkgroups.add( workgroup );
             }
         }
@@ -403,7 +403,7 @@ public class ProfileDAO implements IProfileDAO
             daoUtil.setString( 1, strProfileKey );
             daoUtil.setString( 2, strWorkgroupKey );
             daoUtil.executeQuery( );
-    
+
             bHasWorkgroup = daoUtil.next( );
         }
         return bHasWorkgroup;
@@ -419,7 +419,7 @@ public class ProfileDAO implements IProfileDAO
         {
             daoUtil.setString( 1, strProfileKey );
             daoUtil.setString( 2, strWorkgroupKey );
-    
+
             daoUtil.executeUpdate( );
         }
     }
@@ -434,7 +434,7 @@ public class ProfileDAO implements IProfileDAO
         {
             daoUtil.setString( 1, strProfileKey );
             daoUtil.setString( 2, strWorkgroupKey );
-    
+
             daoUtil.executeUpdate( );
         }
     }
@@ -448,7 +448,7 @@ public class ProfileDAO implements IProfileDAO
         try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_WORKGROUPS, plugin ) )
         {
             daoUtil.setString( 1, strProfileKey );
-    
+
             daoUtil.executeUpdate( );
         }
     }
@@ -465,13 +465,13 @@ public class ProfileDAO implements IProfileDAO
         try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_ROLES_LIST_FOR_PROFILE, plugin ) )
         {
             daoUtil.setString( 1, strProfileKey );
-    
+
             daoUtil.executeQuery( );
             while ( daoUtil.next( ) )
             {
                 RBACRole role = new RBACRole( );
                 role.setKey( daoUtil.getString( 1 ) );
-    
+
                 listRoles.add( role );
             }
         }
@@ -490,7 +490,7 @@ public class ProfileDAO implements IProfileDAO
             daoUtil.setString( 1, strProfileKey );
             daoUtil.setString( 2, strRoleKey );
             daoUtil.executeQuery( );
-    
+
             bHasRole = daoUtil.next( );
         }
         return bHasRole;
@@ -506,7 +506,7 @@ public class ProfileDAO implements IProfileDAO
         {
             daoUtil.setString( 1, strProfileKey );
             daoUtil.setString( 2, strRoleKey );
-    
+
             daoUtil.executeUpdate( );
         }
     }
@@ -521,7 +521,7 @@ public class ProfileDAO implements IProfileDAO
         {
             daoUtil.setString( 1, strProfileKey );
             daoUtil.setString( 2, strRoleKey );
-    
+
             daoUtil.executeUpdate( );
         }
     }
@@ -552,12 +552,12 @@ public class ProfileDAO implements IProfileDAO
         {
             daoUtil.setString( 1, strProfileKey );
             daoUtil.executeQuery( );
-    
+
             while ( daoUtil.next( ) )
             {
                 AdminUser user = new AdminUser( );
                 user.setUserId( daoUtil.getInt( 1 ) );
-    
+
                 listUsers.add( user );
             }
         }
@@ -591,7 +591,7 @@ public class ProfileDAO implements IProfileDAO
         {
             daoUtil.setString( 1, strProfileKey );
             daoUtil.setInt( 2, nIdUser );
-    
+
             daoUtil.executeUpdate( );
         }
     }
@@ -606,7 +606,7 @@ public class ProfileDAO implements IProfileDAO
         {
             daoUtil.setInt( 1, nIdUser );
             daoUtil.setString( 2, strProfileKey );
-    
+
             daoUtil.executeUpdate( );
         }
     }
@@ -667,7 +667,7 @@ public class ProfileDAO implements IProfileDAO
         {
             daoUtil.setString( 1, strProfileKey );
             daoUtil.executeQuery( );
-    
+
             if ( daoUtil.next( ) )
             {
                 view = new View( );

@@ -59,7 +59,7 @@ public class ViewActionDAO implements IViewActionDAO
         try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_ACTIONS, plugin ) )
         {
             daoUtil.executeQuery( );
-    
+
             while ( daoUtil.next( ) )
             {
                 ViewAction action = new ViewAction( );

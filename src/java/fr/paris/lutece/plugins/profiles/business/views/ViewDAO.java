@@ -96,7 +96,7 @@ public class ViewDAO implements IViewDAO
         {
             daoUtil.setString( 1, view.getKey( ) );
             daoUtil.setString( 2, view.getDescription( ) );
-    
+
             daoUtil.executeUpdate( );
         }
     }
@@ -112,7 +112,7 @@ public class ViewDAO implements IViewDAO
         {
             daoUtil.setString( 1, strViewKey );
             daoUtil.executeQuery( );
-    
+
             if ( daoUtil.next( ) )
             {
                 view = new View( );
@@ -146,7 +146,7 @@ public class ViewDAO implements IViewDAO
         {
             daoUtil.setString( 1, view.getDescription( ) );
             daoUtil.setString( 2, view.getKey( ) );
-    
+
             daoUtil.executeUpdate( );
         }
     }
@@ -161,13 +161,13 @@ public class ViewDAO implements IViewDAO
         try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECTALL, plugin ) )
         {
             daoUtil.executeQuery( );
-    
+
             while ( daoUtil.next( ) )
             {
                 View view = new View( );
                 view.setKey( daoUtil.getString( 1 ) );
                 view.setDescription( daoUtil.getString( 2 ) );
-    
+
                 listViews.add( view );
             }
         }
@@ -185,14 +185,14 @@ public class ViewDAO implements IViewDAO
         {
             daoUtil.setString( 1, ProfilesConstants.PERCENT + vFilter.getKey( ) + ProfilesConstants.PERCENT );
             daoUtil.setString( 2, ProfilesConstants.PERCENT + vFilter.getDescription( ) + ProfilesConstants.PERCENT );
-    
+
             daoUtil.executeQuery( );
             while ( daoUtil.next( ) )
             {
                 View view = new View( );
                 view.setKey( daoUtil.getString( 1 ) );
                 view.setDescription( daoUtil.getString( 2 ) );
-    
+
                 listFilteredViews.add( view );
             }
         }
@@ -211,7 +211,7 @@ public class ViewDAO implements IViewDAO
             daoUtil.setString( 1, strViewKey );
             daoUtil.executeQuery( );
 
-            bResult = daoUtil.next( ); 
+            bResult = daoUtil.next( );
         }
         return bResult;
     }
@@ -232,7 +232,7 @@ public class ViewDAO implements IViewDAO
                 Profile profile = new Profile( );
                 profile.setKey( daoUtil.getString( 1 ) );
                 profile.setDescription( daoUtil.getString( 2 ) );
-    
+
                 listProfiles.addItem( profile.getKey( ), profile.getKey( ) );
             }
         }
@@ -251,13 +251,13 @@ public class ViewDAO implements IViewDAO
         try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_PROFILES_LIST_FOR_VIEW, plugin ) )
         {
             daoUtil.setString( 1, strViewKey );
-    
+
             daoUtil.executeQuery( );
             while ( daoUtil.next( ) )
             {
                 Profile profile = new Profile( );
                 profile.setKey( daoUtil.getString( 1 ) );
-    
+
                 listProfiles.add( profile );
             }
         }
@@ -276,7 +276,7 @@ public class ViewDAO implements IViewDAO
         {
             daoUtil.setString( 1, strProfileKey );
             daoUtil.executeQuery( );
-    
+
             if ( daoUtil.next( ) )
             {
                 view = new View( );
@@ -298,7 +298,7 @@ public class ViewDAO implements IViewDAO
         {
             daoUtil.setString( 1, strProfileKey );
             daoUtil.executeQuery( );
-    
+
             bHasView = daoUtil.next( );
         }
         return bHasView;
@@ -314,7 +314,7 @@ public class ViewDAO implements IViewDAO
         {
             daoUtil.setString( 1, strViewKey );
             daoUtil.setString( 2, strProfileKey );
-    
+
             daoUtil.executeUpdate( );
         }
     }
@@ -342,7 +342,7 @@ public class ViewDAO implements IViewDAO
         {
             daoUtil.setString( 1, strViewKey );
             daoUtil.setString( 2, strProfileKey );
-    
+
             daoUtil.executeUpdate( );
         }
     }
@@ -361,13 +361,13 @@ public class ViewDAO implements IViewDAO
         {
             daoUtil.setString( 1, strViewKey );
             daoUtil.executeQuery( );
-    
+
             while ( daoUtil.next( ) )
             {
                 IDashboardComponent dashboardComponent = null;
-    
+
                 String strBeanName = daoUtil.getString( 1 );
-    
+
                 dashboardComponent = DashboardFactory.getDashboardComponent( strBeanName );
                 if ( dashboardComponent != null )
                 {
@@ -405,11 +405,11 @@ public class ViewDAO implements IViewDAO
             daoUtil.setString( 1, strViewKey );
             daoUtil.setString( 2, strDashboardName );
             daoUtil.executeQuery( );
-    
+
             if ( daoUtil.next( ) )
             {
                 dashboardComponent = DashboardFactory.getDashboardComponent( strDashboardName );
-    
+
                 if ( dashboardComponent != null )
                 {
                     dashboardComponent.setName( strDashboardName );
@@ -435,7 +435,7 @@ public class ViewDAO implements IViewDAO
         {
             daoUtil.setString( 1, strViewKey );
             daoUtil.setString( 2, strDashboardName );
-    
+
             daoUtil.executeUpdate( );
         }
     }
@@ -465,7 +465,7 @@ public class ViewDAO implements IViewDAO
             daoUtil.setString( 2, dashboard.getName( ) );
             daoUtil.setInt( 3, dashboard.getZone( ) );
             daoUtil.setInt( 4, dashboard.getOrder( ) );
-    
+
             daoUtil.executeUpdate( );
         }
     }
@@ -480,10 +480,10 @@ public class ViewDAO implements IViewDAO
         {
             daoUtil.setInt( 1, dashboard.getZone( ) );
             daoUtil.setInt( 2, dashboard.getOrder( ) );
-    
+
             daoUtil.setString( 3, strViewKey );
             daoUtil.setString( 4, dashboard.getName( ) );
-    
+
             daoUtil.executeUpdate( );
         }
     }
@@ -498,7 +498,7 @@ public class ViewDAO implements IViewDAO
         try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_MAX_ORDER, plugin ) )
         {
             daoUtil.executeQuery( );
-    
+
             if ( daoUtil.next( ) )
             {
                 nMaxOrder = daoUtil.getInt( 1 );
@@ -517,9 +517,9 @@ public class ViewDAO implements IViewDAO
         try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_MAX_ORDER_COLUMN, plugin ) )
         {
             daoUtil.setInt( 1, nColumn );
-    
+
             daoUtil.executeQuery( );
-    
+
             if ( daoUtil.next( ) )
             {
                 nMaxOrder = daoUtil.getInt( 1 );
@@ -539,7 +539,7 @@ public class ViewDAO implements IViewDAO
         try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_COLUMNS, plugin ) )
         {
             daoUtil.executeQuery( );
-    
+
             while ( daoUtil.next( ) )
             {
                 listColumns.add( daoUtil.getInt( 1 ) );
@@ -565,16 +565,16 @@ public class ViewDAO implements IViewDAO
         {
             int nIndex = applySQLFilter( daoUtil, 1, filter );
             daoUtil.setString( nIndex, strViewKey );
-    
+
             daoUtil.executeQuery( );
             while ( daoUtil.next( ) )
             {
                 IDashboardComponent dashboardComponent = null;
-    
+
                 String strBeanName = daoUtil.getString( 1 );
-    
+
                 dashboardComponent = DashboardFactory.getDashboardComponent( strBeanName );
-    
+
                 if ( dashboardComponent != null )
                 {
                     load( dashboardComponent, daoUtil );
