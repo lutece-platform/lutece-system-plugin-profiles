@@ -98,7 +98,7 @@ public class View implements RBACResource
      */
     public String getResourceId( )
     {
-        return _strKey;
+        return getKey( );
     }
 
     /**

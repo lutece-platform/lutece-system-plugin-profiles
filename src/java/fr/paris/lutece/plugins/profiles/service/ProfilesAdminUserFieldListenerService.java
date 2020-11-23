@@ -43,7 +43,6 @@ import fr.paris.lutece.portal.service.user.attribute.AdminUserFieldListenerServi
  */
 public final class ProfilesAdminUserFieldListenerService
 {
-    // private static final String SPRING_CONTEXT_NAME = "profiles";
     private static final String BEAN_PROFILES_ADMIN_USER_FIELD_SERVICE = "profiles.profilesAdminUserFieldListenerService";
 
     /**
@@ -60,6 +59,6 @@ public final class ProfilesAdminUserFieldListenerService
      */
     public static AdminUserFieldListenerService getService( )
     {
-        return (AdminUserFieldListenerService) SpringContextService.getBean( BEAN_PROFILES_ADMIN_USER_FIELD_SERVICE );
+        return SpringContextService.getBean( BEAN_PROFILES_ADMIN_USER_FIELD_SERVICE );
     }
 }

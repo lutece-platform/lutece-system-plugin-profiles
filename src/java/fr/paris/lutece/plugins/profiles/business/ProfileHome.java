@@ -34,7 +34,7 @@
 package fr.paris.lutece.plugins.profiles.business;
 
 import fr.paris.lutece.plugins.profiles.business.views.View;
-import fr.paris.lutece.portal.business.rbac.AdminRole;
+import fr.paris.lutece.portal.business.rbac.RBACRole;
 import fr.paris.lutece.portal.business.right.Right;
 import fr.paris.lutece.portal.business.user.AdminUser;
 import fr.paris.lutece.portal.business.workgroup.AdminWorkgroup;
@@ -52,7 +52,7 @@ import java.util.List;
 public final class ProfileHome
 {
     private static final String BEAN_PROFILE_HOME = "profiles.profileDAO";
-    private static IProfileDAO _dao = (IProfileDAO) SpringContextService.getBean( BEAN_PROFILE_HOME );
+    private static IProfileDAO _dao = SpringContextService.getBean( BEAN_PROFILE_HOME );
 
     /**
      * Private constructor - this class need not be instantiated
@@ -364,7 +364,7 @@ public final class ProfileHome
      *            Plugin
      * @return The list of roles
      */
-    public static List<AdminRole> getRolesListForProfile( String strProfileKey, Plugin plugin )
+    public static List<RBACRole> getRolesListForProfile( String strProfileKey, Plugin plugin )
     {
         return _dao.selectRolesListForProfile( strProfileKey, plugin );
     }

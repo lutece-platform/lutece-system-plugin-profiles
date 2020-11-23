@@ -92,12 +92,13 @@ public class ViewDAO implements IViewDAO
     @Override
     public void insert( View view, Plugin plugin )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, plugin );
-        daoUtil.setString( 1, view.getKey( ) );
-        daoUtil.setString( 2, view.getDescription( ) );
-
-        daoUtil.executeUpdate( );
-        daoUtil.free( );
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, plugin ) )
+        {
+            daoUtil.setString( 1, view.getKey( ) );
+            daoUtil.setString( 2, view.getDescription( ) );
+    
+            daoUtil.executeUpdate( );
+        }
     }
 
     /**
@@ -106,21 +107,19 @@ public class ViewDAO implements IViewDAO
     @Override
     public View load( String strViewKey, Plugin plugin )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT, plugin );
-        daoUtil.setString( 1, strViewKey );
-        daoUtil.executeQuery( );
-
         View view = null;
-
-        if ( daoUtil.next( ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT, plugin ) )
         {
-            view = new View( );
-            view.setKey( daoUtil.getString( 1 ) );
-            view.setDescription( daoUtil.getString( 2 ) );
+            daoUtil.setString( 1, strViewKey );
+            daoUtil.executeQuery( );
+    
+            if ( daoUtil.next( ) )
+            {
+                view = new View( );
+                view.setKey( daoUtil.getString( 1 ) );
+                view.setDescription( daoUtil.getString( 2 ) );
+            }
         }
-
-        daoUtil.free( );
-
         return view;
     }
 
@@ -130,11 +129,11 @@ public class ViewDAO implements IViewDAO
     @Override
     public void delete( String strViewKey, Plugin plugin )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE, plugin );
-        daoUtil.setString( 1, strViewKey );
-
-        daoUtil.executeUpdate( );
-        daoUtil.free( );
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE, plugin ) )
+        {
+            daoUtil.setString( 1, strViewKey );
+            daoUtil.executeUpdate( );
+        }
     }
 
     /**
@@ -143,12 +142,13 @@ public class ViewDAO implements IViewDAO
     @Override
     public void store( View view, Plugin plugin )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE, plugin );
-        daoUtil.setString( 1, view.getDescription( ) );
-        daoUtil.setString( 2, view.getKey( ) );
-
-        daoUtil.executeUpdate( );
-        daoUtil.free( );
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE, plugin ) )
+        {
+            daoUtil.setString( 1, view.getDescription( ) );
+            daoUtil.setString( 2, view.getKey( ) );
+    
+            daoUtil.executeUpdate( );
+        }
     }
 
     /**
@@ -157,21 +157,20 @@ public class ViewDAO implements IViewDAO
     @Override
     public List<View> selectViewsList( Plugin plugin )
     {
-        List<View> listViews = new ArrayList<View>( );
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECTALL, plugin );
-        daoUtil.executeQuery( );
-
-        while ( daoUtil.next( ) )
+        List<View> listViews = new ArrayList<>( );
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECTALL, plugin ) )
         {
-            View view = new View( );
-            view.setKey( daoUtil.getString( 1 ) );
-            view.setDescription( daoUtil.getString( 2 ) );
-
-            listViews.add( view );
+            daoUtil.executeQuery( );
+    
+            while ( daoUtil.next( ) )
+            {
+                View view = new View( );
+                view.setKey( daoUtil.getString( 1 ) );
+                view.setDescription( daoUtil.getString( 2 ) );
+    
+                listViews.add( view );
+            }
         }
-
-        daoUtil.free( );
-
         return listViews;
     }
 
@@ -181,25 +180,22 @@ public class ViewDAO implements IViewDAO
     @Override
     public List<View> selectViewsByFilter( ViewFilter vFilter, Plugin plugin )
     {
-        List<View> listFilteredViews = new ArrayList<View>( );
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_VIEWS_FROM_SEARCH, plugin );
-
-        daoUtil.setString( 1, ProfilesConstants.PERCENT + vFilter.getKey( ) + ProfilesConstants.PERCENT );
-        daoUtil.setString( 2, ProfilesConstants.PERCENT + vFilter.getDescription( ) + ProfilesConstants.PERCENT );
-
-        daoUtil.executeQuery( );
-
-        while ( daoUtil.next( ) )
+        List<View> listFilteredViews = new ArrayList<>( );
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_VIEWS_FROM_SEARCH, plugin ) )
         {
-            View view = new View( );
-            view.setKey( daoUtil.getString( 1 ) );
-            view.setDescription( daoUtil.getString( 2 ) );
-
-            listFilteredViews.add( view );
+            daoUtil.setString( 1, ProfilesConstants.PERCENT + vFilter.getKey( ) + ProfilesConstants.PERCENT );
+            daoUtil.setString( 2, ProfilesConstants.PERCENT + vFilter.getDescription( ) + ProfilesConstants.PERCENT );
+    
+            daoUtil.executeQuery( );
+            while ( daoUtil.next( ) )
+            {
+                View view = new View( );
+                view.setKey( daoUtil.getString( 1 ) );
+                view.setDescription( daoUtil.getString( 2 ) );
+    
+                listFilteredViews.add( view );
+            }
         }
-
-        daoUtil.free( );
-
         return listFilteredViews;
     }
 
@@ -209,16 +205,14 @@ public class ViewDAO implements IViewDAO
     @Override
     public boolean checkExistView( String strViewKey, Plugin plugin )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT, plugin );
-        daoUtil.setString( 1, strViewKey );
-        daoUtil.executeQuery( );
-
         boolean bResult = false;
-        if ( daoUtil.next( ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT, plugin ) )
         {
-            bResult = true;
+            daoUtil.setString( 1, strViewKey );
+            daoUtil.executeQuery( );
+
+            bResult = daoUtil.next( ); 
         }
-        daoUtil.free( );
         return bResult;
     }
 
@@ -229,20 +223,19 @@ public class ViewDAO implements IViewDAO
     public ReferenceList getViewsList( Plugin plugin )
     {
         ReferenceList listProfiles = new ReferenceList( );
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECTALL, plugin );
-        daoUtil.executeQuery( );
-
-        while ( daoUtil.next( ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECTALL, plugin ) )
         {
-            Profile profile = new Profile( );
-            profile.setKey( daoUtil.getString( 1 ) );
-            profile.setDescription( daoUtil.getString( 2 ) );
+            daoUtil.executeQuery( );
 
-            listProfiles.addItem( profile.getKey( ), profile.getKey( ) );
+            while ( daoUtil.next( ) )
+            {
+                Profile profile = new Profile( );
+                profile.setKey( daoUtil.getString( 1 ) );
+                profile.setDescription( daoUtil.getString( 2 ) );
+    
+                listProfiles.addItem( profile.getKey( ), profile.getKey( ) );
+            }
         }
-
-        daoUtil.free( );
-
         return listProfiles;
     }
 
@@ -254,23 +247,20 @@ public class ViewDAO implements IViewDAO
     @Override
     public List<Profile> selectProfilesListForView( String strViewKey, Plugin plugin )
     {
-        List<Profile> listProfiles = new ArrayList<Profile>( );
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_PROFILES_LIST_FOR_VIEW, plugin );
-
-        daoUtil.setString( 1, strViewKey );
-
-        daoUtil.executeQuery( );
-
-        while ( daoUtil.next( ) )
+        List<Profile> listProfiles = new ArrayList<>( );
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_PROFILES_LIST_FOR_VIEW, plugin ) )
         {
-            Profile profile = new Profile( );
-            profile.setKey( daoUtil.getString( 1 ) );
-
-            listProfiles.add( profile );
+            daoUtil.setString( 1, strViewKey );
+    
+            daoUtil.executeQuery( );
+            while ( daoUtil.next( ) )
+            {
+                Profile profile = new Profile( );
+                profile.setKey( daoUtil.getString( 1 ) );
+    
+                listProfiles.add( profile );
+            }
         }
-
-        daoUtil.free( );
-
         return listProfiles;
     }
 
@@ -282,19 +272,18 @@ public class ViewDAO implements IViewDAO
     {
         View view = null;
 
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_VIEW_FROM_PROFILE_KEY, plugin );
-        daoUtil.setString( 1, strProfileKey );
-        daoUtil.executeQuery( );
-
-        if ( daoUtil.next( ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_VIEW_FROM_PROFILE_KEY, plugin ) )
         {
-            view = new View( );
-            view.setKey( daoUtil.getString( 1 ) );
-            view.setDescription( daoUtil.getString( 2 ) );
+            daoUtil.setString( 1, strProfileKey );
+            daoUtil.executeQuery( );
+    
+            if ( daoUtil.next( ) )
+            {
+                view = new View( );
+                view.setKey( daoUtil.getString( 1 ) );
+                view.setDescription( daoUtil.getString( 2 ) );
+            }
         }
-
-        daoUtil.free( );
-
         return view;
     }
 
@@ -305,17 +294,13 @@ public class ViewDAO implements IViewDAO
     public boolean hasView( String strProfileKey, Plugin plugin )
     {
         boolean bHasView = false;
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_VIEW_PROFILE_FROM_VIEW_KEY, plugin );
-        daoUtil.setString( 1, strProfileKey );
-        daoUtil.executeQuery( );
-
-        if ( daoUtil.next( ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_VIEW_PROFILE_FROM_VIEW_KEY, plugin ) )
         {
-            bHasView = true;
+            daoUtil.setString( 1, strProfileKey );
+            daoUtil.executeQuery( );
+    
+            bHasView = daoUtil.next( );
         }
-
-        daoUtil.free( );
-
         return bHasView;
     }
 
@@ -325,12 +310,13 @@ public class ViewDAO implements IViewDAO
     @Override
     public void insertProfileForView( String strViewKey, String strProfileKey, Plugin plugin )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT_VIEW_PROFILE, plugin );
-        daoUtil.setString( 1, strViewKey );
-        daoUtil.setString( 2, strProfileKey );
-
-        daoUtil.executeUpdate( );
-        daoUtil.free( );
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT_VIEW_PROFILE, plugin ) )
+        {
+            daoUtil.setString( 1, strViewKey );
+            daoUtil.setString( 2, strProfileKey );
+    
+            daoUtil.executeUpdate( );
+        }
     }
 
     /**
@@ -339,11 +325,11 @@ public class ViewDAO implements IViewDAO
     @Override
     public void deleteProfiles( String strViewKey, Plugin plugin )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_PROFILES, plugin );
-        daoUtil.setString( 1, strViewKey );
-
-        daoUtil.executeUpdate( );
-        daoUtil.free( );
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_PROFILES, plugin ) )
+        {
+            daoUtil.setString( 1, strViewKey );
+            daoUtil.executeUpdate( );
+        }
     }
 
     /**
@@ -352,12 +338,13 @@ public class ViewDAO implements IViewDAO
     @Override
     public void deleteProfileFromView( String strViewKey, String strProfileKey, Plugin plugin )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_PROFILE_FROM_VIEW, plugin );
-        daoUtil.setString( 1, strViewKey );
-        daoUtil.setString( 2, strProfileKey );
-
-        daoUtil.executeUpdate( );
-        daoUtil.free( );
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_PROFILE_FROM_VIEW, plugin ) )
+        {
+            daoUtil.setString( 1, strViewKey );
+            daoUtil.setString( 2, strProfileKey );
+    
+            daoUtil.executeUpdate( );
+        }
     }
 
     /* DASHBOARDS */
@@ -368,35 +355,33 @@ public class ViewDAO implements IViewDAO
     @Override
     public List<IDashboardComponent> selectDashboards( String strViewKey, Plugin plugin )
     {
-        List<IDashboardComponent> listDashboards = new ArrayList<IDashboardComponent>( );
+        List<IDashboardComponent> listDashboards = new ArrayList<>( );
 
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_DASHBOARDS_FROM_VIEW, plugin );
-        daoUtil.setString( 1, strViewKey );
-        daoUtil.executeQuery( );
-
-        while ( daoUtil.next( ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_DASHBOARDS_FROM_VIEW, plugin ) )
         {
-            IDashboardComponent dashboardComponent = null;
-
-            String strBeanName = daoUtil.getString( 1 );
-
-            dashboardComponent = DashboardFactory.getDashboardComponent( strBeanName );
-
-            if ( dashboardComponent != null )
+            daoUtil.setString( 1, strViewKey );
+            daoUtil.executeQuery( );
+    
+            while ( daoUtil.next( ) )
             {
-                dashboardComponent.setName( daoUtil.getString( 1 ) );
-                dashboardComponent.setZone( daoUtil.getInt( 2 ) );
-                dashboardComponent.setOrder( daoUtil.getInt( 3 ) );
-                listDashboards.add( dashboardComponent );
-            }
-            else
-            {
-                AppLogService.error( "Dashboard named " + strBeanName + " not found" );
+                IDashboardComponent dashboardComponent = null;
+    
+                String strBeanName = daoUtil.getString( 1 );
+    
+                dashboardComponent = DashboardFactory.getDashboardComponent( strBeanName );
+                if ( dashboardComponent != null )
+                {
+                    dashboardComponent.setName( daoUtil.getString( 1 ) );
+                    dashboardComponent.setZone( daoUtil.getInt( 2 ) );
+                    dashboardComponent.setOrder( daoUtil.getInt( 3 ) );
+                    listDashboards.add( dashboardComponent );
+                }
+                else
+                {
+                    AppLogService.error( "Dashboard named " + strBeanName + " not found" );
+                }
             }
         }
-
-        daoUtil.free( );
-
         return listDashboards;
     }
 
@@ -415,29 +400,28 @@ public class ViewDAO implements IViewDAO
     public IDashboardComponent selectDashboard( String strDashboardName, String strViewKey, Plugin plugin )
     {
         IDashboardComponent dashboardComponent = null;
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_DASHBOARD, plugin );
-        daoUtil.setString( 1, strViewKey );
-        daoUtil.setString( 2, strDashboardName );
-        daoUtil.executeQuery( );
-
-        if ( daoUtil.next( ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_DASHBOARD, plugin ) )
         {
-            dashboardComponent = DashboardFactory.getDashboardComponent( strDashboardName );
-
-            if ( dashboardComponent != null )
+            daoUtil.setString( 1, strViewKey );
+            daoUtil.setString( 2, strDashboardName );
+            daoUtil.executeQuery( );
+    
+            if ( daoUtil.next( ) )
             {
-                dashboardComponent.setName( strDashboardName );
-                dashboardComponent.setZone( daoUtil.getInt( 1 ) );
-                dashboardComponent.setOrder( daoUtil.getInt( 2 ) );
-            }
-            else
-            {
-                AppLogService.error( "Dashboard named " + strDashboardName + " not found" );
+                dashboardComponent = DashboardFactory.getDashboardComponent( strDashboardName );
+    
+                if ( dashboardComponent != null )
+                {
+                    dashboardComponent.setName( strDashboardName );
+                    dashboardComponent.setZone( daoUtil.getInt( 1 ) );
+                    dashboardComponent.setOrder( daoUtil.getInt( 2 ) );
+                }
+                else
+                {
+                    AppLogService.error( "Dashboard named " + strDashboardName + " not found" );
+                }
             }
         }
-
-        daoUtil.free( );
-
         return dashboardComponent;
     }
 
@@ -447,12 +431,13 @@ public class ViewDAO implements IViewDAO
     @Override
     public void deleteDashboard( String strViewKey, String strDashboardName, Plugin plugin )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_DASHBOARD, plugin );
-        daoUtil.setString( 1, strViewKey );
-        daoUtil.setString( 2, strDashboardName );
-
-        daoUtil.executeUpdate( );
-        daoUtil.free( );
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_DASHBOARD, plugin ) )
+        {
+            daoUtil.setString( 1, strViewKey );
+            daoUtil.setString( 2, strDashboardName );
+    
+            daoUtil.executeUpdate( );
+        }
     }
 
     /**
@@ -461,11 +446,11 @@ public class ViewDAO implements IViewDAO
     @Override
     public void deleteDashboards( String strViewKey, Plugin plugin )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_DASHBOARDS, plugin );
-        daoUtil.setString( 1, strViewKey );
-
-        daoUtil.executeUpdate( );
-        daoUtil.free( );
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_DASHBOARDS, plugin ) )
+        {
+            daoUtil.setString( 1, strViewKey );
+            daoUtil.executeUpdate( );
+        }
     }
 
     /**
@@ -474,14 +459,15 @@ public class ViewDAO implements IViewDAO
     @Override
     public void insertDashboard( String strViewKey, IDashboardComponent dashboard, Plugin plugin )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT_DASHBOARD, plugin );
-        daoUtil.setString( 1, strViewKey );
-        daoUtil.setString( 2, dashboard.getName( ) );
-        daoUtil.setInt( 3, dashboard.getZone( ) );
-        daoUtil.setInt( 4, dashboard.getOrder( ) );
-
-        daoUtil.executeUpdate( );
-        daoUtil.free( );
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT_DASHBOARD, plugin ) )
+        {
+            daoUtil.setString( 1, strViewKey );
+            daoUtil.setString( 2, dashboard.getName( ) );
+            daoUtil.setInt( 3, dashboard.getZone( ) );
+            daoUtil.setInt( 4, dashboard.getOrder( ) );
+    
+            daoUtil.executeUpdate( );
+        }
     }
 
     /**
@@ -490,15 +476,16 @@ public class ViewDAO implements IViewDAO
     @Override
     public void storeDashboard( String strViewKey, IDashboardComponent dashboard, Plugin plugin )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_STORE_DASHBOARD, plugin );
-        daoUtil.setInt( 1, dashboard.getZone( ) );
-        daoUtil.setInt( 2, dashboard.getOrder( ) );
-
-        daoUtil.setString( 3, strViewKey );
-        daoUtil.setString( 4, dashboard.getName( ) );
-
-        daoUtil.executeUpdate( );
-        daoUtil.free( );
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_STORE_DASHBOARD, plugin ) )
+        {
+            daoUtil.setInt( 1, dashboard.getZone( ) );
+            daoUtil.setInt( 2, dashboard.getOrder( ) );
+    
+            daoUtil.setString( 3, strViewKey );
+            daoUtil.setString( 4, dashboard.getName( ) );
+    
+            daoUtil.executeUpdate( );
+        }
     }
 
     /**
@@ -507,19 +494,16 @@ public class ViewDAO implements IViewDAO
     @Override
     public int selectMaxOrder( Plugin plugin )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_MAX_ORDER, plugin );
-
         int nMaxOrder = 0;
-
-        daoUtil.executeQuery( );
-
-        if ( daoUtil.next( ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_MAX_ORDER, plugin ) )
         {
-            nMaxOrder = daoUtil.getInt( 1 );
+            daoUtil.executeQuery( );
+    
+            if ( daoUtil.next( ) )
+            {
+                nMaxOrder = daoUtil.getInt( 1 );
+            }
         }
-
-        daoUtil.free( );
-
         return nMaxOrder;
     }
 
@@ -529,21 +513,18 @@ public class ViewDAO implements IViewDAO
     @Override
     public int selectMaxOrder( int nColumn, Plugin plugin )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_MAX_ORDER_COLUMN, plugin );
-
         int nMaxOrder = 0;
-
-        daoUtil.setInt( 1, nColumn );
-
-        daoUtil.executeQuery( );
-
-        if ( daoUtil.next( ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_MAX_ORDER_COLUMN, plugin ) )
         {
-            nMaxOrder = daoUtil.getInt( 1 );
+            daoUtil.setInt( 1, nColumn );
+    
+            daoUtil.executeQuery( );
+    
+            if ( daoUtil.next( ) )
+            {
+                nMaxOrder = daoUtil.getInt( 1 );
+            }
         }
-
-        daoUtil.free( );
-
         return nMaxOrder;
     }
 
@@ -553,19 +534,17 @@ public class ViewDAO implements IViewDAO
     @Override
     public List<Integer> selectColumns( Plugin plugin )
     {
-        List<Integer> listColumns = new ArrayList<Integer>( );
+        List<Integer> listColumns = new ArrayList<>( );
 
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_COLUMNS, plugin );
-
-        daoUtil.executeQuery( );
-
-        while ( daoUtil.next( ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_COLUMNS, plugin ) )
         {
-            listColumns.add( daoUtil.getInt( 1 ) );
+            daoUtil.executeQuery( );
+    
+            while ( daoUtil.next( ) )
+            {
+                listColumns.add( daoUtil.getInt( 1 ) );
+            }
         }
-
-        daoUtil.free( );
-
         return listColumns;
     }
 
@@ -581,36 +560,32 @@ public class ViewDAO implements IViewDAO
                 + ProfilesConstants.INTERROGATION_MARK );
         sbSQL.append( SQL_QUERY_ORDER_BY_COLUMN_AND_ORDER );
 
-        DAOUtil daoUtil = new DAOUtil( sbSQL.toString( ), plugin );
-
-        int nIndex = applySQLFilter( daoUtil, 1, filter );
-        daoUtil.setString( nIndex, strViewKey );
-
-        daoUtil.executeQuery( );
-
-        List<IDashboardComponent> listDashboards = new ArrayList<IDashboardComponent>( );
-
-        while ( daoUtil.next( ) )
+        List<IDashboardComponent> listDashboards = new ArrayList<>( );
+        try ( DAOUtil daoUtil = new DAOUtil( sbSQL.toString( ), plugin ) )
         {
-            IDashboardComponent dashboardComponent = null;
-
-            String strBeanName = daoUtil.getString( 1 );
-
-            dashboardComponent = DashboardFactory.getDashboardComponent( strBeanName );
-
-            if ( dashboardComponent != null )
+            int nIndex = applySQLFilter( daoUtil, 1, filter );
+            daoUtil.setString( nIndex, strViewKey );
+    
+            daoUtil.executeQuery( );
+            while ( daoUtil.next( ) )
             {
-                load( dashboardComponent, daoUtil );
-                listDashboards.add( dashboardComponent );
-            }
-            else
-            {
-                AppLogService.error( "dashboard named " + strBeanName + " not found" );
+                IDashboardComponent dashboardComponent = null;
+    
+                String strBeanName = daoUtil.getString( 1 );
+    
+                dashboardComponent = DashboardFactory.getDashboardComponent( strBeanName );
+    
+                if ( dashboardComponent != null )
+                {
+                    load( dashboardComponent, daoUtil );
+                    listDashboards.add( dashboardComponent );
+                }
+                else
+                {
+                    AppLogService.error( "dashboard named " + strBeanName + " not found" );
+                }
             }
         }
-
-        daoUtil.free( );
-
         return listDashboards;
     }
 
@@ -624,7 +599,7 @@ public class ViewDAO implements IViewDAO
      */
     private void buildSQLFilter( StringBuilder sbSQL, DashboardFilter filter )
     {
-        List<String> listFilters = new ArrayList<String>( );
+        List<String> listFilters = new ArrayList<>( );
 
         if ( filter.containsFilterOrder( ) )
         {
@@ -696,9 +671,9 @@ public class ViewDAO implements IViewDAO
      */
     private void load( IDashboardComponent component, DAOUtil daoUtil )
     {
-        int nIndex = 1;
-        component.setName( daoUtil.getString( nIndex++ ) );
-        component.setZone( daoUtil.getInt( nIndex++ ) );
-        component.setOrder( daoUtil.getInt( nIndex++ ) );
+        int nIndex = 0;
+        component.setName( daoUtil.getString( ++nIndex ) );
+        component.setZone( daoUtil.getInt( ++nIndex ) );
+        component.setOrder( daoUtil.getInt( ++nIndex ) );
     }
 }

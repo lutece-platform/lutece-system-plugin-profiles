@@ -52,6 +52,7 @@ public class ProfilesPlugin extends PluginDefaultImplementation
     /**
      * Initialize the plugin form
      */
+    @Override
     public void init( )
     {
         // Add dashboards

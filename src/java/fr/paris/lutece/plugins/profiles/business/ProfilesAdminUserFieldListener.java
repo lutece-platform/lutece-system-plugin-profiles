@@ -70,41 +70,42 @@ public class ProfilesAdminUserFieldListener extends SimpleAdminUserFieldListener
             String strProfileKey = userField.getValue( );
             int nIdUser = user.getUserId( );
 
-            if ( !ProfileHome.hasUser( strProfileKey, nIdUser, plugin ) )
+            if ( ProfileHome.hasUser( strProfileKey, nIdUser, plugin ) )
             {
-                ProfileHome.addUserForProfile( strProfileKey, nIdUser, plugin );
+                continue;
+            }
+            ProfileHome.addUserForProfile( strProfileKey, nIdUser, plugin );
 
-                // Add rights to the user
-                for ( Right right : ProfileHome.getRightsListForProfile( strProfileKey, plugin ) )
+            // Add rights to the user
+            for ( Right right : ProfileHome.getRightsListForProfile( strProfileKey, plugin ) )
+            {
+                right = RightHome.findByPrimaryKey( right.getId( ) );
+
+                if ( !AdminUserHome.hasRight( user, right.getId( ) ) && ( user.getUserLevel( ) <= right.getLevel( ) ) )
                 {
-                    right = RightHome.findByPrimaryKey( right.getId( ) );
-
-                    if ( !AdminUserHome.hasRight( user, right.getId( ) ) && ( user.getUserLevel( ) <= right.getLevel( ) ) )
-                    {
-                        AdminUserHome.createRightForUser( nIdUser, right.getId( ) );
-                    }
+                    AdminUserHome.createRightForUser( nIdUser, right.getId( ) );
                 }
+            }
 
-                // Add roles to the user
-                for ( RBACRole role : ProfileHome.getRolesListForProfile( strProfileKey, plugin ) )
+            // Add roles to the user
+            for ( RBACRole role : ProfileHome.getRolesListForProfile( strProfileKey, plugin ) )
+            {
+                role = RBACRoleHome.findByPrimaryKey( role.getKey( ) );
+
+                if ( !AdminUserHome.hasRole( user, role.getKey( ) ) )
                 {
-                    role = RBACRoleHome.findByPrimaryKey( role.getKey( ) );
-
-                    if ( !AdminUserHome.hasRole( user, role.getKey( ) ) )
-                    {
-                        AdminUserHome.createRoleForUser( nIdUser, role.getKey( ) );
-                    }
+                    AdminUserHome.createRoleForUser( nIdUser, role.getKey( ) );
                 }
+            }
 
-                // Add workgroups to the user
-                for ( AdminWorkgroup workgroup : ProfileHome.getWorkgroupsListForProfile( strProfileKey, plugin ) )
+            // Add workgroups to the user
+            for ( AdminWorkgroup workgroup : ProfileHome.getWorkgroupsListForProfile( strProfileKey, plugin ) )
+            {
+                workgroup = AdminWorkgroupHome.findByPrimaryKey( workgroup.getKey( ) );
+
+                if ( !AdminWorkgroupHome.isUserInWorkgroup( user, workgroup.getKey( ) ) )
                 {
-                    workgroup = AdminWorkgroupHome.findByPrimaryKey( workgroup.getKey( ) );
-
-                    if ( !AdminWorkgroupHome.isUserInWorkgroup( user, workgroup.getKey( ) ) )
-                    {
-                        AdminWorkgroupHome.addUserForWorkgroup( user, workgroup.getKey( ) );
-                    }
+                    AdminWorkgroupHome.addUserForWorkgroup( user, workgroup.getKey( ) );
                 }
             }
         }

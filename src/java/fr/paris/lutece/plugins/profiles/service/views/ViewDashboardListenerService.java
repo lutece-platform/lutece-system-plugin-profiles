@@ -43,7 +43,6 @@ import fr.paris.lutece.portal.service.spring.SpringContextService;
  */
 public final class ViewDashboardListenerService
 {
-    private static final String SPRING_CONTEXT_NAME = "profiles";
     private static final String BEAN_VIEW_DASHBOARD_SERVICE = "profiles.viewDashboardListenerService";
 
     /**
@@ -60,6 +59,6 @@ public final class ViewDashboardListenerService
      */
     public static DashboardListenerService getService( )
     {
-        return (DashboardListenerService) SpringContextService.getBean( BEAN_VIEW_DASHBOARD_SERVICE );
+        return SpringContextService.getBean( BEAN_VIEW_DASHBOARD_SERVICE );
     }
 }

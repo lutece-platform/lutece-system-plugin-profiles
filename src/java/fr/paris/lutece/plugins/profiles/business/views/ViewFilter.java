@@ -57,13 +57,6 @@ public class ViewFilter
     private String _strDescription;
 
     /**
-     * Constructor
-     */
-    public ViewFilter( )
-    {
-    }
-
-    /**
      * Initialize each component of the object
      */
     public void init( )

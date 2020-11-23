@@ -50,7 +50,7 @@ import java.util.List;
 public final class ViewHome
 {
     private static final String BEAN_VIEW_DAO = "profiles.viewDAO";
-    private static IViewDAO _dao = (IViewDAO) SpringContextService.getBean( BEAN_VIEW_DAO );
+    private static IViewDAO _dao = SpringContextService.getBean( BEAN_VIEW_DAO );
 
     /**
      * Private constructor - this class need not be instantiated
