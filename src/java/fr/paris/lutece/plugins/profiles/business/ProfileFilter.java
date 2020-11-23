@@ -57,13 +57,6 @@ public class ProfileFilter
     private String _strDescription;
 
     /**
-     * Constructor
-     */
-    public ProfileFilter( )
-    {
-    }
-
-    /**
      * Initialize each component of the object
      */
     public void init( )

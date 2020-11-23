@@ -55,23 +55,22 @@ public class ViewActionDAO implements IViewActionDAO
     @Override
     public List<ViewAction> selectActionsList( Plugin plugin )
     {
-        List<ViewAction> listActions = new ArrayList<ViewAction>( );
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_ACTIONS, plugin );
-        daoUtil.executeQuery( );
-
-        while ( daoUtil.next( ) )
+        List<ViewAction> listActions = new ArrayList<>( );
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_ACTIONS, plugin ) )
         {
-            ViewAction action = new ViewAction( );
-            action.setNameKey( daoUtil.getString( 1 ) );
-            action.setDescriptionKey( daoUtil.getString( 2 ) );
-            action.setUrl( daoUtil.getString( 3 ) );
-            action.setIconUrl( daoUtil.getString( 4 ) );
-            action.setPermission( daoUtil.getString( 5 ) );
-            listActions.add( action );
+            daoUtil.executeQuery( );
+    
+            while ( daoUtil.next( ) )
+            {
+                ViewAction action = new ViewAction( );
+                action.setNameKey( daoUtil.getString( 1 ) );
+                action.setDescriptionKey( daoUtil.getString( 2 ) );
+                action.setUrl( daoUtil.getString( 3 ) );
+                action.setIconUrl( daoUtil.getString( 4 ) );
+                action.setPermission( daoUtil.getString( 5 ) );
+                listActions.add( action );
+            }
         }
-
-        daoUtil.free( );
-
         return listActions;
     }
 }

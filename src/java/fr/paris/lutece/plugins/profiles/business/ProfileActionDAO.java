@@ -55,22 +55,21 @@ public class ProfileActionDAO implements IProfileActionDAO
     @Override
     public List<ProfileAction> selectActionsList( Plugin plugin )
     {
-        List<ProfileAction> listActions = new ArrayList<ProfileAction>( );
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_ACTIONS, plugin );
-        daoUtil.executeQuery( );
-
-        while ( daoUtil.next( ) )
+        List<ProfileAction> listActions = new ArrayList<>( );
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_ACTIONS, plugin ) )
         {
-            ProfileAction action = new ProfileAction( );
-            action.setNameKey( daoUtil.getString( 1 ) );
-            action.setDescriptionKey( daoUtil.getString( 2 ) );
-            action.setUrl( daoUtil.getString( 3 ) );
-            action.setIconUrl( daoUtil.getString( 4 ) );
-            action.setPermission( daoUtil.getString( 5 ) );
-            listActions.add( action );
+            daoUtil.executeQuery( );
+            while ( daoUtil.next( ) )
+            {
+                ProfileAction action = new ProfileAction( );
+                action.setNameKey( daoUtil.getString( 1 ) );
+                action.setDescriptionKey( daoUtil.getString( 2 ) );
+                action.setUrl( daoUtil.getString( 3 ) );
+                action.setIconUrl( daoUtil.getString( 4 ) );
+                action.setPermission( daoUtil.getString( 5 ) );
+                listActions.add( action );
+            }
         }
-
-        daoUtil.free( );
 
         return listActions;
     }

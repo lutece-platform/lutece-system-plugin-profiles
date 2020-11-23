@@ -54,7 +54,7 @@ public class ViewActionService implements IViewActionService
     @Override
     public List<ViewAction> selectActionsList( Locale locale, Plugin plugin )
     {
-        List<ViewAction> listActions = ViewActionHome.selectActionsList( locale, plugin );
+        List<ViewAction> listActions = ViewActionHome.selectActionsList( plugin );
 
         return (List<ViewAction>) I18nService.localizeCollection( listActions, locale );
     }

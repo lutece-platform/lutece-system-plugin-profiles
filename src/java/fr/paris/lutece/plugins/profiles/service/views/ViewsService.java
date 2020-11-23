@@ -33,6 +33,7 @@
  */
 package fr.paris.lutece.plugins.profiles.service.views;
 
+import fr.paris.lutece.api.user.User;
 import fr.paris.lutece.plugins.profiles.business.Profile;
 import fr.paris.lutece.plugins.profiles.business.views.View;
 import fr.paris.lutece.plugins.profiles.business.views.ViewAction;
@@ -54,6 +55,7 @@ import fr.paris.lutece.util.ReferenceList;
 import fr.paris.lutece.util.html.ItemNavigator;
 import fr.paris.lutece.util.url.UrlItem;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 
 import java.util.ArrayList;
@@ -83,7 +85,7 @@ public class ViewsService implements IViewsService
     public ItemNavigator getItemNavigator( ViewFilter vFilter, View view, UrlItem url )
     {
         Plugin plugin = PluginService.getPlugin( ProfilesPlugin.PLUGIN_NAME );
-        List<String> listItem = new ArrayList<String>( );
+        List<String> listItem = new ArrayList<>( );
         Collection<View> listAllViews = ViewHome.findViewsByFilter( vFilter, plugin );
         int nIndex = 0;
         int nCurrentItemId = 0;
@@ -109,7 +111,7 @@ public class ViewsService implements IViewsService
     @Override
     public List<ViewAction> getListActions( AdminUser user, View view, String strPermission, Locale locale, Plugin plugin )
     {
-        List<ViewAction> listActions = new ArrayList<ViewAction>( );
+        List<ViewAction> listActions = new ArrayList<>( );
 
         for ( ViewAction action : _viewActionService.selectActionsList( locale, plugin ) )
         {
@@ -119,7 +121,7 @@ public class ViewsService implements IViewsService
             }
         }
 
-        listActions = (List<ViewAction>) RBACService.getAuthorizedActionsCollection( listActions, view, user );
+        listActions = (List<ViewAction>) RBACService.getAuthorizedActionsCollection( listActions, view, (User) user );
 
         return listActions;
     }
@@ -130,7 +132,7 @@ public class ViewsService implements IViewsService
     @Override
     public Map<String, List<IDashboardComponent>> getAllSetDashboards( String strViewKey, AdminUser user, Plugin plugin )
     {
-        Map<String, List<IDashboardComponent>> mapDashboardComponents = new HashMap<String, List<IDashboardComponent>>( );
+        Map<String, List<IDashboardComponent>> mapDashboardComponents = new HashMap<>( );
 
         // Personnalized dashboard positions
         List<IDashboardComponent> listDashboards = ViewHome.findDashboards( strViewKey, plugin );
@@ -148,14 +150,7 @@ public class ViewsService implements IViewsService
             String strColumn = Integer.toString( nColumn );
 
             // find this column list
-            List<IDashboardComponent> listDashboardsColumn = mapDashboardComponents.get( strColumn );
-
-            if ( listDashboardsColumn == null )
-            {
-                // the list does not exist, create it
-                listDashboardsColumn = new ArrayList<IDashboardComponent>( );
-                mapDashboardComponents.put( strColumn, listDashboardsColumn );
-            }
+            List<IDashboardComponent> listDashboardsColumn = mapDashboardComponents.computeIfAbsent( strColumn, s -> new ArrayList<>( ) );
 
             // add dashboard to the list
             listDashboardsColumn.add( dashboard );
@@ -172,7 +167,7 @@ public class ViewsService implements IViewsService
     {
         List<IDashboardComponent> listDashboards = DashboardHome.findAll( );
         List<IDashboardComponent> listPersonnalizedDashboards = ViewHome.findDashboards( strViewKey, plugin );
-        List<IDashboardComponent> listNotSetDashboards = new ArrayList<IDashboardComponent>( );
+        List<IDashboardComponent> listNotSetDashboards = new ArrayList<>( );
 
         for ( IDashboardComponent dashboard : listDashboards )
         {
@@ -193,7 +188,7 @@ public class ViewsService implements IViewsService
     @Override
     public Map<String, ReferenceList> getMapAvailableOrders( Plugin plugin )
     {
-        Map<String, ReferenceList> mapAvailableOrders = new HashMap<String, ReferenceList>( );
+        Map<String, ReferenceList> mapAvailableOrders = new HashMap<>( );
 
         // get columns
         for ( Integer nColumn : ViewHome.findColumns( plugin ) )
@@ -260,7 +255,7 @@ public class ViewsService implements IViewsService
 
         List<IDashboardComponent> listColumnDashboards = ViewHome.findDashboardsByFilter( filter, strViewKey, plugin );
 
-        if ( ( listColumnDashboards != null ) && !listColumnDashboards.isEmpty( ) )
+        if ( CollectionUtils.isNotEmpty( listColumnDashboards ) )
         {
             if ( AppLogService.isDebugEnabled( ) )
             {
@@ -344,9 +339,7 @@ public class ViewsService implements IViewsService
         DashboardFilter filter = new DashboardFilter( );
         filter.setFilterColumn( nColumn );
 
-        List<IDashboardComponent> dashboardComponents = ViewHome.findDashboardsByFilter( filter, strViewKey, plugin );
-
-        return dashboardComponents;
+        return ViewHome.findDashboardsByFilter( filter, strViewKey, plugin );
     }
 
     /**
@@ -370,7 +363,7 @@ public class ViewsService implements IViewsService
     @Override
     public Map<String, Boolean> getOrderedColumnsStatus( String strViewKey, Plugin plugin )
     {
-        Map<String, Boolean> mapOrderedStatus = new HashMap<String, Boolean>( );
+        Map<String, Boolean> mapOrderedStatus = new HashMap<>( );
         List<Integer> listColumns = ViewHome.findColumns( plugin );
 
         for ( Integer nIdColumn : listColumns )

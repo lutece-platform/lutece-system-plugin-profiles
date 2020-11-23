@@ -54,7 +54,7 @@ public class ProfileActionService implements IProfileActionService
     @Override
     public List<ProfileAction> selectActionsList( Locale locale, Plugin plugin )
     {
-        List<ProfileAction> listActions = ProfileActionHome.selectActionsList( locale, plugin );
+        List<ProfileAction> listActions = ProfileActionHome.selectActionsList( plugin );
 
         return (List<ProfileAction>) I18nService.localizeCollection( listActions, locale );
     }

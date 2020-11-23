@@ -33,6 +33,7 @@
  */
 package fr.paris.lutece.plugins.profiles.service;
 
+import fr.paris.lutece.api.user.User;
 import fr.paris.lutece.plugins.profiles.business.Profile;
 import fr.paris.lutece.plugins.profiles.business.ProfileAction;
 import fr.paris.lutece.plugins.profiles.business.ProfileFilter;
@@ -40,7 +41,7 @@ import fr.paris.lutece.plugins.profiles.business.ProfileHome;
 import fr.paris.lutece.plugins.profiles.business.views.View;
 import fr.paris.lutece.plugins.profiles.service.action.IProfileActionService;
 import fr.paris.lutece.plugins.profiles.utils.constants.ProfilesConstants;
-import fr.paris.lutece.portal.business.rbac.AdminRole;
+import fr.paris.lutece.portal.business.rbac.RBACRole;
 import fr.paris.lutece.portal.business.right.Right;
 import fr.paris.lutece.portal.business.user.AdminUser;
 import fr.paris.lutece.portal.business.user.AdminUserHome;
@@ -88,7 +89,7 @@ public class ProfilesService implements IProfilesService
     public ItemNavigator getItemNavigator( ProfileFilter pFilter, Profile profile, UrlItem url )
     {
         Plugin plugin = PluginService.getPlugin( ProfilesPlugin.PLUGIN_NAME );
-        List<String> listItem = new ArrayList<String>( );
+        List<String> listItem = new ArrayList<>( );
         Collection<Profile> listAllProfiles = ProfileHome.findProfilesByFilter( pFilter, plugin );
         int nIndex = 0;
         int nCurrentItemId = 0;
@@ -114,7 +115,7 @@ public class ProfilesService implements IProfilesService
     @Override
     public List<ProfileAction> getListActions( AdminUser user, Profile profile, String strPermission, Locale locale, Plugin plugin )
     {
-        List<ProfileAction> listActions = new ArrayList<ProfileAction>( );
+        List<ProfileAction> listActions = new ArrayList<>( );
 
         for ( ProfileAction action : _profileActionService.selectActionsList( locale, plugin ) )
         {
@@ -124,7 +125,7 @@ public class ProfilesService implements IProfilesService
             }
         }
 
-        listActions = (List<ProfileAction>) RBACService.getAuthorizedActionsCollection( listActions, profile, user );
+        listActions = (List<ProfileAction>) RBACService.getAuthorizedActionsCollection( listActions, profile, (User) user );
 
         return listActions;
     }
@@ -165,9 +166,9 @@ public class ProfilesService implements IProfilesService
         removeUserFromProfile( strProfileKey, nIdUser, plugin );
 
         List<Profile> listProfiles = findProfileByIdUser( nIdUser, plugin );
-        Set<Right> listProfilesRights = new HashSet<Right>( );
-        Set<AdminRole> listProfilesRoles = new HashSet<AdminRole>( );
-        Set<AdminWorkgroup> listProfilesWorkgroups = new HashSet<AdminWorkgroup>( );
+        Set<Right> listProfilesRights = new HashSet<>( );
+        Set<RBACRole> listProfilesRoles = new HashSet<>( );
+        Set<AdminWorkgroup> listProfilesWorkgroups = new HashSet<>( );
         for ( Profile profile : listProfiles )
         {
             if ( !StringUtils.equals( profile.getKey( ), strProfileKey ) )
@@ -189,7 +190,7 @@ public class ProfilesService implements IProfilesService
         }
 
         // Remove roles to the user
-        for ( AdminRole role : getRolesListForProfile( strProfileKey, plugin ) )
+        for ( RBACRole role : getRolesListForProfile( strProfileKey, plugin ) )
         {
             if ( !listProfilesRoles.contains( role ) && AdminUserHome.hasRole( user, role.getKey( ) ) )
             {
@@ -462,7 +463,7 @@ public class ProfilesService implements IProfilesService
      * {@inheritDoc}
      */
     @Override
-    public List<AdminRole> getRolesListForProfile( String strProfileKey, Plugin plugin )
+    public List<RBACRole> getRolesListForProfile( String strProfileKey, Plugin plugin )
     {
         return ProfileHome.getRolesListForProfile( strProfileKey, plugin );
     }

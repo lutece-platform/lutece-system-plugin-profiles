@@ -66,7 +66,7 @@ public class ViewDashboardListener implements DashboardListener
      */
     public List<IDashboardComponent> getDashboardComponents( AdminUser user, HttpServletRequest request )
     {
-        List<IDashboardComponent> listDashboards = new ArrayList<IDashboardComponent>( );
+        List<IDashboardComponent> listDashboards = new ArrayList<>( );
         Plugin plugin = PluginService.getPlugin( ProfilesPlugin.PLUGIN_NAME );
 
         if ( ( plugin.getDbPoolName( ) != null ) && !AppConnectionService.NO_POOL_DEFINED.equals( plugin.getDbPoolName( ) ) )

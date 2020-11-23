@@ -37,7 +37,7 @@ import fr.paris.lutece.plugins.profiles.business.Profile;
 import fr.paris.lutece.plugins.profiles.business.ProfileAction;
 import fr.paris.lutece.plugins.profiles.business.ProfileFilter;
 import fr.paris.lutece.plugins.profiles.business.views.View;
-import fr.paris.lutece.portal.business.rbac.AdminRole;
+import fr.paris.lutece.portal.business.rbac.RBACRole;
 import fr.paris.lutece.portal.business.right.Right;
 import fr.paris.lutece.portal.business.user.AdminUser;
 import fr.paris.lutece.portal.business.workgroup.AdminWorkgroup;
@@ -365,7 +365,7 @@ public interface IProfilesService
      *            Plugin
      * @return The list of roles
      */
-    List<AdminRole> getRolesListForProfile( String strProfileKey, Plugin plugin );
+    List<RBACRole> getRolesListForProfile( String strProfileKey, Plugin plugin );
 
     /**
      * Check if a profile has the given role.
