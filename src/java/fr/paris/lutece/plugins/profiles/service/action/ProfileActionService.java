@@ -51,7 +51,7 @@ public class ProfileActionService implements IProfileActionService
     /**
      * {@inheritDoc}
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings( "unchecked" )
     @Override
     public List<ProfileAction> selectActionsList( Locale locale, Plugin plugin )
     {
