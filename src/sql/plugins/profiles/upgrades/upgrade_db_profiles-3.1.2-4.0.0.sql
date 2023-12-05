@@ -1,0 +1,1 @@
+UPDATE profile_action SET icon_url="users-group" WHERE id_action=6;
