@@ -7,11 +7,11 @@
         <section name="Plugin Profiles">
             <subsection name="Introduction">
                 <p>
-                    Ce plugin permet de définir des profils d'utilisateurs basés
-                    sur un ensemble de rôles et de droits.
+                    This plugin allows to define user profiles based
+                     a set of roles and rights.
                  </p>
                  <p>
-                     Il permet ainsi de faciliter la gestion des habilitations
+                     It thus facilitates the management of authorizations
                 </p>
             </subsection>
         </section>
