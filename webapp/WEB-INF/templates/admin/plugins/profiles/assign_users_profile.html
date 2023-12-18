@@ -151,16 +151,16 @@
 								<#assign anchor = assigned_item_index - 1 >
 							</#if>
 							<@tr id='anchor-${assigned_item_index}'>
-								<@td>${assigned_item.lastName}</td>
+								<@td>${assigned_item.lastName}</@td>
 								<@td hide=['xs']>${assigned_item.firstName}</@td>
-								<@td>${assigned_item.accessCode}</td>
+								<@td>${assigned_item.accessCode}</@td>
 								<@td hide=['xs']>${assigned_item.email}</@td>
 								<@td>
 									<@aButton href='jsp/admin/user/ModifyUser.jsp?id_user=${assigned_item.userId}' title='#i18n{profiles.actions.labelModify}' hideTitle=['all'] buttonIcon='edit' size='sm' />
 									<#if permission>
 									<@aButton href='jsp/admin/plugins/profiles/DoUnassignUserProfile.jsp?profile_key=${profile.key}&amp;id_user=${assigned_item.userId}&amp;attribute_${attribute.idAttribute}=${attribute_field.idField}&amp;anchor=anchor-${anchor}' title='#i18n{profiles.assign_users_profile.actionUnassign}' hideTitle=['all'] buttonIcon='trash' color='danger' size='sm' />
 									</#if>
-								</td>
+								</@td>
 							</@tr>
 							</#list>
 						</@table>
