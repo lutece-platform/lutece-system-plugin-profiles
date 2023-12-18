@@ -1,35 +1,31 @@
-<@row>
-	<@columns>
-		<@box>
-			<@boxHeader title='#i18n{profiles.modify_view.titleModificationForm} : ${view.key}'>
+<@pageContainer>
+    <@pageColumn>
+		<@pageHeader title='#i18n{profiles.modify_view.titleModificationForm} : ${view.key}'>
 			<#if view.actions?exists>
 				<#list view.actions as action>
 					<#if action.permission!='DELETE_VIEW'><#assign color='primary' /><#else><#assign color='danger' /></#if>
 					<@aButton href='${action.url}?view_key=${view.key}' title='${action.description}' hideTitle=['all'] buttonIcon='${action.iconUrl}' color=color size='sm' />
 				</#list>
 			</#if>
-			</@boxHeader>
-            <@boxBody>
-				<@tform method='post' action='jsp/admin/plugins/profiles/DoModifyView.jsp'>
-					<@input type='hidden' id='view_key' name='view_key' value='${view.key}' />
-					<@formGroup labelFor='view_key' labelKey='#i18n{profiles.modify_view.labelKey}' mandatory=true>
-						<@staticText>${view.key}</@staticText>
-					</@formGroup>
-					<@formGroup labelFor='view_description' labelKey='#i18n{profiles.modify_view.labelDescription}' mandatory=true>
-					<#if permission>
-						<@input type='text' id='view_description' name='view_description' value='${view.description}' maxlength=250 />
-					<#else>
-						<@staticText>${view.description}</@staticText>
-					</#if>
-					</@formGroup>
-					<@formGroup>
-						<#if permission>
-							<@button type='submit' title='#i18n{profiles.modify_view.buttonLabelModify}' buttonIcon='save' />
-						</#if>
-						<@aButton href='jsp/admin/plugins/profiles/ManageViews.jsp' title='#i18n{portal.admin.message.buttonCancel}' buttonIcon='times' color='default' />
-					</@formGroup>
-				</@tform>
-			</@boxBody>
-		</@box>
-	</@columns>
-</@row>
+		</@pageHeader>
+		<@tform method='post' action='jsp/admin/plugins/profiles/DoModifyView.jsp' id='edit_view_page' boxed=true>
+			<@input type='hidden' id='view_key' name='view_key' value='${view.key}' />
+			<@formGroup labelFor='view_key' labelKey='#i18n{profiles.modify_view.labelKey}' mandatory=true>
+				<@staticText>${view.key}</@staticText>
+			</@formGroup>
+			<@formGroup labelFor='view_description' labelKey='#i18n{profiles.modify_view.labelDescription}' mandatory=true>
+			<#if permission>
+				<@input type='text' id='view_description' name='view_description' value='${view.description}' maxlength=250 />
+			<#else>
+				<@staticText>${view.description}</@staticText>
+			</#if>
+			</@formGroup>
+			<@formGroup>
+				<#if permission>
+					<@button type='submit' title='#i18n{profiles.modify_view.buttonLabelModify}' buttonIcon='device-floppy' />
+				</#if>
+				<@aButton href='jsp/admin/plugins/profiles/ManageViews.jsp' title='#i18n{portal.admin.message.buttonCancel}' buttonIcon='x' color='default' />
+			</@formGroup>
+		</@tform>
+	</@pageColumn>
+</@pageContainer>

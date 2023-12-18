@@ -1,47 +1,52 @@
-<@row>
-	<@columns md=3>
-		<@box>
-			<@boxHeader title='#i18n{profiles.modify_profile.titleModificationForm} : ${profile.key}'>
-				<@item_navigation item_navigator=item_navigator />
-			</@boxHeader>
-			<@boxBody>
-				<p><strong>#i18n{profiles.assign_rights_profile.profileDescription}</strong></p>
-				<p>${profile.description}</p>
-			</@boxBody>
-		</@box>
-	</@columns>
-	<@columns md=9>
-		<@box>
-			<@boxHeader title='#i18n{profiles.modify_profile.titleModificationForm} : ${profile.key}'>
-				<#if profile.actions?exists>
-					<#list profile.actions as action>
-						<#if action.permission!='DELETE_DELETE'><#assign color='primary' /><#else><#assign color='danger' /></#if>
-						<@aButton href='${action.url}?profile_key=${profile.key}' title='${action.description}' hideTitle=['all'] buttonIcon='${action.iconUrl}' color=color size='sm' />
-					</#list>
-				</#if>
-			</@boxHeader>
-			<@boxBody>
-				<@tform method='post' action='jsp/admin/plugins/profiles/DoModifyProfile.jsp'>
-					<@input type='hidden' id='profile_key' name='profile_key' value='${profile.key}' />
-					<@fieldSet legend='#i18n{profiles.modify_profile.titleModificationForm}' hideLegend=['all']>
-						<@formGroup labelFor='profile_key' labelKey='#i18n{profiles.modify_profile.labelKey}' mandatory=true>
-							<@staticText>${profile.key}</@staticText>
-						</@formGroup>
-						<@formGroup labelFor='profile_description' labelKey='#i18n{profiles.modify_profile.labelDescription}' mandatory=true>
-							<#if permission>
-								<@input type='text' id='profile_description' name='profile_description' value='${profile.description}' maxlength=250 />
-							<#else>
-								<@staticText>${profile.description}</@staticText>
-							</#if>
-						</@formGroup>
-						<@formGroup>
-							<#if permission>
-								<@button type='submit' title='#i18n{profiles.modify_profile.buttonLabelModify}' buttonIcon='save' />
-							</#if>
-						</@formGroup>
-					</@fieldSet>
-				</@tform>
-			</@boxBody>
-		</@box>
-	</@columns>
-</@row>
+<@pageContainer>
+    <@pageColumn>
+		<@pageHeader title='#i18n{profiles.modify_profile.titleModificationForm}' />
+		<@row>
+			<@columns xl=3>
+				<@box>
+					<@boxHeader title='#i18n{profiles.assign_rights_profile.profileKey} : ${profile.key}'>
+						<@item_navigation item_navigator=item_navigator />
+					</@boxHeader>
+					<@boxBody>
+						<p><strong>#i18n{profiles.assign_rights_profile.profileDescription}</strong></p>
+						<p>${profile.description}</p>
+					</@boxBody>
+				</@box>
+			</@columns>
+			<@columns xl=9>
+				<@box>
+					<@boxHeader title='#i18n{profiles.modify_profile.titleModificationForm}'>
+						<#if profile.actions?exists>
+							<#list profile.actions as action>
+								<#if action.permission!='DELETE_DELETE'><#assign color='primary' /><#else><#assign color='danger' /></#if>
+								<@aButton href='${action.url}?profile_key=${profile.key}' title='${action.description}' hideTitle=['all'] buttonIcon='${action.iconUrl}' color=color size='sm' />
+							</#list>
+						</#if>
+					</@boxHeader>
+					<@boxBody>
+						<@tform method='post' action='jsp/admin/plugins/profiles/DoModifyProfile.jsp'>
+							<@input type='hidden' id='profile_key' name='profile_key' value='${profile.key}' />
+							<@fieldSet legend='#i18n{profiles.modify_profile.titleModificationForm}' hideLegend=['all']>
+								<@formGroup labelFor='profile_key' labelKey='#i18n{profiles.modify_profile.labelKey}' mandatory=true>
+									<@staticText>${profile.key}</@staticText>
+								</@formGroup>
+								<@formGroup labelFor='profile_description' labelKey='#i18n{profiles.modify_profile.labelDescription}' mandatory=true>
+									<#if permission>
+										<@input type='text' id='profile_description' name='profile_description' value='${profile.description}' maxlength=250 />
+									<#else>
+										<@staticText>${profile.description}</@staticText>
+									</#if>
+								</@formGroup>
+								<@formGroup>
+									<#if permission>
+										<@button type='submit' title='#i18n{profiles.modify_profile.buttonLabelModify}' buttonIcon='device-floppy' />
+									</#if>
+								</@formGroup>
+							</@fieldSet>
+						</@tform>
+					</@boxBody>
+				</@box>
+			</@columns>
+		</@row>
+	</@pageColumn>
+</@pageContainer>

@@ -1,58 +1,53 @@
-<@row>	<@columns>		<@box>			<@boxHeader title='#i18n{profiles.manage_profiles.pageTitle}'>
+<@pageContainer>    <@pageColumn>		<@pageHeader title='#i18n{profiles.manage_profiles.pageTitle}'>
 				<#if permission>
-					<@tform action='jsp/admin/plugins/profiles/CreateProfile.jsp' method='post'>
+					<#--<@tform action='jsp/admin/plugins/profiles/CreateProfile.jsp' method='post'>
 						<@button type='submit' title='#i18n{profiles.manage_profiles.buttonCreate}' hideTitle=['xs','sm'] buttonIcon='plus' size='sm' />
-					</@tform>
+					</@tform> -->					<#-- btnTitle='#i18n{profiles.manage_profiles.buttonCreate}' -->					<@offcanvas targetUrl='jsp/admin/plugins/profiles/CreateProfile.jsp' targetElement='#create_profile_page' id='profile-create' title='#i18n{profiles.create_profile.pageTitle}' btnTitle='#i18n{profiles.manage_profiles.buttonCreate}' btnIcon='plus' btnSize='' position='end' />
 				</#if>
-			</@boxHeader>
-			<@boxBody>
-				<@tform action='jsp/admin/plugins/profiles/ManageProfiles.jsp' method='post' name='search_profiles'>
-					<@input type='hidden' name='search_is_search' value='true' />
-					<@formGroup labelFor='key' labelKey='#i18n{profiles.manage_profiles.search_profiles.labelKey}'>
-						<@input type='text' id='key' name='search_key' value='${search_filter.key}' maxlength=50 />
-					</@formGroup>
-					<@formGroup labelFor='description' labelKey='#i18n{profiles.manage_profiles.search_profiles.labelDescription}'>
-						<@input type='text' id='description' name='search_description' value='${search_filter.description}' maxlength=250 />
-					</@formGroup>
-					<@formGroup>
-						<@button type='submit' title='#i18n{profiles.manage_profiles.search_profiles.buttonSearch}' buttonIcon='search' />
-					</@formGroup>
-				</@tform>
-				<@table>
-					<tr>
-						<th>
-							#i18n{profiles.manage_profiles.columnKey}
-							<@sort jsp_url="jsp/admin/plugins/profiles/ManageProfiles.jsp" attribute="key${sort_search_attribute}" />
-						</th>
-						<@th hide=['xs']>
-							#i18n{profiles.manage_profiles.columnDescription}
-							<@sort jsp_url="jsp/admin/plugins/profiles/ManageProfiles.jsp" attribute="description${sort_search_attribute}" />
-						</@th>
-						<th>#i18n{profiles.manage_profiles.columnActions}</th>
-					</tr>
-					<#list list_profiles as profile>
-						<tr>
-							<td>${profile.key}</td>
-							<@td hide=['xs']>${profile.description}</@td>
-							<td>
-								<#if profile.actions?exists>
-									<#if profile.actions?size !=0>
-										<#list profile.actions as action>
-											<#if action.permission!='DELETE_DELETE'><#assign color='primary' /><#else><#assign color='danger' /></#if>
-											<@aButton href='${action.url}?profile_key=${profile.key}' title='${action.description}' buttonIcon='${action.iconUrl}' hideTitle=['all'] color=color size='sm' />
-										</#list>
-									<#else>
-											&nbsp;
-									</#if>
-									<#else>
-										&nbsp;
-								</#if>
-							</td>
-						</tr>
-					</#list>
-				</@table>
-				<@paginationAdmin paginator=paginator combo=1 form=0 showcount=0 />
-			</@boxBody>
-		</@box>
-	</@columns>
-</@row>
+		</@pageHeader>		<@tform action='jsp/admin/plugins/profiles/ManageProfiles.jsp' method='post' name='search_profiles' boxed=true>
+			<@input type='hidden' name='search_is_search' value='true' />
+			<@formGroup labelFor='key' labelKey='#i18n{profiles.manage_profiles.search_profiles.labelKey}'>
+				<@input type='text' id='key' name='search_key' value='${search_filter.key}' maxlength=50 />
+			</@formGroup>
+			<@formGroup labelFor='description' labelKey='#i18n{profiles.manage_profiles.search_profiles.labelDescription}'>
+				<@input type='text' id='description' name='search_description' value='${search_filter.description}' maxlength=250 />
+			</@formGroup>
+			<@formGroup>
+				<@button type='submit' title='#i18n{profiles.manage_profiles.search_profiles.buttonSearch}' buttonIcon='search' />
+			</@formGroup>
+		</@tform>
+		<@table>
+			<@tr>
+				<@th>
+					#i18n{profiles.manage_profiles.columnKey}
+					<@sort jsp_url="jsp/admin/plugins/profiles/ManageProfiles.jsp" attribute="key${sort_search_attribute}" />
+				</@th>
+				<@th hide=['xs']>
+					#i18n{profiles.manage_profiles.columnDescription}
+					<@sort jsp_url="jsp/admin/plugins/profiles/ManageProfiles.jsp" attribute="description${sort_search_attribute}" />
+				</@th>
+				<@th>#i18n{profiles.manage_profiles.columnActions}</@th>
+			</@tr>
+			<#list list_profiles as profile>
+				<@tr>
+					<@td>${profile.key}</@td>
+					<@td hide=['xs']>${profile.description}</@td>
+					<@td>
+						<#if profile.actions?exists>
+							<#if profile.actions?size !=0>
+								<#list profile.actions as action>
+									<#if action.permission!='DELETE_DELETE'><#assign color='primary' /><#else><#assign color='danger' /></#if>
+									<@aButton href='${action.url}?profile_key=${profile.key}' title='${action.description}' buttonIcon='${action.iconUrl}' hideTitle=['all'] color=color size='sm' />
+								</#list>
+							<#else>
+									&nbsp;
+							</#if>
+							<#else>
+								&nbsp;
+						</#if>
+					</@td>
+				</@tr>
+			</#list>
+		</@table>
+		<@paginationAdmin paginator=paginator combo=1 form=0 showcount=0 />
+	</@pageColumn></@pageContainer>

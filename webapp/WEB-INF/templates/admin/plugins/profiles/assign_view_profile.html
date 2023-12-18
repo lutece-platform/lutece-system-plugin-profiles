@@ -1,34 +1,28 @@
-<@row>	<@columns>		<@box>			<@boxHeader title='#i18n{profiles.assign_rights_profile.profileKey} : ${profile.key}'>
-				<#if profile.actions?exists>
-					<#list profile.actions as action>
-						<#if action.permission!='DELETE_DELETE'><#assign color='primary' /><#else><#assign color='danger' /></#if>
-						<@aButton href='${action.url}?profile_key=${profile.key}' title='${action.description}' hideTitle=['all'] buttonIcon='${action.iconUrl}' color=color size='sm' />
-					</#list>
-				</#if>
-			</@boxHeader>
-			 <@boxBody>	
-				<@item_navigation item_navigator=item_navigator />
-				<#if available_list?size &gt; 0 >
-					<@tform name='assign-view-profile' method='post' action='jsp/admin/plugins/profiles/DoAssignViewProfile.jsp'>
-						<@input type='hidden' name='profile_key' value='${profile.key}' />
-						<@formGroup labelFor='view_key'>
-							<#list available_list as available_item>
-								<#assign checked = false />
-								<#if assigned_view?exists && available_item.code == assigned_view.key><#assign checked = true /></#if>
-								<@radioButton labelFor='view_key' labelKey='${available_item.code}' name='view_key' id='' value='${available_item.code}' checked=checked />
-							</#list>
-							<@radioButton labelFor='' labelKey='#i18n{profiles.assign_view_profile.noValue}' name='view_key' id='' value='' checked=!assigned_view?exists />
+<@pageContainer>    <@pageColumn>		<@pageHeader title='#i18n{profiles.action.manage_view_assignment.name}'>			<#if profile.actions?exists>
+				<#list profile.actions as action>
+					<#if action.permission!='DELETE_DELETE'><#assign color='primary' /><#else><#assign color='danger' /></#if>
+					<@aButton href='${action.url}?profile_key=${profile.key}' title='${action.description}' hideTitle=['all'] buttonIcon='${action.iconUrl}' color=color size='sm' />
+				</#list>
+			</#if>
+			<@item_navigation item_navigator=item_navigator />
+		</@pageHeader>
+		<#if available_list?size &gt; 0 >
+			<@tform name='assign-view-profile' method='post' action='jsp/admin/plugins/profiles/DoAssignViewProfile.jsp' boxed=true>				<@fieldSet legend='#i18n{profiles.assign_rights_profile.profileKey} : ${profile.key}'>
+					<@input type='hidden' name='profile_key' value='${profile.key}' />
+					<@formGroup labelFor='view_key'>
+						<#list available_list as available_item>
+							<#assign checked = false />
+							<#if assigned_view?exists && available_item.code == assigned_view.key><#assign checked = true /></#if>
+							<@radioButton labelFor='view_key' labelKey='${available_item.code}' name='view_key' id='' value='${available_item.code}' checked=checked />
+						</#list>
+						<@radioButton labelFor='' labelKey='#i18n{profiles.assign_view_profile.noValue}' name='view_key' id='' value='' checked=!assigned_view?exists />
+					</@formGroup>
+					<#if permission>
+						<@formGroup>
+							<@button type='submit' title='#i18n{profiles.assign_view_profile.labelButtonValidate}' buttonIcon='device-floppy' />
 						</@formGroup>
-						<#if permission>
-							<@formGroup>
-								<@button type='submit' title='#i18n{profiles.assign_view_profile.labelButtonValidate}' buttonIcon='check' />
-							</@formGroup>
-						</#if>
-					</@tform>
-				<#else>
-					<@alert color='warning'>#i18n{profiles.assign_view_profile.noViewToAssign}</@alert>
-				</#if>
-			</@boxBody>
-		</@box>
-	</@columns>
-</@row>
+					</#if>				</@fieldSet>
+			</@tform>
+		<#else>
+			<@alert color='warning'>#i18n{profiles.assign_view_profile.noViewToAssign}</@alert>
+		</#if>	</@pageColumn></@pageContainer>

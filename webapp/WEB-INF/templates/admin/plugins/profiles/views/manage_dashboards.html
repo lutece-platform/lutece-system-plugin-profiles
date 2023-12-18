@@ -1,16 +1,16 @@
 <#macro dashboardTable items=[] list_available_orders_column=[] order=true unsetColumn=true>
 	<#if items?exists && items?size &gt; 0>
 		<@table>
-			<tr> <#-- header -->
-				<th>#i18n{portal.dashboard.table.title.name}</th> <#-- name -->
-				<th>#i18n{portal.dashboard.table.title.column}</th> <#-- column -->
-				<#if order><th>#i18n{portal.dashboard.table.title.order}</th></#if> <#-- order -->
-				<#if unsetColumn><th>#i18n{profiles.manage_dashboards.table.title.actions}</th></#if> <#-- unsetColumn -->
-			</tr>
+			<@tr> <#-- header -->
+				<@th>#i18n{portal.dashboard.table.title.name}</@th> <#-- name -->
+				<@th>#i18n{portal.dashboard.table.title.column}</@th> <#-- column -->
+				<#if order><@th>#i18n{portal.dashboard.table.title.order}</@th></#if> <#-- order -->
+				<#if unsetColumn><@th>#i18n{profiles.manage_dashboards.table.title.actions}</@th></#if> <#-- unsetColumn -->
+			</@tr>
 			<#list items as dashboard>
-				<tr>
-					<td><small>${dashboard.name}</small></td> <#-- name -->
-					<td> <#-- column -->
+				<@tr>
+					<@td><small>${dashboard.name}</small></@td> <#-- name -->
+					<@td> <#-- column -->
 						<@tform type='inline' action='jsp/admin/plugins/profiles/DoMoveDashboard.jsp' method='post'>
 							<@input type='hidden' name='dashboard_name' value='${dashboard.name}' />
 							<#if !dashboard.order?exists || dashboard.order == 0 >
@@ -29,9 +29,9 @@
 								</@inputGroup>
 							</@formGroup>
 						</@tform>
-					</td> <#-- /column -->
+					</@td> <#-- /column -->
 					<#if order>
-					<td> <#-- order -->
+					<@td> <#-- order -->
 						<@tform type='inline' action='jsp/admin/plugins/profiles/DoMoveDashboard.jsp' method='post'>
 							<@input type='hidden' name='dashboard_name' value='${dashboard.name}' />
 							<#if !dashboard.zone?exists  || dashboard.zone == 0>
@@ -50,18 +50,18 @@
 								</@inputGroup>
 							</@formGroup>	
 						</@tform>
-					</td> <#-- /order -->
+					</@td> <#-- /order -->
 					</#if>
 					<#if unsetColumn>
-					<td> <#-- unsetColumn -->
+					<@td> <#-- unsetColumn -->
 						<@tform action='jsp/admin/plugins/profiles/DoUnsetColumn.jsp' method='post'>
 							<@input type='hidden' name='dashboard_name' value='${dashboard.name}' />
 							<@input type='hidden' name='view_key' value='${view.key}' />
 							<@button type='submit' title='#i18n{profiles.manage_dashboards.action.unsetColumn}' hideTitle=['all'] buttonIcon='trash' color='danger' size='sm' />
 						</@tform>
-					</td> <#-- /unsetColumn -->
+					</@td> <#-- /unsetColumn -->
 					</#if>
-				</tr>
+				</@tr>
 			</#list>
 		</@table>
 	<#else>
@@ -69,7 +69,7 @@
 	</#if>
 </#macro>
 <@row>
-	<@columns md=4>
+	<@columns xl=4>
 		<@box>
 			<@boxHeader title='#i18n{profiles.manage_views.columnKey} : ${view.key}'>
 				<#if view.actions?exists>
@@ -87,7 +87,7 @@
 			</@boxBody>
 		</@box>
 	</@columns>
-	<@columns md=8>
+	<@columns xl=8>
 		<@box>
 			<@boxHeader title='#i18n{portal.dashboard.title.manage}' />
             <@boxBody>	
@@ -95,13 +95,13 @@
 				<#list list_available_columns as column_refItem>
 					<#if column_refItem.code != ''>
 						<@boxBody>
-								<#assign column_key = column_refItem.code />
-								<h3>#i18n{portal.dashboard.title.column} ${column_key}</h3>
-								<#if map_column_order_status[column_key]?exists && !map_column_order_status[column_key]>
-									<@aButton href='jsp/admin/plugins/profiles/DoReorderColumn.jsp?column=${column_key}&amp;view_key=${view.key}' title='#i18n{portal.dashboard.action.reorder}' hideTitle=['xs'] buttonIcon='arrows-v' size='sm' />
-								</#if>
-								<@dashboardTable items=map_dashboards[column_key] list_available_orders_column=map_available_orders[column_key] />
-								<#-- suggest reorder if the column is not well ordered -->
+							<#assign column_key = column_refItem.code />
+							<h3>#i18n{portal.dashboard.title.column} ${column_key}</h3>
+							<#if map_column_order_status[column_key]?exists && !map_column_order_status[column_key]>
+								<@aButton href='jsp/admin/plugins/profiles/DoReorderColumn.jsp?column=${column_key}&amp;view_key=${view.key}' title='#i18n{portal.dashboard.action.reorder}' hideTitle=['xs'] buttonIcon='arrows-v' size='sm' />
+							</#if>
+							<@dashboardTable items=map_dashboards[column_key] list_available_orders_column=map_available_orders[column_key] />
+							<#-- suggest reorder if the column is not well ordered -->
 						</@boxBody>
 					</#if>
 				</#list>

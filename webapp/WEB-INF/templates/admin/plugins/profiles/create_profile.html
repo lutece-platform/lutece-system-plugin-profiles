@@ -1,18 +1,14 @@
-<@row>	<@columns>		<@box>			<@boxHeader title='#i18n{profiles.create_profile.pageTitle}' />
-            <@boxBody>
-				<@tform method='post' name='create_profile' action='jsp/admin/plugins/profiles/DoCreateProfile.jsp'>
-					<@formGroup labelFor='profile_key' labelKey='#i18n{profiles.create_profile.key}' mandatory=true>
-						<@input type='text' id='profile_key' name='profile_key' maxlength=500 />
-					</@formGroup>
-					<@formGroup labelFor='profile_description' labelKey='#i18n{profiles.create_profile.description}' mandatory=true>
-						<@input type='text' id='profile_description' name='profile_description' maxlength=255 />
-					</@formGroup>
-					<@formGroup>
-						<@button type='submit' name='submit' title='#i18n{profiles.create_profile.buttonLabelCreate}' buttonIcon='check' />
-						<@aButton href='jsp/admin/plugins/profiles/ManageProfiles.jsp' title='#i18n{portal.admin.message.buttonCancel}' buttonIcon='times' color='default' />
-					</@formGroup>
-				</@tform>
-			</@boxBody>
-		</@box>
-	</@columns>
-</@row>
+<@pageContainer>    <@pageColumn>		<@pageHeader title='#i18n{profiles.create_profile.pageTitle}' />
+			<@tform method='post' name='create_profile' action='jsp/admin/plugins/profiles/DoCreateProfile.jsp' id='create_profile_page' boxed=true>
+				<@formGroup labelFor='profile_key' labelKey='#i18n{profiles.create_profile.key}' mandatory=true>
+					<@input type='text' id='profile_key' name='profile_key' maxlength=500 />
+				</@formGroup>
+				<@formGroup labelFor='profile_description' labelKey='#i18n{profiles.create_profile.description}' mandatory=true>
+					<@input type='text' id='profile_description' name='profile_description' maxlength=255 />
+				</@formGroup>
+				<@formGroup>
+					<@button type='submit' name='submit' title='#i18n{profiles.create_profile.buttonLabelCreate}' buttonIcon='device-floppy' />
+					<@aButton href='jsp/admin/plugins/profiles/ManageProfiles.jsp' title='#i18n{portal.admin.message.buttonCancel}' buttonIcon='times' color='default' />
+				</@formGroup>
+			</@tform>
+	</@pageColumn></@pageContainer>

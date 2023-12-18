@@ -1,100 +1,104 @@
-<@row>
-	<@columns md=3>
-		<@box>
-			<@boxHeader title='#i18n{profiles.manage_views.columnKey} : ${view.key} - ${view.description}'>
-				<#if view.actions?exists>
-					<#list view.actions as action>
-						<#if action.permission!='DELETE_VIEW'><#assign color='primary' /><#else><#assign color='danger' /></#if>
-						<@aButton href='${action.url}?view_key=${view.key}' title='${action.description}' hideTitle=['all'] buttonIcon='${action.iconUrl}' color=color size='sm' />
-					</#list>
-				</#if>
-				<@item_navigation item_navigator=item_navigator hideButtonTitle=['all'] />
-			</@boxHeader>
-		    <@boxBody>	
-				<h4>#i18n{profiles.assign_profiles_view.pageTitle}</h4>
-				<#if available_list?size &gt; 0 >
-					<@tform name='assign-profiles-view' method='post' action='jsp/admin/plugins/profiles/DoAssignProfilesView.jsp'>
-						<@input type='hidden' name='view_key' value='${view.key}' />
-						<@formGroup labelFor='profiles_list' labelKey='#i18n{profiles.assign_profiles_view.labelAvailableProfiles}' rows=2>
-							<@select name='profiles_list' default_value='' multiple=15 items=available_list?sort_by('code') />
-						</@formGroup>
-						<#if permission>
-						<@formGroup rows=2>
-							<@button type='submit' title='#i18n{profiles.assign_profiles_view.labelButtonValidate}' buttonIcon='check' />
-						</@formGroup>
+<@pageContainer>
+    <@pageColumn>
+		<@pageHeader title='#i18n{profiles.assign_profiles_view.pageTitle}' />
+		<@row>
+			<@columns xl=3>
+				<@box>
+					<@boxHeader title='#i18n{profiles.manage_views.columnKey} : ${view.key} - ${view.description}'>
+						<#if view.actions?exists>
+							<#list view.actions as action>
+								<#if action.permission!='DELETE_VIEW'><#assign color='primary' /><#else><#assign color='danger' /></#if>
+								<@aButton href='${action.url}?view_key=${view.key}' title='${action.description}' hideTitle=['all'] buttonIcon='${action.iconUrl}' color=color size='sm' />
+							</#list>
 						</#if>
-					</@tform>
-				<#else>
-					<@alert color='warning'>#i18n{profiles.assign_profiles_view.noProfileToAssign}</@alert>
-				</#if>
-			</@boxBody>
-		</@box>
-	</@columns>
-	<@columns md=9>
-		<@box>
-			<@boxHeader title='#i18n{profiles.assign_profiles_view.labelAssignedProfiles}' />
-			<@boxBody>	
-				<@paginationAdmin paginator=paginator combo=1 form=0 />
-				<#if assigned_list?size &gt; 0 || search_is_search >
-					<@tform method='post' name='search_profiles' action='jsp/admin/plugins/profiles/AssignProfilesView.jsp'>
-						<@input type='hidden' name='view_key' value='${view.key}' />
-						<@formGroup labelFor='key' labelKey='#i18n{profiles.manage_profiles.search_profiles.labelKey}'>
-							<@input type='text' id='key' name='search_key' value='${search_filter.key}' maxlength=50 />
-						</@formGroup>
-						<@formGroup labelFor='description' labelKey='#i18n{profiles.manage_profiles.search_profiles.labelDescription}'>
-							<@input type='text' id='description' name='search_description' value='${search_filter.description}' maxlength=250 />
-						</@formGroup>
-						<@formGroup>
-							<@button type='submit' title='#i18n{profiles.assign_profiles_view.labelButtonSearch}' buttonIcon='search' />
-						</@formGroup>
-					</@tform>
-				</#if>			
-			
-		
-				<#if assigned_list?size &gt; 0 || search_is_search >
-					<@tform method='post' action='jsp/admin/plugins/profiles/AssignProfilesView.jsp'>
-						<#if search_is_search >
-							<@input type='hidden' name='search_is_search' value='true' />
-							<@input type='hidden' name='search_key' value='${search_filter.key}' />
-							<@input type='hidden' name='search_description' value='${search_filter.description}' />
-						</#if>
-						<@input type='hidden' name='view_key' value='${view.key}' />
-					</@tform>
-					<@table>
-						 <tr>
-							<th>
-								#i18n{profiles.manage_profiles.columnKey}
-								<@sort jsp_url="jsp/admin/plugins/profiles/AssignProfilesView.jsp" attribute="key${sort_search_attribute}" />
-							</th>
-							<@th hide=['xs']>
-								#i18n{profiles.manage_profiles.columnDescription}
-								<@sort jsp_url="jsp/admin/plugins/profiles/ManageProfiles.jsp" attribute="description${sort_search_attribute}" />
-							</@th>          
-							<th>#i18n{profiles.assign_profiles_view.actions}</th>
-						</tr>
-						<#list assigned_list as assigned_item>
-							<#if assigned_item_has_next>
-								<#assign anchor = assigned_item_index>
-							<#else>
-								<#assign anchor = assigned_item_index - 1 >
-							</#if>
-							<tr id="anchor-${assigned_item_index}">
-								<td>${assigned_item.key}</td>
-								<@td hide=['xs']>${assigned_item.description}</@td>
-								<td>
-									<@aButton href='jsp/admin/plugins/profiles/ModifyProfile.jsp?profile_key=${assigned_item.key}' title='#i18n{profiles.actions.labelModify}' hideTitle=['all'] buttonIcon='edit' size='sm' />
+						<@item_navigation item_navigator=item_navigator hideButtonTitle=['all'] />
+					</@boxHeader>
+					<@boxBody>	
+						<#if available_list?size &gt; 0 >
+							<@tform name='assign-profiles-view' method='post' action='jsp/admin/plugins/profiles/DoAssignProfilesView.jsp'>
+								<@input type='hidden' name='view_key' value='${view.key}' />
+								<@formGroup labelFor='profiles_list' labelKey='#i18n{profiles.assign_profiles_view.labelAvailableProfiles}' rows=2>
+									<@select name='profiles_list' default_value='' multiple=15 items=available_list?sort_by('code') />
+								</@formGroup>
 								<#if permission>
-									<@aButton href='jsp/admin/plugins/profiles/DoUnassignProfileView.jsp?view_key=${view.key}&amp;profile_key=${assigned_item.key}&amp;anchor=anchor-${anchor}' title='#i18n{profiles.assign_profiles_view.actionUnassign}' hideTitle=['all'] buttonIcon='trash' color='danger' size='sm' />
+								<@formGroup rows=2>
+									<@button type='submit' title='#i18n{profiles.assign_profiles_view.labelButtonValidate}' buttonIcon='device-floppy' />
+								</@formGroup>
 								</#if>
-								</td>
-							</tr>
-						</#list>
-					</@table>
-					<@paginationAdmin paginator=paginator />
-			<#else>
-					<@alert color='warning'>#i18n{profiles.assign_profiles_view.noAssignedList}</@alert>
-			</#if>	    
-			</@boxBody>
-		</@box>
-	</@columns>
-</@row>
+							</@tform>
+						<#else>
+							<@alert color='warning'>#i18n{profiles.assign_profiles_view.noProfileToAssign}</@alert>
+						</#if>
+					</@boxBody>
+				</@box>
+			</@columns>
+			<@columns xl=9>
+				<@box>
+					<@boxHeader title='#i18n{profiles.assign_profiles_view.labelAssignedProfiles}' />
+					<@boxBody>	
+						<@paginationAdmin paginator=paginator combo=1 form=0 />
+						<#if assigned_list?size &gt; 0 || search_is_search >
+							<@tform method='post' name='search_profiles' action='jsp/admin/plugins/profiles/AssignProfilesView.jsp'>
+								<@input type='hidden' name='view_key' value='${view.key}' />
+								<@formGroup labelFor='key' labelKey='#i18n{profiles.manage_profiles.search_profiles.labelKey}'>
+									<@input type='text' id='key' name='search_key' value='${search_filter.key}' maxlength=50 />
+								</@formGroup>
+								<@formGroup labelFor='description' labelKey='#i18n{profiles.manage_profiles.search_profiles.labelDescription}'>
+									<@input type='text' id='description' name='search_description' value='${search_filter.description}' maxlength=250 />
+								</@formGroup>
+								<@formGroup>
+									<@button type='submit' title='#i18n{profiles.assign_profiles_view.labelButtonSearch}' buttonIcon='search' />
+								</@formGroup>
+							</@tform>
+						</#if>			
+					
+				
+						<#if assigned_list?size &gt; 0 || search_is_search >
+							<@tform method='post' action='jsp/admin/plugins/profiles/AssignProfilesView.jsp'>
+								<#if search_is_search >
+									<@input type='hidden' name='search_is_search' value='true' />
+									<@input type='hidden' name='search_key' value='${search_filter.key}' />
+									<@input type='hidden' name='search_description' value='${search_filter.description}' />
+								</#if>
+								<@input type='hidden' name='view_key' value='${view.key}' />
+							</@tform>
+							<@table>
+								 <tr>
+									<th>
+										#i18n{profiles.manage_profiles.columnKey}
+										<@sort jsp_url="jsp/admin/plugins/profiles/AssignProfilesView.jsp" attribute="key${sort_search_attribute}" />
+									</th>
+									<@th hide=['xs']>
+										#i18n{profiles.manage_profiles.columnDescription}
+										<@sort jsp_url="jsp/admin/plugins/profiles/ManageProfiles.jsp" attribute="description${sort_search_attribute}" />
+									</@th>          
+									<th>#i18n{profiles.assign_profiles_view.actions}</th>
+								</tr>
+								<#list assigned_list as assigned_item>
+									<#if assigned_item_has_next>
+										<#assign anchor = assigned_item_index>
+									<#else>
+										<#assign anchor = assigned_item_index - 1 >
+									</#if>
+									<tr id="anchor-${assigned_item_index}">
+										<td>${assigned_item.key}</td>
+										<@td hide=['xs']>${assigned_item.description}</@td>
+										<td>
+											<@aButton href='jsp/admin/plugins/profiles/ModifyProfile.jsp?profile_key=${assigned_item.key}' title='#i18n{profiles.actions.labelModify}' hideTitle=['all'] buttonIcon='edit' size='sm' />
+										<#if permission>
+											<@aButton href='jsp/admin/plugins/profiles/DoUnassignProfileView.jsp?view_key=${view.key}&amp;profile_key=${assigned_item.key}&amp;anchor=anchor-${anchor}' title='#i18n{profiles.assign_profiles_view.actionUnassign}' hideTitle=['all'] buttonIcon='trash' color='danger' size='sm' />
+										</#if>
+										</td>
+									</tr>
+								</#list>
+							</@table>
+							<@paginationAdmin paginator=paginator />
+					<#else>
+							<@alert color='warning'>#i18n{profiles.assign_profiles_view.noAssignedList}</@alert>
+					</#if>	    
+					</@boxBody>
+				</@box>
+			</@columns>
+		</@row>
+	</@pageColumn>
+</@pageContainer>

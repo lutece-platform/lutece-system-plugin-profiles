@@ -1,102 +1,106 @@
-<@row>
-	<@columns md=3>
-		<@box>
-			<@boxHeader title='#i18n{profiles.assign_rights_profile.profileKey} : ${profile.key}'>
-				<@item_navigation item_navigator=item_navigator />
-			</@boxHeader>
-			<@boxBody>	
-				<!--#i18n{profiles.assign_workgroups_profile.pageTitle}-->
-				<#if available_list?size &gt; 0 >
-					<@tform name='assign-workgroups-profile' method='post' action='jsp/admin/plugins/profiles/DoAssignWorkgroupsProfile.jsp'>
+<@pageContainer>
+    <@pageColumn>
+		<@pageHeader title='#i18n{profiles.assign_profiles_view.labelAssignedProfiles}' />
+		<@row>
+			<@columns xl=3>
+				<@box>
+					<@boxHeader title='#i18n{profiles.assign_rights_profile.profileKey} : ${profile.key}'>
+						<@item_navigation item_navigator=item_navigator />
+					</@boxHeader>
+					<@boxBody>	
+						<!--#i18n{profiles.assign_workgroups_profile.pageTitle}-->
+						<#if available_list?size &gt; 0 >
+							<@tform name='assign-workgroups-profile' method='post' action='jsp/admin/plugins/profiles/DoAssignWorkgroupsProfile.jsp'>
+								<@input type='hidden' name='profile_key' value='${profile.key}' />
+								<@fieldSet legend='#i18n{profiles.assign_workgroups_profile.labelAvailableWorkgroups}' hideLegend=['all']>
+									<@formGroup labelFor='workgroups_list' labelKey='#i18n{profiles.assign_workgroups_profile.labelAvailableWorkgroups}' rows=2>
+										<@select name='workgroups_list' default_value='' multiple=15 items=available_list?sort_by('name') />
+									</@formGroup>
+									<#if permission>
+									<@formGroup rows=2>
+										<@button type='submit' title='#i18n{profiles.assign_workgroups_profile.labelButtonValidate}' buttonIcon='device-floppy' />
+									</@formGroup>	
+									</#if>
+								</@fieldSet>
+							</@tform>
+						<#else>
+							<p>#i18n{profiles.assign_workgroups_profile.noWorkgroupToAssign}</p>
+						</#if>
+					</@boxBody>
+				</@box>
+			</@columns>
+			<@columns xl=9>
+				<@box>
+					<@boxHeader title='#i18n{profiles.assign_workgroups_profile.labelAssignedWorkgroups}'>
+						<#if profile.actions?exists>
+							<#list profile.actions as action>
+								<#if action.permission!='DELETE_DELETE'><#assign color='primary' /><#else><#assign color='danger' /></#if>
+								<@aButton href='${action.url}?profile_key=${profile.key}' title='${action.description}' hideTitle=['all'] buttonIcon='${action.iconUrl}' color=color size='sm' />
+							</#list>
+						</#if>
+					</@boxHeader>
+					<@boxBody>	
+						<#if assigned_list?size &gt; 0 || search_is_search>
+							<@tform method='post' name='search_workgroups' action='jsp/admin/plugins/profiles/AssignWorkgroupsProfile.jsp'>
+								<@input type='hidden' name='profile_key' value='${profile.key}' />
+								<@formGroup labelFor='key' labelKey='#i18n{portal.workgroup.manage_workgroups.search_workgroups.labelKey}'>
+									<@input type='text' id='key' name='search_key' value='${search_filter.key}' maxlength=50 />
+								</@formGroup>
+								<@formGroup labelFor='description' labelKey='#i18n{portal.workgroup.manage_workgroups.search_workgroups.labelDescription}'>
+									<@input type='text' id='description' name='search_description' value='${search_filter.description}' maxlength=250 />
+								</@formGroup>
+								<@formGroup>
+									<@button type='submit' title='#i18n{portal.workgroup.manage_workgroups.search_workgroups.buttonSearch}' buttonIcon='search' />
+								</@formGroup>
+							</@tform>
+						</#if>
+						<#if assigned_list?size &gt; 0 || search_is_search>
+						<@tform method='post' action='jsp/admin/plugins/profiles/AssignWorkgroupsProfile.jsp'>
+						<@paginationAdmin paginator=paginator combo=1 form=0 />
+						<#if search_is_search >
+							<@input type='hidden' name='search_is_search' value='true' />
+							<@input type='hidden' name='search_key' value='${search_filter.key}' />
+							<@input type='hidden' name='search_description' value='${search_filter.description}' />
+						</#if>
 						<@input type='hidden' name='profile_key' value='${profile.key}' />
-						<@fieldSet legend='#i18n{profiles.assign_workgroups_profile.labelAvailableWorkgroups}' hideLegend=['all']>
-							<@formGroup labelFor='workgroups_list' labelKey='#i18n{profiles.assign_workgroups_profile.labelAvailableWorkgroups}' rows=2>
-								<@select name='workgroups_list' default_value='' multiple=15 items=available_list?sort_by('name') />
-							</@formGroup>
-							<#if permission>
-							<@formGroup rows=2>
-								<@button type='submit' title='#i18n{profiles.assign_workgroups_profile.labelButtonValidate}' buttonIcon='check' />
-							</@formGroup>	
+						</@tform>
+						<@table>
+							<@tr>            
+								<@th>
+									#i18n{profiles.assign_workgroups_profile.columnTitleKey}
+									<@sort jsp_url="jsp/admin/plugins/profiles/AssignWorkgroupsProfile.jsp" attribute="key&profile_key=${profile.key}${sort_search_attribute}" />
+								</@th>
+								<@th hide=['xs']>
+									#i18n{profiles.assign_workgroups_profile.columnTitleDescription}
+									<@sort jsp_url="jsp/admin/plugins/profiles/AssignWorkgroupsProfile.jsp" attribute="description&profile_key=${profile.key}${sort_search_attribute}" />
+								</@th>
+								<@th>#i18n{profiles.assign_workgroups_profile.actions}</@th>
+							</@tr>
+							<#list assigned_list as assigned_item>
+							<#if assigned_item_has_next || assigned_list?size = 1>
+								<#assign anchor = assigned_item_index>
+							<#else>
+								<#assign anchor = assigned_item_index - 1 >
 							</#if>
-						</@fieldSet>
-					</@tform>
-				<#else>
-					<p>#i18n{profiles.assign_workgroups_profile.noWorkgroupToAssign}</p>
-				</#if>
-			</@boxBody>
-		</@box>
-	</@columns>
-	<@columns md=9>
-		<@box>
-			<@boxHeader title='#i18n{profiles.assign_profiles_view.labelAssignedProfiles}'>
-				<#if profile.actions?exists>
-					<#list profile.actions as action>
-						<#if action.permission!='DELETE_DELETE'><#assign color='primary' /><#else><#assign color='danger' /></#if>
-						<@aButton href='${action.url}?profile_key=${profile.key}' title='${action.description}' hideTitle=['all'] buttonIcon='${action.iconUrl}' color=color size='sm' />
-					</#list>
-				</#if>
-			</@boxHeader>
-			<@boxBody>	
-				<#if assigned_list?size &gt; 0 || search_is_search>
-					<@tform method='post' name='search_workgroups' action='jsp/admin/plugins/profiles/AssignWorkgroupsProfile.jsp'>
-						<@input type='hidden' name='profile_key' value='${profile.key}' />
-						<@formGroup labelFor='key' labelKey='#i18n{portal.workgroup.manage_workgroups.search_workgroups.labelKey}'>
-							<@input type='text' id='key' name='search_key' value='${search_filter.key}' maxlength=50 />
-						</@formGroup>
-						<@formGroup labelFor='description' labelKey='#i18n{portal.workgroup.manage_workgroups.search_workgroups.labelDescription}'>
-							<@input type='text' id='description' name='search_description' value='${search_filter.description}' maxlength=250 />
-						</@formGroup>
-						<@formGroup>
-							<@button type='submit' title='#i18n{portal.workgroup.manage_workgroups.search_workgroups.buttonSearch}' buttonIcon='search' />
-						</@formGroup>
-					</@tform>
-				</#if>
-				<h4>#i18n{profiles.assign_workgroups_profile.labelAssignedWorkgroups}</h4>
-				<#if assigned_list?size &gt; 0 || search_is_search>
-				<@tform method='post' action='jsp/admin/plugins/profiles/AssignWorkgroupsProfile.jsp'>
-				<@paginationAdmin paginator=paginator combo=1 form=0 />
-				<#if search_is_search >
-					<@input type='hidden' name='search_is_search' value='true' />
-					<@input type='hidden' name='search_key' value='${search_filter.key}' />
-					<@input type='hidden' name='search_description' value='${search_filter.description}' />
-				</#if>
-				<@input type='hidden' name='profile_key' value='${profile.key}' />
-				</@tform>
-				<@table>
-					<tr>            
-						<th>
-							#i18n{profiles.assign_workgroups_profile.columnTitleKey}
-							<@sort jsp_url="jsp/admin/plugins/profiles/AssignWorkgroupsProfile.jsp" attribute="key&profile_key=${profile.key}${sort_search_attribute}" />
-						</th>
-						<@th hide=['xs']>
-							#i18n{profiles.assign_workgroups_profile.columnTitleDescription}
-							<@sort jsp_url="jsp/admin/plugins/profiles/AssignWorkgroupsProfile.jsp" attribute="description&profile_key=${profile.key}${sort_search_attribute}" />
-						</@th>
-						<th>#i18n{profiles.assign_workgroups_profile.actions}</th>
-					</tr>
-					<#list assigned_list as assigned_item>
-					<#if assigned_item_has_next || assigned_list?size = 1>
-						<#assign anchor = assigned_item_index>
-					<#else>
-						<#assign anchor = assigned_item_index - 1 >
-					</#if>
-					<tr id="anchor-${assigned_item_index}">
-						<td>${assigned_item.key}</td>
-						<@td hide=['xs']>${assigned_item.description}</@td>
-						<td>
-							<@aButton href='jsp/admin/workgroup/ModifyWorkgroup.jsp?workgroup_key=${assigned_item.key}' title='#i18n{profiles.actions.labelModify}' hideTitle=['all'] buttonIcon='edit' size='sm' />
-							<#if permission>
-							<@aButton href='jsp/admin/plugins/profiles/DoUnassignWorkgroupProfile.jsp?profile_key=${profile.key}&workgroup_key=${assigned_item.key}&anchor=anchor-${anchor}' title='#i18n{profiles.assign_workgroups_profile.actionUnassign}' hideTitle=['all'] buttonIcon='trash' color='danger' size='sm' />
-							</#if>
-						</td>
-					</tr>
-					</#list>
-				</@table>
-				<@paginationAdmin paginator=paginator />
-				<#else>
-					<@alert color='warning'>#i18n{profiles.assign_workgroups_profile.noAssignedList}</@alert>
-				</#if>	    
-			</@boxBody>
-		</@box>
-	</@columns>
-</@row>
+							<@tr id="anchor-${assigned_item_index}">
+								<@td>${assigned_item.key}</@td>
+								<@td hide=['xs']>${assigned_item.description}</@td>
+								<@td>
+									<@aButton href='jsp/admin/workgroup/ModifyWorkgroup.jsp?workgroup_key=${assigned_item.key}' title='#i18n{profiles.actions.labelModify}' hideTitle=['all'] buttonIcon='edit' size='sm' />
+									<#if permission>
+									<@aButton href='jsp/admin/plugins/profiles/DoUnassignWorkgroupProfile.jsp?profile_key=${profile.key}&workgroup_key=${assigned_item.key}&anchor=anchor-${anchor}' title='#i18n{profiles.assign_workgroups_profile.actionUnassign}' hideTitle=['all'] buttonIcon='trash' color='danger' size='sm' />
+									</#if>
+								</@td>
+							</@tr>
+							</#list>
+						</@table>
+						<@paginationAdmin paginator=paginator />
+						<#else>
+							<@alert color='warning'>#i18n{profiles.assign_workgroups_profile.noAssignedList}</@alert>
+						</#if>	    
+					</@boxBody>
+				</@box>
+			</@columns>
+		</@row>
+	</@pageColumn>
+</@pageContainer>

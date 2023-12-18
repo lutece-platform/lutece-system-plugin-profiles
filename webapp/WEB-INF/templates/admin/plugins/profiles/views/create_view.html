@@ -1,18 +1,14 @@
-<@row>	<@columns>		<@box>			<@boxHeader title='#i18n{profiles.create_view.pageTitle}' />
-            <@boxBody>
-				<@tform method='post' name='create_view' action='jsp/admin/plugins/profiles/DoCreateView.jsp'>
-					<@formGroup labelFor='view_key' labelKey='#i18n{profiles.create_view.key}' mandatory=true>
-						<@input type='text' id='view_key' name='view_key' maxlength=50 />
-					</@formGroup>
-					<@formGroup labelFor='view_description' labelKey='#i18n{profiles.create_view.description}' mandatory=true>
-						<@input type='text' id='view_description' name='view_description' maxlength=255 />
-					</@formGroup>
-					<@formGroup>
-						<@button type='submit' title='#i18n{profiles.create_view.buttonLabelCreate}' buttonIcon='check' />
-						<@aButton href='jsp/admin/plugins/profiles/ManageViews.jsp' title='#i18n{portal.admin.message.buttonCancel}' title='#i18n{portal.admin.message.buttonCancel}' buttonIcon='times' color='default' />
-					</@formGroup>
-				</@tform>
-			</@boxBody>
-		</@box>
-	</@columns>
-</@row>
+<@pageContainer>    <@pageColumn>		<@pageHeader title='#i18n{profiles.create_view.pageTitle}' />
+		<@tform method='post' name='create_view' action='jsp/admin/plugins/profiles/DoCreateView.jsp' boxed=true id='create_view_page'>
+			<@formGroup labelFor='view_key' labelKey='#i18n{profiles.create_view.key}' mandatory=true>
+				<@input type='text' id='view_key' name='view_key' maxlength=50 />
+			</@formGroup>
+			<@formGroup labelFor='view_description' labelKey='#i18n{profiles.create_view.description}' mandatory=true>
+				<@input type='text' id='view_description' name='view_description' maxlength=255 />
+			</@formGroup>
+			<@formGroup>
+				<@button type='submit' title='#i18n{profiles.create_view.buttonLabelCreate}' buttonIcon='check' />
+				<@aButton href='jsp/admin/plugins/profiles/ManageViews.jsp' title='#i18n{portal.admin.message.buttonCancel}' title='#i18n{portal.admin.message.buttonCancel}' buttonIcon='times' color='default' />
+			</@formGroup>
+		</@tform>
+	</@pageColumn></@pageContainer>
