@@ -2,7 +2,7 @@
     <!-- Plugin Informations --> 
     <name>profiles</name>
     <class>fr.paris.lutece.plugins.profiles.service.ProfilesPlugin</class>
-    <version>3.1.2-SNAPSHOT</version>
+    <version>4.0.0</version>
     <description>profiles.plugin.description</description>
     <documentation/>
     <installation/>
