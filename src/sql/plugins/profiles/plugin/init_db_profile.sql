@@ -1,3 +1,6 @@
+-- liquibase formatted sql
+-- changeset profiles:init_db_profile.sql
+-- preconditions onFail:MARK_RAN onError:WARN
 --
 -- Init  table profile_action
 --

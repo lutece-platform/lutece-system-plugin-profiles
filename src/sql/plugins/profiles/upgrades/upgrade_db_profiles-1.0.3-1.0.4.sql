@@ -1,3 +1,6 @@
+-- liquibase formatted sql
+-- changeset profiles:upgrade_db_profiles-1.0.3-1.0.4.sql
+-- preconditions onFail:MARK_RAN onError:WARN
 DELETE FROM profile_action;
 INSERT INTO profile_action (id_action, name_key, description_key, action_url, icon_url, action_permission) VALUES (1,'profiles.action.modify_profile.name','profiles.action.modify_profile.description','jsp/admin/plugins/profiles/ModifyProfile.jsp','icon-edit','MODIFY_PROFILE');
 INSERT INTO profile_action (id_action, name_key, description_key, action_url, icon_url, action_permission) VALUES (2,'profiles.action.delete_profile.name','profiles.action.delete_profile.description','jsp/admin/plugins/profiles/RemoveProfile.jsp','icon-trash','DELETE_DELETE');

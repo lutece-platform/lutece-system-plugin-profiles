@@ -1,3 +1,6 @@
+-- liquibase formatted sql
+-- changeset profiles:init_core_profile.sql
+-- preconditions onFail:MARK_RAN onError:WARN
 --
 -- Init  table core_admin_right
 --
