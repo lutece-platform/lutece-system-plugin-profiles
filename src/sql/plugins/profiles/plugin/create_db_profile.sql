@@ -1,3 +1,6 @@
+-- liquibase formatted sql
+-- changeset profiles:create_db_profile.sql
+-- preconditions onFail:MARK_RAN onError:WARN
 DROP TABLE IF EXISTS profile_profile;
 DROP TABLE IF EXISTS profile_user;
 DROP TABLE IF EXISTS profile_right;

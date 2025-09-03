@@ -1,3 +1,6 @@
+-- liquibase formatted sql
+-- changeset profiles:upgrade_db_profiles-1.0.4-1.0.5.sql
+-- preconditions onFail:MARK_RAN onError:WARN
 UPDATE profile_view_action SET icon_url='fa fa-wrench' WHERE  id_action=4;
 UPDATE profile_view_action SET icon_url='fa fa-hand-o-right' WHERE  id_action=3;
 UPDATE profile_view_action SET icon_url='fa fa-edit' WHERE  id_action=1;
