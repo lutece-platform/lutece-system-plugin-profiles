@@ -7,9 +7,29 @@
 
 ## Introduction
 
-Ce plugin permet de dÃ©finir des profils d'utilisateurs basÃ©s sur un ensemble de rÃ´les et de droits.
+Ce plugin permet de définir des profils d'utilisateurs basés sur un ensemble de rôles et de droits.
 
 Il permet ainsi de faciliter la gestion des habilitations
+
+## Configuration
+
+La configuration des profils se fait depuis le sous-menu "Gestion des profils" depuis le Back Office.
+
+Un profil se définit par un identifiant et une description.
+
+La configuration d'un profil se fait en lui assignant :
+
+
+ 
+* des rôles
+* des droits
+* des groupes de travail
+* une vue (tableau de bord de la page d'accueil du Back Office)
+
+
+## Usage
+
+L'attribution d'un profil à un utilisateur permet de lui affecter automatiquement les rôles, les droits, groupes de travail prévus dans le profil.
 
 
 [Maven documentation and reports](https://dev.lutece.paris.fr/plugins/plugin-profiles/)
