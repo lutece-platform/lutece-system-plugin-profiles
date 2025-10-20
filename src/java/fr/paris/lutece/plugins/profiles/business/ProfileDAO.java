@@ -42,6 +42,7 @@ import fr.paris.lutece.portal.business.workgroup.AdminWorkgroup;
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.util.ReferenceList;
 import fr.paris.lutece.util.sql.DAOUtil;
+import jakarta.enterprise.context.ApplicationScoped;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,6 +52,7 @@ import java.util.List;
  * ProfileDAO
  * 
  */
+@ApplicationScoped
 public class ProfileDAO implements IProfileDAO
 {
     private static final String SQL_QUERY_SELECT = " SELECT profile_key, profile_description FROM profile_profile WHERE profile_key = ? ";

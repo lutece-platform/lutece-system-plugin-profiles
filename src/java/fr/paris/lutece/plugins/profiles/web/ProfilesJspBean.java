@@ -63,7 +63,6 @@ import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.message.AdminMessage;
 import fr.paris.lutece.portal.service.message.AdminMessageService;
 import fr.paris.lutece.portal.service.rbac.RBACService;
-import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.service.user.attribute.AttributeService;
 import fr.paris.lutece.portal.service.util.AppPathService;
@@ -90,7 +89,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.enterprise.context.SessionScoped;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -99,6 +101,8 @@ import org.apache.commons.lang3.StringUtils;
  * ProfilesJspBean
  *
  */
+@SessionScoped
+@Named
 public class ProfilesJspBean extends PluginAdminPageJspBean
 {
     private static final long serialVersionUID = 4019088465748996120L;
@@ -135,9 +139,14 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
     private int _nDefaultItemsPerPage;
     private String _strCurrentPageIndex;
     private Map<String, ItemNavigator> _itemNavigators = new HashMap<>( );
-    private IProfilesService _profilesService = SpringContextService.getBean( ProfilesConstants.BEAN_PROFILES_SERVICE );
-    private IProfileActionService _profileActionService = SpringContextService.getBean( ProfilesConstants.BEAN_PROFILE_ACTION_SERVICE );
-    private IViewsService _viewsService = SpringContextService.getBean( ProfilesConstants.BEAN_VIEWS_SERVICE );
+    @Inject
+    private IProfilesService _profilesService;
+    @Inject
+    private IProfileActionService _profileActionService;
+    @Inject
+    private IViewsService _viewsService;
+    @Inject
+    private AttributeService _attributeService;
     private ProfileFilter _pFilter;
 
     /**
@@ -1177,7 +1186,7 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
         profile.setActions( listActions );
 
         // Attribute
-        List<IAttribute> listAttributes = AttributeService.getInstance( ).getPluginAttributesWithFields( ProfilesPlugin.PLUGIN_NAME, getLocale( ) );
+        List<IAttribute> listAttributes = _attributeService.getPluginAttributesWithFields( ProfilesPlugin.PLUGIN_NAME, getLocale( ) );
         AttributeField attributeField = new AttributeField( );
         attributeField.setTitle( profile.getKey( ) );
         attributeField.setValue( profile.getDescription( ) );

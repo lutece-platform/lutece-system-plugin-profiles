@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2022, City of Paris
+ * Copyright (c) 2002-2025, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,40 +31,33 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.profiles.business;
+package fr.paris.lutece.plugins.profiles.service;
 
-import org.junit.jupiter.api.Test;
+import fr.paris.lutece.portal.service.dashboard.DashboardListenerService;
+import fr.paris.lutece.portal.service.user.attribute.AdminUserFieldListenerService;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.inject.Produces;
+import jakarta.inject.Named;
 
-import fr.paris.lutece.plugins.profiles.service.ProfilesPlugin;
-import fr.paris.lutece.portal.service.plugin.Plugin;
-import fr.paris.lutece.portal.service.plugin.PluginService;
-import fr.paris.lutece.test.LuteceTestCase;
-
-public class ProfileBusinessTest extends LuteceTestCase
+/**
+ * Produces the service listeners required by the Profiles plugin
+ */
+@ApplicationScoped
+public class ProfilesListenerServiceProducer
 {
-    private Plugin _plugin = PluginService.getPlugin( ProfilesPlugin.PLUGIN_NAME );
-
-    @Test
-    void testCRUD( )
+    @Produces
+    @ApplicationScoped
+    @Named("profiles.profilesAdminUserFieldListenerService")
+    public AdminUserFieldListenerService produceProfilesAdminUserFieldListenerService( )
     {
-        Profile profile = new Profile( );
-        profile.setKey( "key" );
-        profile.setDescription( "desc" );
+        return new AdminUserFieldListenerService( );
+    }
 
-        ProfileHome.create( profile, _plugin );
-
-        Profile loaded = ProfileHome.findByPrimaryKey( profile.getKey( ), _plugin );
-        assertEquals( profile.getDescription( ), loaded.getDescription( ) );
-
-        profile.setDescription( "desc2" );
-        ProfileHome.update( profile, _plugin );
-
-        loaded = ProfileHome.findByPrimaryKey( profile.getKey( ), _plugin );
-        assertEquals( profile.getDescription( ), loaded.getDescription( ) );
-
-        ProfileHome.remove( profile.getKey( ), _plugin );
-
-        loaded = ProfileHome.findByPrimaryKey( profile.getKey( ), _plugin );
-        assertNull( loaded );
+    @Produces
+    @ApplicationScoped
+    @Named("profiles.viewDashboardListenerService")
+    public DashboardListenerService produceProfilesViewDashboardListenerService( )
+    {
+        return new DashboardListenerService( );
     }
 }

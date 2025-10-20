@@ -2,9 +2,9 @@
 
 <jsp:include page="../../AdminHeader.jsp" />
 
-<jsp:useBean id="view" scope="session" class="fr.paris.lutece.plugins.profiles.web.views.ViewsJspBean" />
+<%@page import="fr.paris.lutece.plugins.profiles.web.views.ViewsJspBean"%>
 
-<% view.init( request, fr.paris.lutece.plugins.profiles.web.views.ViewsJspBean.RIGHT_MANAGE_VIEWS ); %>
-<%= view.getModifyView( request ) %>
+${ viewsJspBean.init( pageContext.request, ViewsJspBean.RIGHT_MANAGE_VIEWS ) }
+${ viewsJspBean.getModifyView( pageContext.request ) }
 
 <%@ include file="../../AdminFooter.jsp" %>

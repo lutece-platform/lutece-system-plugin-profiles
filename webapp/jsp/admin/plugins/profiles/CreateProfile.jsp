@@ -2,9 +2,9 @@
 
 <jsp:include page="../../AdminHeader.jsp" />
 
-<jsp:useBean id="profile" scope="session" class="fr.paris.lutece.plugins.profiles.web.ProfilesJspBean" />
+<%@page import="fr.paris.lutece.plugins.profiles.web.ProfilesJspBean"%>
 
-<% profile.init( request, fr.paris.lutece.plugins.profiles.web.ProfilesJspBean.RIGHT_MANAGE_PROFILES ); %>
-<%= profile.getCreateProfile ( request ) %>
+${ profilesJspBean.init( pageContext.request, ProfilesJspBean.RIGHT_MANAGE_PROFILES ) }
+${ profilesJspBean.getCreateProfile( pageContext.request ) }
 
 <%@ include file="../../AdminFooter.jsp" %>

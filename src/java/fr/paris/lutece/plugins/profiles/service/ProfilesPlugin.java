@@ -39,8 +39,10 @@ import fr.paris.lutece.plugins.profiles.business.ProfilesAdminUserFieldListener;
 import fr.paris.lutece.plugins.profiles.business.views.ViewDashboardListener;
 import fr.paris.lutece.plugins.profiles.service.views.ViewDashboardListenerService;
 import fr.paris.lutece.portal.service.plugin.PluginDefaultImplementation;
-import fr.paris.lutece.portal.service.rbac.RBACRemovalListenerService;
-import fr.paris.lutece.portal.service.workgroup.WorkgroupRemovalListenerService;
+import fr.paris.lutece.portal.service.util.BeanUtils;
+import fr.paris.lutece.portal.service.util.RemovalListenerService;
+import jakarta.enterprise.inject.literal.NamedLiteral;
+import jakarta.enterprise.inject.spi.CDI;
 
 /**
  * class ProfilesPlugin
@@ -60,7 +62,9 @@ public class ProfilesPlugin extends PluginDefaultImplementation
         ViewDashboardListenerService.getService( ).registerListener( new ViewDashboardListener( ) );
 
         // Add removal listeners
-        WorkgroupRemovalListenerService.getService( ).registerListener( new ProfileWorkgroupRemovalListener( ) );
-        RBACRemovalListenerService.getService( ).registerListener( new ProfileRBACRemovalListener( ) );
+        CDI.current( ).select( RemovalListenerService.class, NamedLiteral.of(BeanUtils.BEAN_WORKGROUP_REMOVAL_SERVICE) )
+                .get( ).registerListener( new ProfileWorkgroupRemovalListener( ) );
+        CDI.current( ).select( RemovalListenerService.class, NamedLiteral.of(BeanUtils.BEAN_RBAC_REMOVAL_SERVICE) )
+                .get( ).registerListener( new ProfileRBACRemovalListener( ) );
     }
 }

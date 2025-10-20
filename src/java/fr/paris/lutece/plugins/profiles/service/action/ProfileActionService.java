@@ -37,6 +37,7 @@ import fr.paris.lutece.plugins.profiles.business.ProfileAction;
 import fr.paris.lutece.plugins.profiles.business.ProfileActionHome;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.plugin.Plugin;
+import jakarta.enterprise.context.ApplicationScoped;
 
 import java.util.List;
 import java.util.Locale;
@@ -46,6 +47,7 @@ import java.util.Locale;
  * ProfileActionService
  *
  */
+@ApplicationScoped
 public class ProfileActionService implements IProfileActionService
 {
     /**

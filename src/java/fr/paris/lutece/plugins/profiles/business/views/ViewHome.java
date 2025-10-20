@@ -37,8 +37,8 @@ import fr.paris.lutece.plugins.profiles.business.Profile;
 import fr.paris.lutece.portal.business.dashboard.DashboardFilter;
 import fr.paris.lutece.portal.service.dashboard.IDashboardComponent;
 import fr.paris.lutece.portal.service.plugin.Plugin;
-import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.util.ReferenceList;
+import jakarta.enterprise.inject.spi.CDI;
 
 import java.util.List;
 
@@ -49,8 +49,7 @@ import java.util.List;
  */
 public final class ViewHome
 {
-    private static final String BEAN_VIEW_DAO = "profiles.viewDAO";
-    private static IViewDAO _dao = SpringContextService.getBean( BEAN_VIEW_DAO );
+    private static IViewDAO _dao = CDI.current().select( IViewDAO.class ).get( );
 
     /**
      * Private constructor - this class need not be instantiated

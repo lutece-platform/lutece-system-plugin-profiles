@@ -1,6 +1,6 @@
 <%@ page errorPage="../../ErrorPage.jsp" %>
 
-<jsp:useBean id="view" scope="session" class="fr.paris.lutece.plugins.profiles.web.views.ViewsJspBean" />
+<%@page import="fr.paris.lutece.plugins.profiles.web.views.ViewsJspBean"%>
 
-<% view.init( request, fr.paris.lutece.plugins.profiles.web.views.ViewsJspBean.RIGHT_MANAGE_VIEWS ) ; %>
-<% response.sendRedirect( view.doReorderColumn( request ) ); %>
+${ viewsJspBean.init( pageContext.request, ViewsJspBean.RIGHT_MANAGE_VIEWS ) }
+${ pageContext.response.sendRedirect( viewsJspBean.doReorderColumn( pageContext.request )) }
