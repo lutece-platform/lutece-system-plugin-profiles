@@ -7,11 +7,29 @@
         <section name="Plugin Profiles">
             <subsection name="Introduction">
                 <p>
-                    This plugin allows to define user profiles based
+                    This plugin allows you to define user profiles based on
                      a set of roles and rights.
                  </p>
                  <p>
                      It thus facilitates the management of authorizations
+                </p>
+            </subsection>
+            <subsection name="Configuration">
+                <p>The configuration of profiles is done from the "Profile Management" submenu in the Back Office.</p>
+                <p>A profile is defined by an identifier and a description.</p>
+                <p>The configuration of a profile consists of assigning it:</p>
+                <p>
+                    <ul>
+                        <li>roles</li>
+                        <li>rights</li>
+                        <li>work groups</li>
+                        <li>a view (dashboard of the Back Office home page)</li>
+                    </ul>
+                </p>
+            </subsection>
+            <subsection name="Usage">
+                <p>
+                    Assigning a profile to a user automatically grants them the roles, rights, and work groups defined in the profile.
                 </p>
             </subsection>
         </section>

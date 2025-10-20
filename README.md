@@ -7,9 +7,29 @@
 
 ## Introduction
 
-This plugin allows to define user profiles based a set of roles and rights.
+This plugin allows you to define user profiles based on a set of roles and rights.
 
 It thus facilitates the management of authorizations
+
+## Configuration
+
+The configuration of profiles is done from the "Profile Management" submenu in the Back Office.
+
+A profile is defined by an identifier and a description.
+
+The configuration of a profile consists of assigning it:
+
+
+ 
+* roles
+* rights
+* work groups
+* a view (dashboard of the Back Office home page)
+
+
+## Usage
+
+Assigning a profile to a user automatically grants them the roles, rights, and work groups defined in the profile.
 
 
 [Maven documentation and reports](https://dev.lutece.paris.fr/plugins/plugin-profiles/)
