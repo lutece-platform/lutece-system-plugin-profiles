@@ -14,6 +14,24 @@
                     Il permet ainsi de faciliter la gestion des habilitations
                 </p>
             </subsection>
+            <subsection name="Configuration">
+                <p>La configuration des profils se fait depuis le sous-menu "Gestion des profils" depuis le Back Office.</p>
+                <p>Un profil se définit par un identifiant et une description.</p>
+                <p>La configuration d'un profil se fait en lui assignant :</p>
+                <p>
+                    <ul>
+                        <li>des rôles</li>
+                        <li>des droits</li>
+                        <li>des groupes de travail</li>
+                        <li>une vue (tableau de bord de la page d'accueil du Back Office)</li>
+                    </ul>
+                </p>
+            </subsection>
+            <subsection name="Usage">
+                <p>
+                    L'attribution d'un profil à un utilisateur permet de lui affecter automatiquement les rôles, les droits, groupes de travail prévus dans le profil.
+                </p>
+            </subsection>
         </section>
     </body>
 </document>
