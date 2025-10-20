@@ -55,6 +55,7 @@ import fr.paris.lutece.util.ReferenceList;
 import fr.paris.lutece.util.html.ItemNavigator;
 import fr.paris.lutece.util.url.UrlItem;
 
+import jakarta.enterprise.context.ApplicationScoped;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -66,17 +67,20 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 /**
  *
  * ViewService
  *
  */
+@ApplicationScoped
 public class ViewsService implements IViewsService
 {
     @Inject
     private IViewActionService _viewActionService;
+    @Inject
+    private DashboardService _dashboardService;
 
     /**
      * {@inheritDoc}
@@ -173,7 +177,7 @@ public class ViewsService implements IViewsService
         {
             boolean bRight = user.checkRight( dashboard.getRight( ) ) || dashboard.getRight( ).equalsIgnoreCase( ProfilesConstants.ALL );
 
-            if ( !listPersonnalizedDashboards.contains( dashboard ) && bRight && ( dashboard.getZone( ) <= DashboardService.getInstance( ).getColumnCount( ) ) )
+            if ( !listPersonnalizedDashboards.contains( dashboard ) && bRight && ( dashboard.getZone( ) <= _dashboardService.getColumnCount( ) ) )
             {
                 listNotSetDashboards.add( dashboard );
             }
@@ -232,7 +236,7 @@ public class ViewsService implements IViewsService
         // add empty item
         refList.addItem( StringUtils.EMPTY, StringUtils.EMPTY );
 
-        for ( int nColumnIndex = 1; nColumnIndex <= DashboardService.getInstance( ).getColumnCount( ); nColumnIndex++ )
+        for ( int nColumnIndex = 1; nColumnIndex <= _dashboardService.getColumnCount( ); nColumnIndex++ )
         {
             refList.addItem( nColumnIndex, Integer.toString( nColumnIndex ) );
         }
@@ -257,10 +261,7 @@ public class ViewsService implements IViewsService
 
         if ( CollectionUtils.isNotEmpty( listColumnDashboards ) )
         {
-            if ( AppLogService.isDebugEnabled( ) )
-            {
-                AppLogService.debug( "Reordering  dashboard column " + dashboard.getZone( ) );
-            }
+        	AppLogService.debug( "Reordering  dashboard column {}", dashboard.getZone( ) );
 
             // sort by order
             Collections.sort( listColumnDashboards );

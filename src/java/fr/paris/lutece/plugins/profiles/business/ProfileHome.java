@@ -39,8 +39,8 @@ import fr.paris.lutece.portal.business.right.Right;
 import fr.paris.lutece.portal.business.user.AdminUser;
 import fr.paris.lutece.portal.business.workgroup.AdminWorkgroup;
 import fr.paris.lutece.portal.service.plugin.Plugin;
-import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.util.ReferenceList;
+import jakarta.enterprise.inject.spi.CDI;
 
 import java.util.List;
 
@@ -51,8 +51,7 @@ import java.util.List;
  */
 public final class ProfileHome
 {
-    private static final String BEAN_PROFILE_HOME = "profiles.profileDAO";
-    private static IProfileDAO _dao = SpringContextService.getBean( BEAN_PROFILE_HOME );
+    private static IProfileDAO _dao = CDI.current().select( IProfileDAO.class ).get( );
 
     /**
      * Private constructor - this class need not be instantiated

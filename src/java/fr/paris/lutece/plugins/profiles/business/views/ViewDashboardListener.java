@@ -46,7 +46,7 @@ import fr.paris.lutece.portal.service.plugin.PluginService;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  *

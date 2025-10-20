@@ -34,7 +34,8 @@
 package fr.paris.lutece.plugins.profiles.service.views;
 
 import fr.paris.lutece.portal.service.dashboard.DashboardListenerService;
-import fr.paris.lutece.portal.service.spring.SpringContextService;
+import jakarta.enterprise.inject.literal.NamedLiteral;
+import jakarta.enterprise.inject.spi.CDI;
 
 /**
  *
@@ -59,6 +60,6 @@ public final class ViewDashboardListenerService
      */
     public static DashboardListenerService getService( )
     {
-        return SpringContextService.getBean( BEAN_VIEW_DASHBOARD_SERVICE );
+        return CDI.current( ).select( DashboardListenerService.class, NamedLiteral.of( BEAN_VIEW_DASHBOARD_SERVICE ) ).get( );
     }
 }

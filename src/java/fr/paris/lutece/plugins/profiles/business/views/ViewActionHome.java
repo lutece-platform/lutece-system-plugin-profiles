@@ -34,7 +34,7 @@
 package fr.paris.lutece.plugins.profiles.business.views;
 
 import fr.paris.lutece.portal.service.plugin.Plugin;
-import fr.paris.lutece.portal.service.spring.SpringContextService;
+import jakarta.enterprise.inject.spi.CDI;
 
 import java.util.List;
 
@@ -45,8 +45,7 @@ import java.util.List;
  */
 public final class ViewActionHome
 {
-    private static final String BEAN_VIEW_ACTION_DAO = "profiles.viewActionDAO";
-    private static IViewActionDAO _dao = SpringContextService.getBean( BEAN_VIEW_ACTION_DAO );
+    private static IViewActionDAO _dao = CDI.current().select( IViewActionDAO.class ).get( );
 
     /**
      * Private constructor - this class need not be instantiated

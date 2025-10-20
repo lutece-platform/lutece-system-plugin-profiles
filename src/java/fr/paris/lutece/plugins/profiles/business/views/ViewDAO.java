@@ -42,6 +42,7 @@ import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.util.ReferenceList;
 import fr.paris.lutece.util.sql.DAOUtil;
+import jakarta.enterprise.context.ApplicationScoped;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,6 +52,7 @@ import java.util.List;
  * ViewDAO
  * 
  */
+@ApplicationScoped
 public class ViewDAO implements IViewDAO
 {
     private static final String SQL_QUERY_SELECT = " SELECT view_key, view_description FROM profile_view WHERE view_key = ? ";
@@ -378,7 +380,7 @@ public class ViewDAO implements IViewDAO
                 }
                 else
                 {
-                    AppLogService.error( "Dashboard named " + strBeanName + " not found" );
+                    AppLogService.error( "Dashboard named {} not found", strBeanName );
                 }
             }
         }
@@ -418,7 +420,7 @@ public class ViewDAO implements IViewDAO
                 }
                 else
                 {
-                    AppLogService.error( "Dashboard named " + strDashboardName + " not found" );
+                    AppLogService.error( "Dashboard named {} not found", strDashboardName );
                 }
             }
         }
@@ -582,7 +584,7 @@ public class ViewDAO implements IViewDAO
                 }
                 else
                 {
-                    AppLogService.error( "dashboard named " + strBeanName + " not found" );
+                    AppLogService.error( "dashboard named {} not found", strBeanName );
                 }
             }
         }

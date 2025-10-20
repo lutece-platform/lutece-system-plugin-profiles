@@ -35,6 +35,7 @@ package fr.paris.lutece.plugins.profiles.business.views;
 
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.util.sql.DAOUtil;
+import jakarta.enterprise.context.ApplicationScoped;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,6 +45,7 @@ import java.util.List;
  * ProfileActionDAO
  *
  */
+@ApplicationScoped
 public class ViewActionDAO implements IViewActionDAO
 {
     private static final String SQL_QUERY_SELECT_ACTIONS = " SELECT name_key, description_key, action_url, icon_url, action_permission "

@@ -59,6 +59,7 @@ import fr.paris.lutece.portal.service.user.attribute.AttributeService;
 import fr.paris.lutece.util.ReferenceList;
 import fr.paris.lutece.util.html.ItemNavigator;
 import fr.paris.lutece.util.url.UrlItem;
+import jakarta.enterprise.context.ApplicationScoped;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -67,8 +68,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
-import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.inject.Inject;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -77,10 +78,15 @@ import org.apache.commons.lang3.StringUtils;
  * ProfilesService
  * 
  */
+@ApplicationScoped
 public class ProfilesService implements IProfilesService
 {
     @Inject
     private IProfileActionService _profileActionService;
+    @Inject
+    private AttributeService _attributeService;
+    @Inject
+    private AttributeFieldService _attributeFieldService;
 
     /**
      * {@inheritDoc}
@@ -153,7 +159,7 @@ public class ProfilesService implements IProfilesService
         AdminUser user = AdminUserHome.findByPrimaryKey( nIdUser );
 
         // Remove User Fields
-        List<IAttribute> listAttributes = AttributeService.getInstance( ).getPluginAttributesWithoutFields( ProfilesPlugin.PLUGIN_NAME, locale );
+        List<IAttribute> listAttributes = _attributeService.getPluginAttributesWithoutFields( ProfilesPlugin.PLUGIN_NAME, locale );
         IAttribute attribute = listAttributes.get( 0 );
         List<AdminUserField> listUserFields = AdminUserFieldHome.selectUserFieldsByIdUserIdAttribute( user.getUserId( ), attribute.getIdAttribute( ) );
 
@@ -219,13 +225,13 @@ public class ProfilesService implements IProfilesService
             ProfileHome.create( profile, plugin );
 
             // Create user field
-            List<IAttribute> listAttributes = AttributeService.getInstance( ).getPluginAttributesWithoutFields( ProfilesPlugin.PLUGIN_NAME, locale );
+            List<IAttribute> listAttributes = _attributeService.getPluginAttributesWithoutFields( ProfilesPlugin.PLUGIN_NAME, locale );
             AttributeField attributeField = new AttributeField( );
             attributeField.setTitle( profile.getKey( ) );
             attributeField.setValue( profile.getDescription( ) );
             attributeField.setDefaultValue( false );
             attributeField.setAttribute( listAttributes.get( 0 ) );
-            AttributeFieldService.getInstance( ).createAttributeField( attributeField );
+            _attributeFieldService.createAttributeField( attributeField );
         }
 
         return profile;
@@ -242,7 +248,7 @@ public class ProfilesService implements IProfilesService
             ProfileHome.update( profile, plugin );
 
             // Modify user field
-            List<IAttribute> listAttributes = AttributeService.getInstance( ).getPluginAttributesWithFields( ProfilesPlugin.PLUGIN_NAME, locale );
+            List<IAttribute> listAttributes = _attributeService.getPluginAttributesWithFields( ProfilesPlugin.PLUGIN_NAME, locale );
 
             for ( IAttribute attribute : listAttributes )
             {
@@ -256,7 +262,7 @@ public class ProfilesService implements IProfilesService
                     if ( ( attributeField.getTitle( ) != null ) && attributeField.getTitle( ).equals( profile.getKey( ) ) )
                     {
                         attributeField.setValue( profile.getDescription( ) );
-                        AttributeFieldService.getInstance( ).updateAttributeField( attributeField );
+                        _attributeFieldService.updateAttributeField( attributeField );
 
                         break;
                     }
@@ -276,7 +282,7 @@ public class ProfilesService implements IProfilesService
         ProfileHome.remove( strProfileKey, plugin );
 
         // Remove user field
-        List<IAttribute> listAttributes = AttributeService.getInstance( ).getPluginAttributesWithFields( ProfilesPlugin.PLUGIN_NAME, locale );
+        List<IAttribute> listAttributes = _attributeService.getPluginAttributesWithFields( ProfilesPlugin.PLUGIN_NAME, locale );
 
         for ( IAttribute attribute : listAttributes )
         {
@@ -289,7 +295,7 @@ public class ProfilesService implements IProfilesService
             {
                 if ( ( attributeField.getTitle( ) != null ) && attributeField.getTitle( ).equals( strProfileKey ) )
                 {
-                    AttributeFieldService.getInstance( ).removeAttributeFieldFromIdField( attributeField.getIdField( ) );
+                    _attributeFieldService.removeAttributeFieldFromIdField( attributeField.getIdField( ) );
 
                     break;
                 }

@@ -51,7 +51,6 @@ import fr.paris.lutece.portal.service.dashboard.IDashboardComponent;
 import fr.paris.lutece.portal.service.message.AdminMessage;
 import fr.paris.lutece.portal.service.message.AdminMessageService;
 import fr.paris.lutece.portal.service.rbac.RBACService;
-import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.util.AppPathService;
@@ -75,7 +74,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.enterprise.context.SessionScoped;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -84,6 +86,8 @@ import org.apache.commons.lang3.StringUtils;
  * class ViewsJspBean
  * 
  */
+@SessionScoped
+@Named
 public class ViewsJspBean extends PluginAdminPageJspBean
 {
 
@@ -112,14 +116,19 @@ public class ViewsJspBean extends PluginAdminPageJspBean
     private int _nDefaultItemsPerPage;
     private String _strCurrentPageIndex;
     private Map<String, ItemNavigator> _itemNavigators = new HashMap<>( );
-    private IViewsService _viewsService = SpringContextService.getBean( ProfilesConstants.BEAN_VIEWS_SERVICE );
-    private IViewActionService _viewActionService = SpringContextService.getBean( ProfilesConstants.BEAN_VIEW_ACTION_SERVICE );
-    private IProfilesService _profilesService = SpringContextService.getBean( ProfilesConstants.BEAN_PROFILES_SERVICE );
+    @Inject
+    private IViewsService _viewsService;
+    @Inject
+    private IViewActionService _viewActionService;
+    @Inject
+    private IProfilesService _profilesService;
+    @Inject
+    private DashboardService _dashboardService;
     private ViewFilter _vFilter;
 
     /**
      * Return views management
-     * 
+     *
      * @param request
      *            The Http request
      * @return Html views management page
@@ -645,7 +654,7 @@ public class ViewsJspBean extends PluginAdminPageJspBean
         List<IDashboardComponent> listNotSetDashboards = _viewsService.getNotSetDashboards( strViewKey, getUser( ), getPlugin( ) );
         model.put( ProfilesConstants.MARK_NOT_SET_DASHBOARDS, listNotSetDashboards );
 
-        model.put( ProfilesConstants.MARK_COLUMN_COUNT, DashboardService.getInstance( ).getColumnCount( ) );
+        model.put( ProfilesConstants.MARK_COLUMN_COUNT, _dashboardService.getColumnCount( ) );
         model.put( ProfilesConstants.MARK_MAP_AVAILABLE_ORDERS, _viewsService.getMapAvailableOrders( getPlugin( ) ) );
         model.put( ProfilesConstants.MARK_LIST_AVAILABLE_COLUMNS, _viewsService.getListAvailableColumns( ) );
         model.put( ProfilesConstants.MARK_MAP_COLUMN_ORDER_STATUS, _viewsService.getOrderedColumnsStatus( strViewKey, getPlugin( ) ) );
@@ -690,7 +699,7 @@ public class ViewsJspBean extends PluginAdminPageJspBean
         }
         catch( NumberFormatException nfe )
         {
-            AppLogService.error( "ViewJspBean.doReorderColumn : " + nfe.getMessage( ), nfe );
+            AppLogService.error( "ViewJspBean.doReorderColumn : {}", nfe.getMessage( ), nfe );
 
             return AdminMessageService.getMessageUrl( request, Messages.MANDATORY_FIELDS, AdminMessage.TYPE_STOP );
         }
@@ -733,10 +742,7 @@ public class ViewsJspBean extends PluginAdminPageJspBean
         {
             bCreate = true;
 
-            if ( AppLogService.isDebugEnabled( ) )
-            {
-                AppLogService.debug( "Dashboard " + strDashboardName + " has no property set. Retrieving from SpringContext" );
-            }
+            AppLogService.debug( "Dashboard {} has no property set. Retrieving from CDI Context", strDashboardName );
 
             dashboard = DashboardFactory.getDashboardComponent( strDashboardName );
 

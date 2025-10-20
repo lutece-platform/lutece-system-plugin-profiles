@@ -33,8 +33,9 @@
  */
 package fr.paris.lutece.plugins.profiles.service;
 
-import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.user.attribute.AdminUserFieldListenerService;
+import jakarta.enterprise.inject.literal.NamedLiteral;
+import jakarta.enterprise.inject.spi.CDI;
 
 /**
  *
@@ -59,6 +60,6 @@ public final class ProfilesAdminUserFieldListenerService
      */
     public static AdminUserFieldListenerService getService( )
     {
-        return SpringContextService.getBean( BEAN_PROFILES_ADMIN_USER_FIELD_SERVICE );
+        return CDI.current( ).select( AdminUserFieldListenerService.class, NamedLiteral.of( BEAN_PROFILES_ADMIN_USER_FIELD_SERVICE ) ).get( );
     }
 }
