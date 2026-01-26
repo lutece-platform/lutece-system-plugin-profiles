@@ -22,8 +22,8 @@ INSERT INTO core_admin_role (role_key,role_description) VALUES ('profiles_views_
 --
 -- Init  table core_admin_role_resource
 --
-INSERT INTO core_admin_role_resource (rbac_id,role_key,resource_type,resource_id,permission) VALUES (150,'profiles_manager','PROFILES','*','*');
-INSERT INTO core_admin_role_resource (rbac_id,role_key,resource_type,resource_id,permission) VALUES (151,'profiles_views_manager','PROFILES_VIEWS','*','*');
+INSERT INTO core_admin_role_resource (role_key,resource_type,resource_id,permission) VALUES ('profiles_manager','PROFILES','*','*');
+INSERT INTO core_admin_role_resource (role_key,resource_type,resource_id,permission) VALUES ('profiles_views_manager','PROFILES_VIEWS','*','*');
 
 --
 -- Init  table core_user_role
