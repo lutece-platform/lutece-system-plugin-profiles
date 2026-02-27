@@ -8,7 +8,7 @@
 						<@item_navigation item_navigator=item_navigator />
 					</@boxHeader>
 					<@boxBody>
-					   <#if available_list?size &gt; 0>
+					   <#if available_list?size gt 0>
 							<@tform name='assign-rights-profile' method='post' action='jsp/admin/plugins/profiles/DoAssignRightsProfile.jsp'>
 								<@input type='hidden' name='profile_key' value='${profile.key}' />
 								<@formGroup labelFor='profile_key' labelKey='#i18n{profiles.assign_rights_profile.labelAvailableRights}' rows=2>
@@ -21,7 +21,7 @@
 								</#if>
 							</@tform>
 						<#else>
-							<@alert color='warning'>#i18n{profiles.assign_rights_profile.noRightToAssign}</@alert>
+							<@empty title='#i18n{profiles.assign_rights_profile.noRightToAssign}' />
 						</#if>
 					</@boxBody>
 				</@box>
@@ -32,12 +32,12 @@
 						<#if profile.actions?exists>
 							<#list profile.actions as action>
 								<#if action.permission!='DELETE_DELETE'><#assign color='primary' /><#else><#assign color='danger' /></#if>
-								<@aButton href='${action.url}?profile_key=${profile.key}' title='${action.description}' hideTitle=['all'] buttonIcon='${action.iconUrl}' color=color size='sm' />
+								<@aButton href='${action.url}?profile_key=${profile.key}' title='${action.description}' hideTitle=['all'] buttonIcon='${action.iconUrl}' color=color  />
 							</#list>
 						</#if>
 					</@boxHeader>
 					<@boxBody>
-						<#if assigned_list?size &gt; 0 >
+						<#if assigned_list?size gt 0 >
 							<@table>
 								<@tr>            
 									<@th>#i18n{profiles.assign_rights_profile.columnTitleName}</@th>
@@ -57,14 +57,14 @@
 										<@td>${assigned_item.level}</@td>
 										<@td>
 											<#if permission>
-												<@aButton href='jsp/admin/plugins/profiles/DoUnassignRightProfile.jsp?profile_key=${profile.key}&id_right=${assigned_item.id}&anchor=anchor-${anchor}' title='#i18n{profiles.assign_rights_profile.actionUnassign}' hideTitle=['all'] buttonIcon='trash' color='danger' size='sm' />
+												<@aButton href='jsp/admin/plugins/profiles/DoUnassignRightProfile.jsp?profile_key=${profile.key}&id_right=${assigned_item.id}&anchor=anchor-${anchor}' title='#i18n{profiles.assign_rights_profile.actionUnassign}' hideTitle=['all'] buttonIcon='trash' color='danger'  />
 											</#if>
 										</@td>
 									</@tr>
 								</#list>
 							</@table>
 						<#else>
-							<@alert color='warning'>#i18n{profiles.assign_rights_profile.noAssignedList}</@alert>
+							<@empty title='#i18n{profiles.assign_rights_profile.noAssignedList}' />
 						</#if>	
 					</@boxBody>
 				</@box>
