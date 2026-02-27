@@ -8,8 +8,8 @@
 						<@item_navigation item_navigator=item_navigator />
 					</@boxHeader>
 					<@boxBody>
-						<p><strong>#i18n{profiles.assign_rights_profile.profileDescription}</strong></p>
-						<p>${profile.description}</p>
+						<@p><strong>#i18n{profiles.assign_rights_profile.profileDescription}</strong></@p>
+						<@p>${profile.description}</@p>
 					</@boxBody>
 				</@box>
 			</@columns>
@@ -19,7 +19,7 @@
 						<#if profile.actions?exists>
 							<#list profile.actions as action>
 								<#if action.permission!='DELETE_DELETE'><#assign color='primary' /><#else><#assign color='danger' /></#if>
-								<@aButton href='${action.url}?profile_key=${profile.key}' title='${action.description}' hideTitle=['all'] buttonIcon='${action.iconUrl}' color=color size='sm' />
+								<@aButton href='${action.url}?profile_key=${profile.key}' title='${action.description}' hideTitle=['all'] buttonIcon='${action.iconUrl} me-1' color=color  />
 							</#list>
 						</#if>
 					</@boxHeader>
