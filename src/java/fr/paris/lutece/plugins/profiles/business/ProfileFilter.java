@@ -40,6 +40,7 @@ import fr.paris.lutece.util.url.UrlItem;
 
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 
 import java.net.URLEncoder;
@@ -51,8 +52,9 @@ import jakarta.servlet.http.HttpServletRequest;
  * ProfileFilter
  *
  */
-public class ProfileFilter
+public class ProfileFilter implements Serializable
 {
+    private static final long serialVersionUID = 1L;
     private String _strKey;
     private String _strDescription;
 
