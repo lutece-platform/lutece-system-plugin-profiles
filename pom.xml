@@ -3,7 +3,7 @@
     <parent>
         <artifactId>lutece-global-pom</artifactId>
         <groupId>fr.paris.lutece.tools</groupId>
-        <version>8.0.0</version>
+        <version>8.0.3</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -43,6 +43,11 @@
 		    <type>jar</type>
 		    <scope>test</scope>
 		</dependency>
+        <dependency>
+            <groupId>org.glassfish.jaxb</groupId>
+            <artifactId>jaxb-runtime</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <scm>

@@ -42,29 +42,29 @@ import fr.paris.lutece.test.LuteceTestCase;
 
 public class ProfileBusinessTest extends LuteceTestCase
 {
-    private Plugin _plugin = PluginService.getPlugin( ProfilesPlugin.PLUGIN_NAME );
-
     @Test
     void testCRUD( )
     {
+        Plugin plugin = PluginService.getPlugin( ProfilesPlugin.PLUGIN_NAME );
+
         Profile profile = new Profile( );
         profile.setKey( "key" );
         profile.setDescription( "desc" );
 
-        ProfileHome.create( profile, _plugin );
+        ProfileHome.create( profile, plugin );
 
-        Profile loaded = ProfileHome.findByPrimaryKey( profile.getKey( ), _plugin );
+        Profile loaded = ProfileHome.findByPrimaryKey( profile.getKey( ), plugin );
         assertEquals( profile.getDescription( ), loaded.getDescription( ) );
 
         profile.setDescription( "desc2" );
-        ProfileHome.update( profile, _plugin );
+        ProfileHome.update( profile, plugin );
 
-        loaded = ProfileHome.findByPrimaryKey( profile.getKey( ), _plugin );
+        loaded = ProfileHome.findByPrimaryKey( profile.getKey( ), plugin );
         assertEquals( profile.getDescription( ), loaded.getDescription( ) );
 
-        ProfileHome.remove( profile.getKey( ), _plugin );
+        ProfileHome.remove( profile.getKey( ), plugin );
 
-        loaded = ProfileHome.findByPrimaryKey( profile.getKey( ), _plugin );
+        loaded = ProfileHome.findByPrimaryKey( profile.getKey( ), plugin );
         assertNull( loaded );
     }
 }
