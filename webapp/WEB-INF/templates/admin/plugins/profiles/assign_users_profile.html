@@ -154,7 +154,7 @@
 								<@td>
 									<@aButton href='jsp/admin/user/ModifyUser.jsp?id_user=${assigned_item.userId}' title='#i18n{profiles.actions.labelModify}' hideTitle=['all'] buttonIcon='edit'  />
 									<#if permission>
-									<@aButton href='jsp/admin/plugins/profiles/DoUnassignUserProfile.jsp?profile_key=${profile.key}&amp;id_user=${assigned_item.userId}&amp;attribute_${attribute.idAttribute}=${attribute_field.idField}&amp;anchor=anchor-${anchor}' title='#i18n{profiles.assign_users_profile.actionUnassign}' hideTitle=['all'] buttonIcon='trash' color='danger'  />
+									<@aButton href='jsp/admin/plugins/profiles/DoUnassignUserProfile.jsp?profile_key=${profile.key}&id_user=${assigned_item.userId}&attribute_${attribute.idAttribute}=${attribute_field.idField}&anchor=anchor-${anchor}' title='#i18n{profiles.assign_users_profile.actionUnassign}' hideTitle=['all'] buttonIcon='trash' color='danger'  />
 									</#if>
 								</@td>
 							</@tr>

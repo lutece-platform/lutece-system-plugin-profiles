@@ -92,7 +92,7 @@
 					<#assign column_key = column_refItem.code />
 					<@box title='#i18n{portal.dashboard.title.column} ${column_key}'>
 					<#if map_column_order_status[column_key]?exists && !map_column_order_status[column_key]>
-						<@aButton href='jsp/admin/plugins/profiles/DoReorderColumn.jsp?column=${column_key}&amp;view_key=${view.key}' title='#i18n{portal.dashboard.action.reorder}' hideTitle=['xs'] buttonIcon='arrows-sort' />
+						<@aButton href='jsp/admin/plugins/profiles/DoReorderColumn.jsp?column=${column_key}&view_key=${view.key}' title='#i18n{portal.dashboard.action.reorder}' hideTitle=['xs'] buttonIcon='arrows-sort' />
 					</#if>
 					<@dashboardTable items=map_dashboards[column_key] list_available_orders_column=map_available_orders[column_key] />
 					<#-- suggest reorder if the column is not well ordered -->
