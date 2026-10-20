@@ -49,7 +49,7 @@
 									<@manageFeatureItemColumn auto=true hide=['xs']>${assigned_item.description}</@manageFeatureItemColumn>
 									<@manageFeatureItemColumn align='end'>
 										<@aButton href='jsp/admin/plugins/profiles/ModifyProfile.jsp?profile_key=${assigned_item.key}' title='#i18n{profiles.actions.labelModify}' hideTitle=['all'] buttonIcon='pencil' />
-										<#if permission><@aButton href='jsp/admin/plugins/profiles/DoUnassignProfileView.jsp?view_key=${view.key}&amp;profile_key=${assigned_item.key}&amp;anchor=anchor-${anchor}' title='#i18n{profiles.assign_profiles_view.actionUnassign}' hideTitle=['all'] buttonIcon='trash' color='danger' /></#if>
+										<#if permission><@aButton href='jsp/admin/plugins/profiles/DoUnassignProfileView.jsp?view_key=${view.key}&profile_key=${assigned_item.key}&anchor=anchor-${anchor}' title='#i18n{profiles.assign_profiles_view.actionUnassign}' hideTitle=['all'] buttonIcon='trash' color='danger' /></#if>
 									</@manageFeatureItemColumn>
 								</@manageFeatureItem>
 							</#list>
