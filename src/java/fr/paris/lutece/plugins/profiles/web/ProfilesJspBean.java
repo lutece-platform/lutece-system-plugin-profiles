@@ -82,6 +82,8 @@ import fr.paris.lutece.util.sort.AttributeComparator;
 import fr.paris.lutece.util.string.StringUtil;
 import fr.paris.lutece.util.url.UrlItem;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -121,6 +123,8 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
 
     // JSP
     private static final String JSP_MANAGE_PROFILES = "ManageProfiles.jsp";
+    private static final String JSP_URL_MANAGE_PROFILES = "jsp/admin/plugins/profiles/ManageProfiles.jsp";
+    private static final String JSP_URL_CREATE_PROFILE = "jsp/admin/plugins/profiles/CreateProfile.jsp";
     private static final String JSP_URL_DO_REMOVE_PROFILE = "jsp/admin/plugins/profiles/DoRemoveProfile.jsp";
     private static final String JSP_URL_MODIFY_PROFILE = "jsp/admin/plugins/profiles/ModifyProfile.jsp";
     private static final String JSP_URL_ASSIGN_RIGHTS_PROFILE = "jsp/admin/plugins/profiles/AssignRightsProfile.jsp";
@@ -269,7 +273,8 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
         if ( !RBACService.isAuthorized( Profile.RESOURCE_TYPE, RBAC.WILDCARD_RESOURCES_ID, ProfilesResourceIdService.PERMISSION_CREATE_PROFILE,
                 (User) getUser( ) ) )
         {
-            return AdminMessageService.getMessageUrl( request, Messages.USER_ACCESS_DENIED, AdminMessage.TYPE_STOP );
+            return AdminMessageService.getMessageUrlReturningTo( request, Messages.USER_ACCESS_DENIED, AdminMessage.TYPE_STOP,
+                    getJspManageProfiles( request ) );
         }
 
         String strKey = request.getParameter( ProfilesConstants.PARAMETER_PROFILE_KEY );
@@ -277,24 +282,28 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
 
         if ( StringUtils.isBlank( strKey ) )
         {
-            return AdminMessageService.getMessageUrl( request, Messages.MANDATORY_FIELDS, AdminMessage.TYPE_STOP );
+            return AdminMessageService.getMessageUrlReturningTo( request, Messages.MANDATORY_FIELDS, AdminMessage.TYPE_STOP,
+                    AppPathService.getBaseUrl( request ) + JSP_URL_CREATE_PROFILE );
         }
 
         if ( StringUtils.isBlank( strDescription ) )
         {
-            return AdminMessageService.getMessageUrl( request, Messages.MANDATORY_FIELDS, AdminMessage.TYPE_STOP );
+            return AdminMessageService.getMessageUrlReturningTo( request, Messages.MANDATORY_FIELDS, AdminMessage.TYPE_STOP,
+                    AppPathService.getBaseUrl( request ) + JSP_URL_CREATE_PROFILE );
         }
 
         // Check if profile already exist
         if ( _profilesService.checkExistProfile( strKey, getPlugin( ) ) )
         {
-            return AdminMessageService.getMessageUrl( request, ProfilesConstants.MESSAGE_PROFILE_ALREADY_EXISTS, AdminMessage.TYPE_STOP );
+            return AdminMessageService.getMessageUrlReturningTo( request, ProfilesConstants.MESSAGE_PROFILE_ALREADY_EXISTS, AdminMessage.TYPE_STOP,
+                    AppPathService.getBaseUrl( request ) + JSP_URL_CREATE_PROFILE );
         }
 
         // Check if strKey contains accentuated characters
         if ( !StringUtil.checkCodeKey( strKey ) )
         {
-            return AdminMessageService.getMessageUrl( request, ProfilesConstants.MESSAGE_ACCENTUATED_CHARACTER, AdminMessage.TYPE_STOP );
+            return AdminMessageService.getMessageUrlReturningTo( request, ProfilesConstants.MESSAGE_ACCENTUATED_CHARACTER, AdminMessage.TYPE_STOP,
+                    AppPathService.getBaseUrl( request ) + JSP_URL_CREATE_PROFILE );
         }
 
         Profile profile = new Profile( );
@@ -337,13 +346,15 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
 
         if ( !RBACService.isAuthorized( Profile.RESOURCE_TYPE, strProfileKey, ProfilesResourceIdService.PERMISSION_DELETE_PROFILE, (User) getUser( ) ) )
         {
-            return AdminMessageService.getMessageUrl( request, Messages.USER_ACCESS_DENIED, AdminMessage.TYPE_STOP );
+            return AdminMessageService.getMessageUrlReturningTo( request, Messages.USER_ACCESS_DENIED, AdminMessage.TYPE_STOP,
+                    getJspManageProfiles( request ) );
         }
 
         // check that no user has this profile
         if ( _profilesService.checkProfileAttributed( strProfileKey, getPlugin( ) ) )
         {
-            return AdminMessageService.getMessageUrl( request, ProfilesConstants.PROPERTY_PROFILE_ATTRIBUTED, AdminMessage.TYPE_STOP );
+            return AdminMessageService.getMessageUrlReturningTo( request, ProfilesConstants.PROPERTY_PROFILE_ATTRIBUTED, AdminMessage.TYPE_STOP,
+                    getJspManageProfiles( request ) );
         }
 
         _profilesService.removeRights( strProfileKey, getPlugin( ) );
@@ -406,14 +417,16 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
 
         if ( !RBACService.isAuthorized( Profile.RESOURCE_TYPE, strProfileKey, ProfilesResourceIdService.PERMISSION_MODIFY_PROFILE, (User) getUser( ) ) )
         {
-            return AdminMessageService.getMessageUrl( request, Messages.USER_ACCESS_DENIED, AdminMessage.TYPE_STOP );
+            return AdminMessageService.getMessageUrlReturningTo( request, Messages.USER_ACCESS_DENIED, AdminMessage.TYPE_STOP,
+                    getJspManageProfiles( request ) );
         }
 
         String strDescription = request.getParameter( ProfilesConstants.PARAMETER_PROFILE_DESCRIPTION );
 
         if ( StringUtils.isBlank( strDescription ) )
         {
-            return AdminMessageService.getMessageUrl( request, Messages.MANDATORY_FIELDS, AdminMessage.TYPE_STOP );
+            return AdminMessageService.getMessageUrlReturningTo( request, Messages.MANDATORY_FIELDS, AdminMessage.TYPE_STOP,
+                    getJspOfProfile( request, JSP_URL_MODIFY_PROFILE, strProfileKey ) );
         }
 
         Profile profile = new Profile( );
@@ -533,7 +546,8 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
         if ( !RBACService.isAuthorized( Profile.RESOURCE_TYPE, strProfileKey, ProfilesResourceIdService.PERMISSION_MANAGE_RIGHTS_ASSIGNMENT,
                 (User) getUser( ) ) )
         {
-            return AdminMessageService.getMessageUrl( request, Messages.USER_ACCESS_DENIED, AdminMessage.TYPE_STOP );
+            return AdminMessageService.getMessageUrlReturningTo( request, Messages.USER_ACCESS_DENIED, AdminMessage.TYPE_STOP,
+                    getJspOfProfile( request, JSP_URL_ASSIGN_RIGHTS_PROFILE, strProfileKey ) );
         }
 
         // retrieve the selected portlets ids
@@ -580,7 +594,8 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
         if ( !RBACService.isAuthorized( Profile.RESOURCE_TYPE, strProfileKey, ProfilesResourceIdService.PERMISSION_MANAGE_RIGHTS_ASSIGNMENT,
                 (User) getUser( ) ) )
         {
-            return AdminMessageService.getMessageUrl( request, Messages.USER_ACCESS_DENIED, AdminMessage.TYPE_STOP );
+            return AdminMessageService.getMessageUrlReturningTo( request, Messages.USER_ACCESS_DENIED, AdminMessage.TYPE_STOP,
+                    getJspOfProfile( request, JSP_URL_ASSIGN_RIGHTS_PROFILE, strProfileKey ) );
         }
 
         String strIdRight = request.getParameter( ProfilesConstants.PARAMETER_ID_RIGHT );
@@ -783,7 +798,8 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
         if ( !RBACService.isAuthorized( Profile.RESOURCE_TYPE, strProfileKey, ProfilesResourceIdService.PERMISSION_MANAGE_WORKGROUPS_ASSIGNMENT,
                 (User) getUser( ) ) )
         {
-            return AdminMessageService.getMessageUrl( request, Messages.USER_ACCESS_DENIED, AdminMessage.TYPE_STOP );
+            return AdminMessageService.getMessageUrlReturningTo( request, Messages.USER_ACCESS_DENIED, AdminMessage.TYPE_STOP,
+                    getJspOfProfile( request, JSP_URL_ASSIGN_WORKGROUPS_PROFILE, strProfileKey ) );
         }
 
         // retrieve the selected portlets ids
@@ -830,7 +846,8 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
         if ( !RBACService.isAuthorized( Profile.RESOURCE_TYPE, strProfileKey, ProfilesResourceIdService.PERMISSION_MANAGE_WORKGROUPS_ASSIGNMENT,
                 (User) getUser( ) ) )
         {
-            return AdminMessageService.getMessageUrl( request, Messages.USER_ACCESS_DENIED, AdminMessage.TYPE_STOP );
+            return AdminMessageService.getMessageUrlReturningTo( request, Messages.USER_ACCESS_DENIED, AdminMessage.TYPE_STOP,
+                    getJspOfProfile( request, JSP_URL_ASSIGN_WORKGROUPS_PROFILE, strProfileKey ) );
         }
 
         String strWorkgroupKey = request.getParameter( ProfilesConstants.PARAMETER_WORKGROUP_KEY );
@@ -992,7 +1009,8 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
         if ( !RBACService.isAuthorized( Profile.RESOURCE_TYPE, strProfileKey, ProfilesResourceIdService.PERMISSION_MANAGE_ROLES_ASSIGNMENT,
                 (User) getUser( ) ) )
         {
-            return AdminMessageService.getMessageUrl( request, Messages.USER_ACCESS_DENIED, AdminMessage.TYPE_STOP );
+            return AdminMessageService.getMessageUrlReturningTo( request, Messages.USER_ACCESS_DENIED, AdminMessage.TYPE_STOP,
+                    getJspOfProfile( request, JSP_URL_ASSIGN_ROLES_PROFILE, strProfileKey ) );
         }
 
         // retrieve the selected portlets ids
@@ -1039,7 +1057,8 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
         if ( !RBACService.isAuthorized( Profile.RESOURCE_TYPE, strProfileKey, ProfilesResourceIdService.PERMISSION_MANAGE_ROLES_ASSIGNMENT,
                 (User) getUser( ) ) )
         {
-            return AdminMessageService.getMessageUrl( request, Messages.USER_ACCESS_DENIED, AdminMessage.TYPE_STOP );
+            return AdminMessageService.getMessageUrlReturningTo( request, Messages.USER_ACCESS_DENIED, AdminMessage.TYPE_STOP,
+                    getJspOfProfile( request, JSP_URL_ASSIGN_ROLES_PROFILE, strProfileKey ) );
         }
 
         String strRoleKey = request.getParameter( ProfilesConstants.PARAMETER_ROLE_KEY );
@@ -1252,7 +1271,8 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
             if ( !RBACService.isAuthorized( Profile.RESOURCE_TYPE, strProfileKey, ProfilesResourceIdService.PERMISSION_MANAGE_USERS_ASSIGNMENT,
                     (User) getUser( ) ) )
             {
-                return AdminMessageService.getMessageUrl( request, Messages.USER_ACCESS_DENIED, AdminMessage.TYPE_STOP );
+                return AdminMessageService.getMessageUrlReturningTo( request, Messages.USER_ACCESS_DENIED, AdminMessage.TYPE_STOP,
+                        getJspOfProfile( request, JSP_URL_ASSIGN_USERS_PROFILE, strProfileKey ) );
             }
 
             // retrieve the selected user ids
@@ -1288,7 +1308,8 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
         if ( !RBACService.isAuthorized( Profile.RESOURCE_TYPE, strProfileKey, ProfilesResourceIdService.PERMISSION_MANAGE_USERS_ASSIGNMENT,
                 (User) getUser( ) ) )
         {
-            return AdminMessageService.getMessageUrl( request, Messages.USER_ACCESS_DENIED, AdminMessage.TYPE_STOP );
+            return AdminMessageService.getMessageUrlReturningTo( request, Messages.USER_ACCESS_DENIED, AdminMessage.TYPE_STOP,
+                    getJspOfProfile( request, JSP_URL_ASSIGN_USERS_PROFILE, strProfileKey ) );
         }
 
         String strIdUser = request.getParameter( ProfilesConstants.PARAMETER_ID_USER );
@@ -1372,7 +1393,8 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
             if ( !RBACService.isAuthorized( Profile.RESOURCE_TYPE, strProfileKey, ProfilesResourceIdService.PERMISSION_MANAGE_VIEW_ASSIGNMENT,
                     (User) getUser( ) ) )
             {
-                return AdminMessageService.getMessageUrl( request, Messages.USER_ACCESS_DENIED, AdminMessage.TYPE_STOP );
+                return AdminMessageService.getMessageUrlReturningTo( request, Messages.USER_ACCESS_DENIED, AdminMessage.TYPE_STOP,
+                        getJspOfProfile( request, JSP_URL_ASSIGN_VIEW_PROFILE, strProfileKey ) );
             }
 
             String strViewKey = request.getParameter( ProfilesConstants.PARAMETER_VIEW_KEY );
@@ -1395,6 +1417,44 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
         }
 
         return strReturn;
+    }
+
+    /**
+     * Return the url of the jsp manage profiles
+     * 
+     * @param request
+     *            The HTTP request
+     * @return the url of the jsp manage profiles
+     */
+    private String getJspManageProfiles( HttpServletRequest request )
+    {
+        return AppPathService.getBaseUrl( request ) + JSP_URL_MANAGE_PROFILES;
+    }
+
+    /**
+     * Return the url of a jsp of a profile, or of the jsp manage profiles when the profile is unknown
+     * 
+     * @param request
+     *            The HTTP request
+     * @param strJspUrl
+     *            the url of the jsp, relative to the webapp
+     * @param strProfileKey
+     *            the key of the profile
+     * @return the url of the jsp of the profile
+     */
+    private String getJspOfProfile( HttpServletRequest request, String strJspUrl, String strProfileKey )
+    {
+        Profile profile = ( strProfileKey == null ) ? null : _profilesService.findByPrimaryKey( strProfileKey, getPlugin( ) );
+
+        if ( profile == null )
+        {
+            return getJspManageProfiles( request );
+        }
+
+        UrlItem url = new UrlItem( AppPathService.getBaseUrl( request ) + strJspUrl );
+        url.addParameter( ProfilesConstants.PARAMETER_PROFILE_KEY, URLEncoder.encode( profile.getKey( ), StandardCharsets.UTF_8 ) );
+
+        return url.getUrl( );
     }
 
     /**
