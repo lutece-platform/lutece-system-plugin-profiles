@@ -68,6 +68,8 @@ import fr.paris.lutece.util.sort.AttributeComparator;
 import fr.paris.lutece.util.string.StringUtil;
 import fr.paris.lutece.util.url.UrlItem;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -104,6 +106,8 @@ public class ViewsJspBean extends PluginAdminPageJspBean
 
     // JSP
     private static final String JSP_MANAGE_VIEWS = "ManageViews.jsp";
+    private static final String JSP_URL_MANAGE_VIEWS = "jsp/admin/plugins/profiles/ManageViews.jsp";
+    private static final String JSP_URL_CREATE_VIEW = "jsp/admin/plugins/profiles/CreateView.jsp";
     private static final String JSP_URL_DO_REMOVE_VIEW = "jsp/admin/plugins/profiles/DoRemoveView.jsp";
     private static final String JSP_URL_MODIFY_VIEW = "jsp/admin/plugins/profiles/ModifyView.jsp";
     private static final String JSP_URL_ASSIGN_PROFILES_VIEW = "jsp/admin/plugins/profiles/AssignProfilesView.jsp";
@@ -245,7 +249,7 @@ public class ViewsJspBean extends PluginAdminPageJspBean
     {
         if ( !RBACService.isAuthorized( View.RESOURCE_TYPE, RBAC.WILDCARD_RESOURCES_ID, ViewsResourceIdService.PERMISSION_CREATE_VIEW, (User) getUser( ) ) )
         {
-            return AdminMessageService.getMessageUrl( request, Messages.USER_ACCESS_DENIED, AdminMessage.TYPE_STOP );
+            return AdminMessageService.getMessageUrlReturningTo( request, Messages.USER_ACCESS_DENIED, AdminMessage.TYPE_STOP, getJspManageViews( request ) );
         }
 
         String strKey = request.getParameter( ProfilesConstants.PARAMETER_VIEW_KEY );
@@ -253,24 +257,28 @@ public class ViewsJspBean extends PluginAdminPageJspBean
 
         if ( StringUtils.isBlank( strKey ) )
         {
-            return AdminMessageService.getMessageUrl( request, Messages.MANDATORY_FIELDS, AdminMessage.TYPE_STOP );
+            return AdminMessageService.getMessageUrlReturningTo( request, Messages.MANDATORY_FIELDS, AdminMessage.TYPE_STOP,
+                    AppPathService.getBaseUrl( request ) + JSP_URL_CREATE_VIEW );
         }
 
         if ( StringUtils.isBlank( strDescription ) )
         {
-            return AdminMessageService.getMessageUrl( request, Messages.MANDATORY_FIELDS, AdminMessage.TYPE_STOP );
+            return AdminMessageService.getMessageUrlReturningTo( request, Messages.MANDATORY_FIELDS, AdminMessage.TYPE_STOP,
+                    AppPathService.getBaseUrl( request ) + JSP_URL_CREATE_VIEW );
         }
 
         // Check if the view already exists
         if ( _viewsService.checkExistView( strKey, getPlugin( ) ) )
         {
-            return AdminMessageService.getMessageUrl( request, ProfilesConstants.MESSAGE_VIEW_ALREADY_EXISTS, AdminMessage.TYPE_STOP );
+            return AdminMessageService.getMessageUrlReturningTo( request, ProfilesConstants.MESSAGE_VIEW_ALREADY_EXISTS, AdminMessage.TYPE_STOP,
+                    AppPathService.getBaseUrl( request ) + JSP_URL_CREATE_VIEW );
         }
 
         // Check if strKey contains accentuated characters
         if ( !StringUtil.checkCodeKey( strKey ) )
         {
-            return AdminMessageService.getMessageUrl( request, ProfilesConstants.MESSAGE_ACCENTUATED_CHARACTER, AdminMessage.TYPE_STOP );
+            return AdminMessageService.getMessageUrlReturningTo( request, ProfilesConstants.MESSAGE_ACCENTUATED_CHARACTER, AdminMessage.TYPE_STOP,
+                    AppPathService.getBaseUrl( request ) + JSP_URL_CREATE_VIEW );
         }
 
         View view = new View( );
@@ -313,7 +321,7 @@ public class ViewsJspBean extends PluginAdminPageJspBean
 
         if ( !RBACService.isAuthorized( View.RESOURCE_TYPE, strViewKey, ViewsResourceIdService.PERMISSION_DELETE_VIEW, (User) getUser( ) ) )
         {
-            return AdminMessageService.getMessageUrl( request, Messages.USER_ACCESS_DENIED, AdminMessage.TYPE_STOP );
+            return AdminMessageService.getMessageUrlReturningTo( request, Messages.USER_ACCESS_DENIED, AdminMessage.TYPE_STOP, getJspManageViews( request ) );
         }
 
         _viewsService.removeProfiles( strViewKey, getPlugin( ) );
@@ -374,14 +382,15 @@ public class ViewsJspBean extends PluginAdminPageJspBean
 
         if ( !RBACService.isAuthorized( View.RESOURCE_TYPE, strViewKey, ViewsResourceIdService.PERMISSION_MODIFY_VIEW, (User) getUser( ) ) )
         {
-            return AdminMessageService.getMessageUrl( request, Messages.USER_ACCESS_DENIED, AdminMessage.TYPE_STOP );
+            return AdminMessageService.getMessageUrlReturningTo( request, Messages.USER_ACCESS_DENIED, AdminMessage.TYPE_STOP, getJspManageViews( request ) );
         }
 
         String strDescription = request.getParameter( ProfilesConstants.PARAMETER_VIEW_DESCRIPTION );
 
         if ( StringUtils.isBlank( strDescription ) )
         {
-            return AdminMessageService.getMessageUrl( request, Messages.MANDATORY_FIELDS, AdminMessage.TYPE_STOP );
+            return AdminMessageService.getMessageUrlReturningTo( request, Messages.MANDATORY_FIELDS, AdminMessage.TYPE_STOP,
+                    getJspOfView( request, JSP_URL_MODIFY_VIEW, strViewKey ) );
         }
 
         View view = new View( );
@@ -558,7 +567,8 @@ public class ViewsJspBean extends PluginAdminPageJspBean
 
             if ( !RBACService.isAuthorized( View.RESOURCE_TYPE, strViewKey, ViewsResourceIdService.PERMISSION_MANAGE_PROFILES_ASSIGNMENT, (User) getUser( ) ) )
             {
-                return AdminMessageService.getMessageUrl( request, Messages.USER_ACCESS_DENIED, AdminMessage.TYPE_STOP );
+                return AdminMessageService.getMessageUrlReturningTo( request, Messages.USER_ACCESS_DENIED, AdminMessage.TYPE_STOP,
+                        getJspOfView( request, JSP_URL_ASSIGN_PROFILES_VIEW, strViewKey ) );
             }
 
             // retrieve the selected portlets ids
@@ -581,7 +591,8 @@ public class ViewsJspBean extends PluginAdminPageJspBean
                                 profile.getKey( )
                         };
 
-                        return AdminMessageService.getMessageUrl( request, ProfilesConstants.PROPERTY_NO_MULTIPLE_VIEWS, args, AdminMessage.TYPE_STOP );
+                        return AdminMessageService.getMessageUrlReturningTo( request, ProfilesConstants.PROPERTY_NO_MULTIPLE_VIEWS, args,
+                                AdminMessage.TYPE_STOP, getJspOfView( request, JSP_URL_ASSIGN_PROFILES_VIEW, strViewKey ) );
                     }
                 }
             }
@@ -606,7 +617,8 @@ public class ViewsJspBean extends PluginAdminPageJspBean
 
         if ( !RBACService.isAuthorized( View.RESOURCE_TYPE, strViewKey, ViewsResourceIdService.PERMISSION_MANAGE_PROFILES_ASSIGNMENT, (User) getUser( ) ) )
         {
-            return AdminMessageService.getMessageUrl( request, Messages.USER_ACCESS_DENIED, AdminMessage.TYPE_STOP );
+            return AdminMessageService.getMessageUrlReturningTo( request, Messages.USER_ACCESS_DENIED, AdminMessage.TYPE_STOP,
+                    getJspOfView( request, JSP_URL_ASSIGN_PROFILES_VIEW, strViewKey ) );
         }
 
         String strProfileKey = request.getParameter( ProfilesConstants.PARAMETER_PROFILE_KEY );
@@ -681,14 +693,16 @@ public class ViewsJspBean extends PluginAdminPageJspBean
 
         if ( !RBACService.isAuthorized( View.RESOURCE_TYPE, strViewKey, ViewsResourceIdService.PERMISSION_MANAGE_DASHBOARDS, (User) getUser( ) ) )
         {
-            return AdminMessageService.getMessageUrl( request, Messages.USER_ACCESS_DENIED, AdminMessage.TYPE_STOP );
+            return AdminMessageService.getMessageUrlReturningTo( request, Messages.USER_ACCESS_DENIED, AdminMessage.TYPE_STOP,
+                    getJspOfView( request, JSP_URL_MANAGE_DASHBOARDS, strViewKey ) );
         }
 
         String strColumnName = request.getParameter( ProfilesConstants.PARAMETER_COLUMN );
 
         if ( StringUtils.isBlank( strColumnName ) )
         {
-            return AdminMessageService.getMessageUrl( request, Messages.MANDATORY_FIELDS, AdminMessage.TYPE_STOP );
+            return AdminMessageService.getMessageUrlReturningTo( request, Messages.MANDATORY_FIELDS, AdminMessage.TYPE_STOP,
+                    getJspOfView( request, JSP_URL_MANAGE_DASHBOARDS, strViewKey ) );
         }
 
         int nColumn = 0;
@@ -701,7 +715,8 @@ public class ViewsJspBean extends PluginAdminPageJspBean
         {
             AppLogService.error( "ViewJspBean.doReorderColumn : {}", nfe.getMessage( ), nfe );
 
-            return AdminMessageService.getMessageUrl( request, Messages.MANDATORY_FIELDS, AdminMessage.TYPE_STOP );
+            return AdminMessageService.getMessageUrlReturningTo( request, Messages.MANDATORY_FIELDS, AdminMessage.TYPE_STOP,
+                    getJspOfView( request, JSP_URL_MANAGE_DASHBOARDS, strViewKey ) );
         }
 
         _viewsService.doReorderColumn( strViewKey, nColumn, getPlugin( ) );
@@ -722,14 +737,16 @@ public class ViewsJspBean extends PluginAdminPageJspBean
 
         if ( !RBACService.isAuthorized( View.RESOURCE_TYPE, strViewKey, ViewsResourceIdService.PERMISSION_MANAGE_DASHBOARDS, (User) getUser( ) ) )
         {
-            return AdminMessageService.getMessageUrl( request, Messages.USER_ACCESS_DENIED, AdminMessage.TYPE_STOP );
+            return AdminMessageService.getMessageUrlReturningTo( request, Messages.USER_ACCESS_DENIED, AdminMessage.TYPE_STOP,
+                    getJspOfView( request, JSP_URL_MANAGE_DASHBOARDS, strViewKey ) );
         }
 
         String strDashboardName = request.getParameter( ProfilesConstants.PARAMETER_DASHBOARD_NAME );
 
         if ( StringUtils.isBlank( strDashboardName ) )
         {
-            return AdminMessageService.getMessageUrl( request, ProfilesConstants.MESSAGE_DASHBOARD_NOT_FOUND, AdminMessage.TYPE_STOP );
+            return AdminMessageService.getMessageUrlReturningTo( request, ProfilesConstants.MESSAGE_DASHBOARD_NOT_FOUND, AdminMessage.TYPE_STOP,
+                    getJspOfView( request, JSP_URL_MANAGE_DASHBOARDS, strViewKey ) );
         }
 
         // retrieve dashboard from database. If not found, will use Spring.
@@ -748,7 +765,8 @@ public class ViewsJspBean extends PluginAdminPageJspBean
 
             if ( dashboard == null )
             {
-                return AdminMessageService.getMessageUrl( request, ProfilesConstants.MESSAGE_DASHBOARD_NOT_FOUND, AdminMessage.TYPE_STOP );
+                return AdminMessageService.getMessageUrlReturningTo( request, ProfilesConstants.MESSAGE_DASHBOARD_NOT_FOUND, AdminMessage.TYPE_STOP,
+                        getJspOfView( request, JSP_URL_MANAGE_DASHBOARDS, strViewKey ) );
             }
         }
         else
@@ -763,7 +781,8 @@ public class ViewsJspBean extends PluginAdminPageJspBean
 
         if ( StringUtils.isBlank( strOrder ) && StringUtils.isBlank( strColumn ) )
         {
-            return AdminMessageService.getMessageUrl( request, Messages.MANDATORY_FIELDS, AdminMessage.TYPE_STOP );
+            return AdminMessageService.getMessageUrlReturningTo( request, Messages.MANDATORY_FIELDS, AdminMessage.TYPE_STOP,
+                    getJspOfView( request, JSP_URL_MANAGE_DASHBOARDS, strViewKey ) );
         }
 
         int nOrder = StringUtil.getIntValue( strOrder, -1 );
@@ -771,7 +790,8 @@ public class ViewsJspBean extends PluginAdminPageJspBean
 
         if ( ( nOrder == -1 ) || ( nColumn == -1 ) )
         {
-            return AdminMessageService.getMessageUrl( request, Messages.MANDATORY_FIELDS, AdminMessage.TYPE_STOP );
+            return AdminMessageService.getMessageUrlReturningTo( request, Messages.MANDATORY_FIELDS, AdminMessage.TYPE_STOP,
+                    getJspOfView( request, JSP_URL_MANAGE_DASHBOARDS, strViewKey ) );
         }
 
         dashboard.setOrder( nOrder );
@@ -795,7 +815,8 @@ public class ViewsJspBean extends PluginAdminPageJspBean
 
         if ( !RBACService.isAuthorized( View.RESOURCE_TYPE, strViewKey, ViewsResourceIdService.PERMISSION_MANAGE_DASHBOARDS, (User) getUser( ) ) )
         {
-            return AdminMessageService.getMessageUrl( request, Messages.USER_ACCESS_DENIED, AdminMessage.TYPE_STOP );
+            return AdminMessageService.getMessageUrlReturningTo( request, Messages.USER_ACCESS_DENIED, AdminMessage.TYPE_STOP,
+                    getJspOfView( request, JSP_URL_MANAGE_DASHBOARDS, strViewKey ) );
         }
 
         String strDashboardName = request.getParameter( ProfilesConstants.PARAMETER_DASHBOARD_NAME );
@@ -803,6 +824,44 @@ public class ViewsJspBean extends PluginAdminPageJspBean
         _viewsService.removeDashboard( strViewKey, strDashboardName, getPlugin( ) );
 
         return JSP_MANAGE_DASHBOARDS + ProfilesConstants.INTERROGATION_MARK + ProfilesConstants.PARAMETER_VIEW_KEY + ProfilesConstants.EQUAL + strViewKey;
+    }
+
+    /**
+     * Return the url of the jsp manage views
+     * 
+     * @param request
+     *            The HTTP request
+     * @return the url of the jsp manage views
+     */
+    private String getJspManageViews( HttpServletRequest request )
+    {
+        return AppPathService.getBaseUrl( request ) + JSP_URL_MANAGE_VIEWS;
+    }
+
+    /**
+     * Return the url of a jsp of a view, or of the jsp manage views when the view is unknown
+     * 
+     * @param request
+     *            The HTTP request
+     * @param strJspUrl
+     *            the url of the jsp, relative to the webapp
+     * @param strViewKey
+     *            the key of the view
+     * @return the url of the jsp of the view
+     */
+    private String getJspOfView( HttpServletRequest request, String strJspUrl, String strViewKey )
+    {
+        View view = ( strViewKey == null ) ? null : _viewsService.findByPrimaryKey( strViewKey, getPlugin( ) );
+
+        if ( view == null )
+        {
+            return getJspManageViews( request );
+        }
+
+        UrlItem url = new UrlItem( AppPathService.getBaseUrl( request ) + strJspUrl );
+        url.addParameter( ProfilesConstants.PARAMETER_VIEW_KEY, URLEncoder.encode( view.getKey( ), StandardCharsets.UTF_8 ) );
+
+        return url.getUrl( );
     }
 
     /**
