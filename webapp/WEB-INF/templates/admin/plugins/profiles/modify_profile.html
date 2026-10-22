@@ -18,7 +18,7 @@
 					<@boxHeader title='#i18n{profiles.modify_profile.titleModificationForm}'>
 						<#if profile.actions?exists>
 							<#list profile.actions as action>
-								<#if action.permission!='DELETE_DELETE'><#assign color='primary' /><#else><#assign color='danger' /></#if>
+								<#if action.permission!='DELETE_PROFILE'><#assign color='primary' /><#else><#assign color='danger' /></#if>
 								<@aButton href='${action.url}?profile_key=${profile.key}' title='${action.description}' hideTitle=['all'] buttonIcon='${action.iconUrl} me-1' color=color  />
 							</#list>
 						</#if>

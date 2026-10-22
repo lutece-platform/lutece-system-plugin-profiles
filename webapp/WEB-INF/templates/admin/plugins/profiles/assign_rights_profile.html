@@ -31,7 +31,7 @@
 					<@boxHeader title='#i18n{profiles.assign_rights_profile.labelAssignedRights}'>
 						<#if profile.actions?exists>
 							<#list profile.actions as action>
-								<#if action.permission!='DELETE_DELETE'><#assign color='primary' /><#else><#assign color='danger' /></#if>
+								<#if action.permission!='DELETE_PROFILE'><#assign color='primary' /><#else><#assign color='danger' /></#if>
 								<@aButton href='${action.url}?profile_key=${profile.key}' title='${action.description}' hideTitle=['all'] buttonIcon='${action.iconUrl}' color=color  />
 							</#list>
 						</#if>

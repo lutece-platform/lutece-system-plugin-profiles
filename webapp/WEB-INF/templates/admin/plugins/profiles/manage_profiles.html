@@ -29,7 +29,7 @@
 					<#if profile.actions?exists>
 						<#if profile.actions?size !=0>
 							<#list profile.actions as action>
-								<#if action.permission!='DELETE_DELETE'><#assign color='primary' /><#else><#assign color='danger' /></#if>
+								<#if action.permission!='DELETE_PROFILE'><#assign color='primary' /><#else><#assign color='danger' /></#if>
 								<@aButton href='${action.url}?profile_key=${profile.key}' title='${action.description}' buttonIcon='${action.iconUrl}' hideTitle=['all'] color=color />
 							</#list>
 						</#if>

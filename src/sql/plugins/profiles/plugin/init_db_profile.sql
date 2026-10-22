@@ -5,7 +5,7 @@
 -- Init  table profile_action
 --
 INSERT INTO profile_action (id_action, name_key, description_key, action_url, icon_url, action_permission) VALUES (1,'profiles.action.modify_profile.name','profiles.action.modify_profile.description','jsp/admin/plugins/profiles/ModifyProfile.jsp','edit','MODIFY_PROFILE');
-INSERT INTO profile_action (id_action, name_key, description_key, action_url, icon_url, action_permission) VALUES (2,'profiles.action.delete_profile.name','profiles.action.delete_profile.description','jsp/admin/plugins/profiles/RemoveProfile.jsp','trash','DELETE_DELETE');
+INSERT INTO profile_action (id_action, name_key, description_key, action_url, icon_url, action_permission) VALUES (2,'profiles.action.delete_profile.name','profiles.action.delete_profile.description','jsp/admin/plugins/profiles/RemoveProfile.jsp','trash','DELETE_PROFILE');
 INSERT INTO profile_action (id_action, name_key, description_key, action_url, icon_url, action_permission) VALUES (3,'profiles.action.manage_users_assignment.name','profiles.action.manage_users_assignment.description','jsp/admin/plugins/profiles/AssignUsersProfile.jsp','user','MANAGE_USERS_ASSIGNMENT');
 INSERT INTO profile_action (id_action, name_key, description_key, action_url, icon_url, action_permission) VALUES (4,'profiles.action.manage_rights_assignment.name','profiles.action.manage_rights_assignment.description','jsp/admin/plugins/profiles/AssignRightsProfile.jsp','lock','MANAGE_RIGHTS_ASSIGNMENT');
 INSERT INTO profile_action (id_action, name_key, description_key, action_url, icon_url, action_permission) VALUES (5,'profiles.action.manage_roles_assignment.name','profiles.action.manage_roles_assignment.description','jsp/admin/plugins/profiles/AssignRolesProfile.jsp','th-list','MANAGE_ROLES_ASSIGNMENT');
