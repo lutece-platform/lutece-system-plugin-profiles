@@ -65,7 +65,7 @@ public class ViewDAO implements IViewDAO
     private static final String SQL_QUERY_SELECT_VIEW_FROM_PROFILE_KEY = " SELECT pvp.view_key, pvp.view_description "
             + " FROM profile_view pvp INNER JOIN profile_view_profile vp ON pvp.view_key = vp.view_key WHERE vp.profile_key = ? ";
     private static final String SQL_QUERY_SELECT_PROFILES_LIST_FOR_VIEW = " SELECT profile_key FROM profile_view_profile WHERE view_key = ? ORDER BY profile_key ASC ";
-    private static final String SQL_QUERY_SELECT_VIEW_PROFILE_FROM_VIEW_KEY = " SELECT view_key, profile_key FROM profile_view_profile WHERE view_key = ? LIMIT 1 ";
+    private static final String SQL_QUERY_SELECT_VIEW_PROFILE_FROM_PROFILE_KEY = " SELECT view_key, profile_key FROM profile_view_profile WHERE profile_key = ? LIMIT 1 ";
     private static final String SQL_QUERY_INSERT_VIEW_PROFILE = " INSERT INTO profile_view_profile (view_key, profile_key) VALUES ( ?, ? ) ";
     private static final String SQL_QUERY_DELETE_PROFILES = " DELETE FROM profile_view_profile WHERE view_key = ? ";
     private static final String SQL_QUERY_DELETE_PROFILE_FROM_VIEW = " DELETE FROM profile_view_profile WHERE view_key = ? AND profile_key = ? ";
@@ -296,7 +296,7 @@ public class ViewDAO implements IViewDAO
     public boolean hasView( String strProfileKey, Plugin plugin )
     {
         boolean bHasView = false;
-        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_VIEW_PROFILE_FROM_VIEW_KEY, plugin ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_VIEW_PROFILE_FROM_PROFILE_KEY, plugin ) )
         {
             daoUtil.setString( 1, strProfileKey );
             daoUtil.executeQuery( );
