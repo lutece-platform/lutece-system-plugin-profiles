@@ -793,7 +793,7 @@ public class ViewsJspBean extends PluginAdminPageJspBean
     {
         String strViewKey = request.getParameter( ProfilesConstants.PARAMETER_VIEW_KEY );
 
-        if ( !RBACService.isAuthorized( View.RESOURCE_TYPE, strViewKey, ViewsResourceIdService.PERMISSION_DELETE_VIEW, (User) getUser( ) ) )
+        if ( !RBACService.isAuthorized( View.RESOURCE_TYPE, strViewKey, ViewsResourceIdService.PERMISSION_MANAGE_DASHBOARDS, (User) getUser( ) ) )
         {
             return AdminMessageService.getMessageUrl( request, Messages.USER_ACCESS_DENIED, AdminMessage.TYPE_STOP );
         }
