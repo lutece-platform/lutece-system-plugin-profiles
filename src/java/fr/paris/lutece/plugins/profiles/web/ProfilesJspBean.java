@@ -90,6 +90,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 
 import jakarta.enterprise.context.SessionScoped;
 import jakarta.inject.Inject;
@@ -608,7 +609,8 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
 
         for ( AdminUser user : _profilesService.getUsersListForProfile( strProfileKey, getPlugin( ) ) )
         {
-            if ( AdminUserHome.hasRight( user, right.getId( ) ) && ( ( user.getUserLevel( ) > getUser( ).getUserLevel( ) ) || getUser( ).isAdmin( ) ) )
+            if ( AdminUserHome.hasRight( user, right.getId( ) ) && ( ( user.getUserLevel( ) > getUser( ).getUserLevel( ) ) || getUser( ).isAdmin( ) )
+                    && !isGrantedByAnotherProfile( user, strProfileKey, strKey -> _profilesService.hasRight( strKey, right.getId( ), getPlugin( ) ) ) )
             {
                 AdminUserHome.removeRightForUser( user.getUserId( ), right.getId( ) );
             }
@@ -616,6 +618,30 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
 
         return JSP_ASSIGN_RIGHTS_PROFILE + ProfilesConstants.INTERROGATION_MARK + ProfilesConstants.PARAMETER_PROFILE_KEY + ProfilesConstants.EQUAL
                 + strProfileKey + ProfilesConstants.SHARP + strAnchor;
+    }
+
+    /**
+     * Tells whether a profile of the user, other than the given one, grants a right, a role or a workgroup
+     *
+     * @param user
+     *            the user
+     * @param strProfileKey
+     *            the profile whose grant is removed
+     * @param grants
+     *            tells whether a profile (key) grants it
+     * @return true if another profile of the user grants it
+     */
+    private boolean isGrantedByAnotherProfile( AdminUser user, String strProfileKey, Predicate<String> grants )
+    {
+        for ( Profile profile : _profilesService.findProfileByIdUser( user.getUserId( ), getPlugin( ) ) )
+        {
+            if ( !profile.getKey( ).equals( strProfileKey ) && grants.test( profile.getKey( ) ) )
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /* ASSIGN WORKGROUPS */
@@ -860,7 +886,8 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
 
         for ( AdminUser user : _profilesService.getUsersListForProfile( strProfileKey, getPlugin( ) ) )
         {
-            if ( AdminWorkgroupHome.isUserInWorkgroup( user, workgroup.getKey( ) ) )
+            if ( AdminWorkgroupHome.isUserInWorkgroup( user, workgroup.getKey( ) )
+                    && !isGrantedByAnotherProfile( user, strProfileKey, strKey -> _profilesService.hasWorkgroup( strKey, workgroup.getKey( ), getPlugin( ) ) ) )
             {
                 AdminWorkgroupHome.removeUserFromWorkgroup( user, workgroup.getKey( ) );
             }
@@ -1071,7 +1098,8 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
 
         for ( AdminUser user : _profilesService.getUsersListForProfile( strProfileKey, getPlugin( ) ) )
         {
-            if ( AdminUserHome.hasRole( user, role.getKey( ) ) )
+            if ( AdminUserHome.hasRole( user, role.getKey( ) )
+                    && !isGrantedByAnotherProfile( user, strProfileKey, strKey -> _profilesService.hasRole( strKey, role.getKey( ), getPlugin( ) ) ) )
             {
                 AdminUserHome.removeRoleForUser( user.getUserId( ), role.getKey( ) );
             }

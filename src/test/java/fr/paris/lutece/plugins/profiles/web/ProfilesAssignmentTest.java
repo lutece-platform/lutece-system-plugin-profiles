@@ -158,6 +158,78 @@ public class ProfilesAssignmentTest extends LuteceTestCase
         assertFalse( _profilesService.hasRight( PROFILE_B, RIGHT, _plugin ), "another profile should not have the right" );
     }
 
+    @Test
+    public void testUnassigningARightKeepsItForTheUsersOfAnotherProfileGrantingIt( ) throws AccessDeniedException
+    {
+        _profilesService.addRightForProfile( PROFILE_A, RIGHT, _plugin );
+        _profilesService.addRightForProfile( PROFILE_B, RIGHT, _plugin );
+        _profilesService.addUserForProfile( PROFILE_A, _user.getUserId( ), _plugin );
+        _profilesService.addUserForProfile( PROFILE_B, _user.getUserId( ), _plugin );
+        AdminUserHome.createRightForUser( _user.getUserId( ), RIGHT );
+
+        MockHttpServletRequest request = getUserRequest( );
+        request.setParameter( "profile_key", PROFILE_A );
+        request.setParameter( "id_right", RIGHT );
+        _bean.doUnassignRightProfile( request );
+
+        assertTrue( AdminUserHome.hasRight( _user, RIGHT ), "the right is still granted by the other profile of the user" );
+
+        request = getUserRequest( );
+        request.setParameter( "profile_key", PROFILE_B );
+        request.setParameter( "id_right", RIGHT );
+        _bean.doUnassignRightProfile( request );
+
+        assertFalse( AdminUserHome.hasRight( _user, RIGHT ), "no profile of the user grants the right any more" );
+    }
+
+    @Test
+    public void testUnassigningAWorkgroupKeepsItForTheUsersOfAnotherProfileGrantingIt( ) throws AccessDeniedException
+    {
+        _profilesService.addWorkgroupForProfile( PROFILE_A, WORKGROUP, _plugin );
+        _profilesService.addWorkgroupForProfile( PROFILE_B, WORKGROUP, _plugin );
+        _profilesService.addUserForProfile( PROFILE_A, _user.getUserId( ), _plugin );
+        _profilesService.addUserForProfile( PROFILE_B, _user.getUserId( ), _plugin );
+        AdminWorkgroupHome.addUserForWorkgroup( _user, WORKGROUP );
+
+        MockHttpServletRequest request = getUserRequest( );
+        request.setParameter( "profile_key", PROFILE_A );
+        request.setParameter( "workgroup_key", WORKGROUP );
+        _bean.doUnassignWorkgroupProfile( request );
+
+        assertTrue( AdminWorkgroupHome.isUserInWorkgroup( _user, WORKGROUP ), "the workgroup is still granted by the other profile of the user" );
+
+        request = getUserRequest( );
+        request.setParameter( "profile_key", PROFILE_B );
+        request.setParameter( "workgroup_key", WORKGROUP );
+        _bean.doUnassignWorkgroupProfile( request );
+
+        assertFalse( AdminWorkgroupHome.isUserInWorkgroup( _user, WORKGROUP ), "no profile of the user grants the workgroup any more" );
+    }
+
+    @Test
+    public void testUnassigningARoleKeepsItForTheUsersOfAnotherProfileGrantingIt( ) throws AccessDeniedException
+    {
+        _profilesService.addRoleForProfile( PROFILE_A, RBAC_ROLE, _plugin );
+        _profilesService.addRoleForProfile( PROFILE_B, RBAC_ROLE, _plugin );
+        _profilesService.addUserForProfile( PROFILE_A, _user.getUserId( ), _plugin );
+        _profilesService.addUserForProfile( PROFILE_B, _user.getUserId( ), _plugin );
+        AdminUserHome.createRoleForUser( _user.getUserId( ), RBAC_ROLE );
+
+        MockHttpServletRequest request = getUserRequest( );
+        request.setParameter( "profile_key", PROFILE_A );
+        request.setParameter( "role_key", RBAC_ROLE );
+        _bean.doUnassignRoleProfile( request );
+
+        assertTrue( AdminUserHome.hasRole( _user, RBAC_ROLE ), "the role is still granted by the other profile of the user" );
+
+        request = getUserRequest( );
+        request.setParameter( "profile_key", PROFILE_B );
+        request.setParameter( "role_key", RBAC_ROLE );
+        _bean.doUnassignRoleProfile( request );
+
+        assertFalse( AdminUserHome.hasRole( _user, RBAC_ROLE ), "no profile of the user grants the role any more" );
+    }
+
     private MockHttpServletRequest assignRequest( String strListParameter, String strValue ) throws AccessDeniedException
     {
         MockHttpServletRequest request = getUserRequest( );
