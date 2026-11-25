@@ -38,7 +38,7 @@
 				</@manageFeatureItem>
 				</#list>
 			</@manageFeature>
-			<#if paginator?has_content && list_profiles?size gt 10>
+			<#if paginator?has_content && paginator.itemsCount gt 10>
 				<@tform method='post' action='jsp/admin/plugins/profiles/ManageProfiles.jsp'>
 					<@paginationAdmin paginator=paginator combo=1 form=0 showcount=0 />
 					<#if search_is_search >

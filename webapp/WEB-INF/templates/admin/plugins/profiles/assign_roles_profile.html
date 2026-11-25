@@ -68,7 +68,7 @@
 									</@tr>
 								</#list>
 							</@table>
-							<#if assigned_list?size gt 10 >
+							<#if paginator.itemsCount gt 10 >
 							<@tform type='inline' method='post' action='jsp/admin/plugins/profiles/AssignRolesProfile.jsp'>
 								<@input type='hidden' name='profile_key' value='${profile.key}' />
 								<@paginationAdmin paginator=paginator combo=1 form=0 />

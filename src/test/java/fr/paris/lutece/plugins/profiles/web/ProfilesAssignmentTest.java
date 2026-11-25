@@ -255,6 +255,31 @@ public class ProfilesAssignmentTest extends LuteceTestCase
                 "the field of the other profile should be kept, else the next save of the user drops that profile" );
     }
 
+    @Test
+    public void testProfileListPaginatorShownOnEveryPage( ) throws AccessDeniedException
+    {
+        for ( int i = 0; i < 12; i++ )
+        {
+            Profile profile = new Profile( );
+            profile.setKey( "junit_page_" + i );
+            profile.setDescription( "junit_page_" + i );
+            _profilesService.create( profile, Locale.FRENCH, _plugin );
+        }
+
+        MockHttpServletRequest request = getUserRequest( );
+        request.setParameter( "items_per_page", "10" );
+        String strHtml = _bean.getManageProfiles( request );
+
+        assertTrue( strHtml.contains( "page_index=2" ), "the second page should be reachable from the first one" );
+
+        request = getUserRequest( );
+        request.setParameter( "items_per_page", "10" );
+        request.setParameter( "page_index", "2" );
+        strHtml = _bean.getManageProfiles( request );
+
+        assertTrue( strHtml.contains( "page_index=1" ), "the first page should be reachable from the second one" );
+    }
+
     private MockHttpServletRequest assignRequest( String strListParameter, String strValue ) throws AccessDeniedException
     {
         MockHttpServletRequest request = getUserRequest( );

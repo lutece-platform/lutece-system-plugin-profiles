@@ -87,7 +87,7 @@
 							</@tr>
 							</#list>
 						</@table>
-						<#if assigned_list?size gt 10 || search_is_search>
+						<#if paginator.itemsCount gt 10 || search_is_search>
 							<@tform method='post' action='jsp/admin/plugins/profiles/AssignWorkgroupsProfile.jsp'>
 							<@paginationAdmin paginator=paginator combo=1 form=0 />
 							<#if search_is_search >
