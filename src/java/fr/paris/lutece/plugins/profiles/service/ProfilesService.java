@@ -163,9 +163,13 @@ public class ProfilesService implements IProfilesService
         IAttribute attribute = listAttributes.get( 0 );
         List<AdminUserField> listUserFields = AdminUserFieldHome.selectUserFieldsByIdUserIdAttribute( user.getUserId( ), attribute.getIdAttribute( ) );
 
+        // only the value of the profile left: the values of the other profiles are the selection read by the user screens
         for ( AdminUserField userField : listUserFields )
         {
-            AdminUserFieldHome.remove( userField );
+            if ( StringUtils.equals( userField.getValue( ), strProfileKey ) )
+            {
+                AdminUserFieldHome.remove( userField );
+            }
         }
 
         // Remove profile

@@ -230,6 +230,31 @@ public class ProfilesAssignmentTest extends LuteceTestCase
         assertFalse( AdminUserHome.hasRole( _user, RBAC_ROLE ), "no profile of the user grants the role any more" );
     }
 
+    @Test
+    public void testUnassigningAUserFromAProfileKeepsTheFieldsOfTheOtherProfiles( ) throws AccessDeniedException
+    {
+        int nIdAttribute = queryInt( "SELECT id_attribute FROM core_attribute WHERE plugin_name = 'profiles'" );
+        for ( String strKey : new String [ ] {
+                PROFILE_A, PROFILE_B
+        } )
+        {
+            _profilesService.addUserForProfile( strKey, _user.getUserId( ), _plugin );
+            int nIdField = queryInt( "SELECT id_field FROM core_attribute_field WHERE id_attribute = " + nIdAttribute + " AND title = '" + strKey + "'" );
+            execute( "INSERT INTO core_admin_user_field ( id_user, id_attribute, id_field, user_field_value ) VALUES ( " + _user.getUserId( ) + ", "
+                    + nIdAttribute + ", " + nIdField + ", '" + strKey + "' )" );
+        }
+
+        MockHttpServletRequest request = getUserRequest( );
+        _profilesService.doUnassignUserFromProfile( _user.getUserId( ), PROFILE_A, AdminUserHome.findByPrimaryKey( 1 ), request, Locale.FRENCH, _plugin );
+
+        assertFalse( _profilesService.hasUser( PROFILE_A, _user.getUserId( ), _plugin ) );
+        assertTrue( _profilesService.hasUser( PROFILE_B, _user.getUserId( ), _plugin ) );
+        assertEquals( 0, queryInt( "SELECT COUNT(*) FROM core_admin_user_field WHERE id_user = " + _user.getUserId( ) + " AND user_field_value = '" + PROFILE_A + "'" ),
+                "the field of the profile left should be removed" );
+        assertEquals( 1, queryInt( "SELECT COUNT(*) FROM core_admin_user_field WHERE id_user = " + _user.getUserId( ) + " AND user_field_value = '" + PROFILE_B + "'" ),
+                "the field of the other profile should be kept, else the next save of the user drops that profile" );
+    }
+
     private MockHttpServletRequest assignRequest( String strListParameter, String strValue ) throws AccessDeniedException
     {
         MockHttpServletRequest request = getUserRequest( );
