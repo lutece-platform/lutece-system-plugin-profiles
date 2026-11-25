@@ -66,7 +66,7 @@ public class ProfileDAO implements IProfileDAO
     private static final String SQL_QUERY_SELECT_PROFILE_FROM_ID_USER = " SELECT p.profile_key, p.profile_description "
             + " FROM profile_profile p INNER JOIN profile_user pu ON p.profile_key = pu.profile_key WHERE pu.id_user = ? ";
     private static final String SQL_QUERY_SELECT_RIGHTS_LIST_FOR_PROFILE = " SELECT id_right FROM profile_right WHERE profile_key = ? ORDER BY id_right ASC ";
-    private static final String SQL_QUERY_SELECT_PROFILE_RIGHT = " SELECT profile_key, id_right FROM profile_right WHERE profile_key = ? AND profile_key = ? ";
+    private static final String SQL_QUERY_SELECT_PROFILE_RIGHT = " SELECT profile_key, id_right FROM profile_right WHERE profile_key = ? AND id_right = ? ";
     private static final String SQL_QUERY_INSERT_PROFILE_RIGHT = " INSERT INTO profile_right (profile_key, id_right) VALUES ( ?, ? ) ";
     private static final String SQL_QUERY_DELETE_PROFILE_RIGHT = " DELETE FROM profile_right WHERE profile_key = ? AND id_right = ? ";
     private static final String SQL_QUERY_DELETE_RIGHTS = " DELETE FROM profile_right WHERE profile_key = ? ";
