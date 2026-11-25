@@ -10,6 +10,7 @@
 					<@boxBody>
 						<#if available_list?size gt 0 >
 							<@tform name='assign-users-profile' method='post' action='jsp/admin/plugins/profiles/DoAssignUsersProfile.jsp'>
+								<@input type='hidden' name='token' value='${token}' />
 								<@input type='hidden' name='profile_key' value='${profile.key}' />
 								<@input type='hidden' name='attribute_${attribute.idAttribute}' value='${attribute_field.idField}' />
 								<@formGroup labelFor='profile_key' labelKey='#i18n{profiles.assign_users_profile.labelAvailableUsers}' rows=2>
@@ -154,7 +155,7 @@
 								<@td>
 									<@aButton href='jsp/admin/user/ModifyUser.jsp?id_user=${assigned_item.userId}' title='#i18n{profiles.actions.labelModify}' hideTitle=['all'] buttonIcon='edit'  />
 									<#if permission>
-									<@aButton href='jsp/admin/plugins/profiles/DoUnassignUserProfile.jsp?profile_key=${profile.key}&id_user=${assigned_item.userId}&attribute_${attribute.idAttribute}=${attribute_field.idField}&anchor=anchor-${anchor}' title='#i18n{profiles.assign_users_profile.actionUnassign}' hideTitle=['all'] buttonIcon='trash' color='danger'  />
+									<@tform method='post' type='inline' class='d-inline-block' action='jsp/admin/plugins/profiles/DoUnassignUserProfile.jsp'><@input type='hidden' name='token' value='${token}' /><@input type='hidden' name='profile_key' value='${profile.key}' /><@input type='hidden' name='id_user' value='${assigned_item.userId}' /><@input type='hidden' name='anchor' value='anchor-${anchor}' /><@button type='submit' title='#i18n{profiles.assign_users_profile.actionUnassign}' hideTitle=['all'] buttonIcon='trash' color='danger' /></@tform>
 									</#if>
 								</@td>
 							</@tr>

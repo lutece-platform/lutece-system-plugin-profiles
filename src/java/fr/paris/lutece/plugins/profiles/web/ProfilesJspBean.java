@@ -33,6 +33,8 @@
  */
 package fr.paris.lutece.plugins.profiles.web;
 
+import fr.paris.lutece.portal.service.security.SecurityTokenService;
+import fr.paris.lutece.portal.service.admin.AccessDeniedException;
 import fr.paris.lutece.api.user.User;
 import fr.paris.lutece.plugins.profiles.business.Profile;
 import fr.paris.lutece.plugins.profiles.business.ProfileAction;
@@ -257,6 +259,7 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
 
         Map<String, Object> model = new HashMap<>( );
 
+        model.put( SecurityTokenService.MARK_TOKEN, getSecurityTokenService( ).getToken( request, ProfilesConstants.TOKEN_ACTION_ADMIN ) );
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_CREATE_PROFILE, getLocale( ), model );
 
         return getAdminPage( template.getHtml( ) );
@@ -269,8 +272,13 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
      *            The HTTP Request
      * @return The Jsp URL of the process result
      */
-    public String doCreateProfile( HttpServletRequest request )
+    public String doCreateProfile( HttpServletRequest request ) throws AccessDeniedException
     {
+        if ( !getSecurityTokenService( ).validate( request, ProfilesConstants.TOKEN_ACTION_ADMIN ) )
+        {
+            throw new AccessDeniedException( ProfilesConstants.MESSAGE_INVALID_TOKEN );
+        }
+
         if ( !RBACService.isAuthorized( Profile.RESOURCE_TYPE, RBAC.WILDCARD_RESOURCES_ID, ProfilesResourceIdService.PERMISSION_CREATE_PROFILE,
                 (User) getUser( ) ) )
         {
@@ -331,7 +339,11 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
         UrlItem url = new UrlItem( JSP_URL_DO_REMOVE_PROFILE );
         url.addParameter( ProfilesConstants.PARAMETER_PROFILE_KEY, strProfileKey );
 
-        return AdminMessageService.getMessageUrl( request, ProfilesConstants.MESSAGE_CONFIRM_REMOVE_PROFILE, url.getUrl( ), AdminMessage.TYPE_CONFIRMATION );
+        // the confirmation posts the token to the action
+        Map<String, Object> parameters = new HashMap<>( );
+        parameters.put( SecurityTokenService.PARAMETER_TOKEN, getSecurityTokenService( ).getToken( request, ProfilesConstants.TOKEN_ACTION_ADMIN ) );
+
+        return AdminMessageService.getMessageUrl( request, ProfilesConstants.MESSAGE_CONFIRM_REMOVE_PROFILE, url.getUrl( ), AdminMessage.TYPE_CONFIRMATION, parameters );
     }
 
     /**
@@ -341,8 +353,13 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
      *            The Http request
      * @return Html form
      */
-    public String doRemoveProfile( HttpServletRequest request )
+    public String doRemoveProfile( HttpServletRequest request ) throws AccessDeniedException
     {
+        if ( !getSecurityTokenService( ).validate( request, ProfilesConstants.TOKEN_ACTION_ADMIN ) )
+        {
+            throw new AccessDeniedException( ProfilesConstants.MESSAGE_INVALID_TOKEN );
+        }
+
         String strProfileKey = request.getParameter( ProfilesConstants.PARAMETER_PROFILE_KEY );
 
         if ( !RBACService.isAuthorized( Profile.RESOURCE_TYPE, strProfileKey, ProfilesResourceIdService.PERMISSION_DELETE_PROFILE, (User) getUser( ) ) )
@@ -400,6 +417,7 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
         model.put( ProfilesConstants.MARK_ITEM_NAVIGATOR, _itemNavigators.get( ProfilesConstants.PARAMETER_MODIFY_PROFILE ) );
         model.put( ProfilesConstants.MARK_PERMISSION, bPermission );
 
+        model.put( SecurityTokenService.MARK_TOKEN, getSecurityTokenService( ).getToken( request, ProfilesConstants.TOKEN_ACTION_ADMIN ) );
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_MODIFY_PROFILE, getLocale( ), model );
 
         return getAdminPage( template.getHtml( ) );
@@ -412,8 +430,13 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
      *            The Http request
      * @return Html form
      */
-    public String doModifyProfile( HttpServletRequest request )
+    public String doModifyProfile( HttpServletRequest request ) throws AccessDeniedException
     {
+        if ( !getSecurityTokenService( ).validate( request, ProfilesConstants.TOKEN_ACTION_ADMIN ) )
+        {
+            throw new AccessDeniedException( ProfilesConstants.MESSAGE_INVALID_TOKEN );
+        }
+
         String strProfileKey = request.getParameter( ProfilesConstants.PARAMETER_PROFILE_KEY );
 
         if ( !RBACService.isAuthorized( Profile.RESOURCE_TYPE, strProfileKey, ProfilesResourceIdService.PERMISSION_MODIFY_PROFILE, (User) getUser( ) ) )
@@ -522,6 +545,7 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
         model.put( ProfilesConstants.MARK_ITEM_NAVIGATOR, _itemNavigators.get( ProfilesConstants.PARAMETER_ASSIGN_RIGHT ) );
         model.put( ProfilesConstants.MARK_PERMISSION, bPermission );
 
+        model.put( SecurityTokenService.MARK_TOKEN, getSecurityTokenService( ).getToken( request, ProfilesConstants.TOKEN_ACTION_ADMIN ) );
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_ASSIGN_RIGHTS_PROFILE, getLocale( ), model );
 
         return getAdminPage( template.getHtml( ) );
@@ -534,8 +558,13 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
      *            The HTTP Request
      * @return The Jsp URL of the process result
      */
-    public String doAssignRightsProfile( HttpServletRequest request )
+    public String doAssignRightsProfile( HttpServletRequest request ) throws AccessDeniedException
     {
+        if ( !getSecurityTokenService( ).validate( request, ProfilesConstants.TOKEN_ACTION_ADMIN ) )
+        {
+            throw new AccessDeniedException( ProfilesConstants.MESSAGE_INVALID_TOKEN );
+        }
+
         String strActionCancel = request.getParameter( ProfilesConstants.PARAMETER_CANCEL );
 
         if ( strActionCancel != null )
@@ -588,8 +617,13 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
      *            The HttpRequest
      * @return the HTML code of list assignations
      */
-    public String doUnassignRightProfile( HttpServletRequest request )
+    public String doUnassignRightProfile( HttpServletRequest request ) throws AccessDeniedException
     {
+        if ( !getSecurityTokenService( ).validate( request, ProfilesConstants.TOKEN_ACTION_ADMIN ) )
+        {
+            throw new AccessDeniedException( ProfilesConstants.MESSAGE_INVALID_TOKEN );
+        }
+
         String strProfileKey = request.getParameter( ProfilesConstants.PARAMETER_PROFILE_KEY );
 
         if ( !RBACService.isAuthorized( Profile.RESOURCE_TYPE, strProfileKey, ProfilesResourceIdService.PERMISSION_MANAGE_RIGHTS_ASSIGNMENT,
@@ -799,6 +833,7 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
         model.put( ProfilesConstants.MARK_SORT_SEARCH_ATTRIBUTE, strSortSearchAttribute );
         model.put( ProfilesConstants.MARK_PERMISSION, bPermission );
 
+        model.put( SecurityTokenService.MARK_TOKEN, getSecurityTokenService( ).getToken( request, ProfilesConstants.TOKEN_ACTION_ADMIN ) );
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_ASSIGN_WORKGROUPS_PROFILE, getLocale( ), model );
 
         return getAdminPage( template.getHtml( ) );
@@ -811,8 +846,13 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
      *            The HTTP Request
      * @return The Jsp URL of the process result
      */
-    public String doAssignWorkgroupsProfile( HttpServletRequest request )
+    public String doAssignWorkgroupsProfile( HttpServletRequest request ) throws AccessDeniedException
     {
+        if ( !getSecurityTokenService( ).validate( request, ProfilesConstants.TOKEN_ACTION_ADMIN ) )
+        {
+            throw new AccessDeniedException( ProfilesConstants.MESSAGE_INVALID_TOKEN );
+        }
+
         String strActionCancel = request.getParameter( ProfilesConstants.PARAMETER_CANCEL );
 
         if ( strActionCancel != null )
@@ -865,8 +905,13 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
      *            The HttpRequest
      * @return the HTML code of list assignations
      */
-    public String doUnassignWorkgroupProfile( HttpServletRequest request )
+    public String doUnassignWorkgroupProfile( HttpServletRequest request ) throws AccessDeniedException
     {
+        if ( !getSecurityTokenService( ).validate( request, ProfilesConstants.TOKEN_ACTION_ADMIN ) )
+        {
+            throw new AccessDeniedException( ProfilesConstants.MESSAGE_INVALID_TOKEN );
+        }
+
         String strProfileKey = request.getParameter( ProfilesConstants.PARAMETER_PROFILE_KEY );
 
         if ( !RBACService.isAuthorized( Profile.RESOURCE_TYPE, strProfileKey, ProfilesResourceIdService.PERMISSION_MANAGE_WORKGROUPS_ASSIGNMENT,
@@ -1011,6 +1056,7 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
         model.put( ProfilesConstants.MARK_PAGINATOR, paginator );
         model.put( ProfilesConstants.MARK_PERMISSION, bPermission );
 
+        model.put( SecurityTokenService.MARK_TOKEN, getSecurityTokenService( ).getToken( request, ProfilesConstants.TOKEN_ACTION_ADMIN ) );
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_ASSIGN_ROLES_PROFILE, getLocale( ), model );
 
         return getAdminPage( template.getHtml( ) );
@@ -1023,8 +1069,13 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
      *            The HTTP Request
      * @return The Jsp URL of the process result
      */
-    public String doAssignRolesProfile( HttpServletRequest request )
+    public String doAssignRolesProfile( HttpServletRequest request ) throws AccessDeniedException
     {
+        if ( !getSecurityTokenService( ).validate( request, ProfilesConstants.TOKEN_ACTION_ADMIN ) )
+        {
+            throw new AccessDeniedException( ProfilesConstants.MESSAGE_INVALID_TOKEN );
+        }
+
         String strActionCancel = request.getParameter( ProfilesConstants.PARAMETER_CANCEL );
 
         if ( strActionCancel != null )
@@ -1077,8 +1128,13 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
      *            The HttpRequest
      * @return the HTML code of list assignations
      */
-    public String doUnassignRoleProfile( HttpServletRequest request )
+    public String doUnassignRoleProfile( HttpServletRequest request ) throws AccessDeniedException
     {
+        if ( !getSecurityTokenService( ).validate( request, ProfilesConstants.TOKEN_ACTION_ADMIN ) )
+        {
+            throw new AccessDeniedException( ProfilesConstants.MESSAGE_INVALID_TOKEN );
+        }
+
         String strProfileKey = request.getParameter( ProfilesConstants.PARAMETER_PROFILE_KEY );
 
         if ( !RBACService.isAuthorized( Profile.RESOURCE_TYPE, strProfileKey, ProfilesResourceIdService.PERMISSION_MANAGE_ROLES_ASSIGNMENT,
@@ -1270,6 +1326,7 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
         model.put( ProfilesConstants.MARK_ATTRIBUTE, listAttributes.get( 0 ) );
         model.put( ProfilesConstants.MARK_ATTRIBUTE_FIELD, attributeField );
 
+        model.put( SecurityTokenService.MARK_TOKEN, getSecurityTokenService( ).getToken( request, ProfilesConstants.TOKEN_ACTION_ADMIN ) );
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_ASSIGN_USERS_PROFILE, getLocale( ), model );
 
         return getAdminPage( template.getHtml( ) );
@@ -1282,8 +1339,13 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
      *            The HTTP Request
      * @return The Jsp URL of the process result
      */
-    public String doAssignUsersProfile( HttpServletRequest request )
+    public String doAssignUsersProfile( HttpServletRequest request ) throws AccessDeniedException
     {
+        if ( !getSecurityTokenService( ).validate( request, ProfilesConstants.TOKEN_ACTION_ADMIN ) )
+        {
+            throw new AccessDeniedException( ProfilesConstants.MESSAGE_INVALID_TOKEN );
+        }
+
         String strReturn;
 
         String strActionCancel = request.getParameter( ProfilesConstants.PARAMETER_CANCEL );
@@ -1329,8 +1391,13 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
      *            The HttpRequest
      * @return the HTML code of list assignations
      */
-    public String doUnassignUserProfile( HttpServletRequest request )
+    public String doUnassignUserProfile( HttpServletRequest request ) throws AccessDeniedException
     {
+        if ( !getSecurityTokenService( ).validate( request, ProfilesConstants.TOKEN_ACTION_ADMIN ) )
+        {
+            throw new AccessDeniedException( ProfilesConstants.MESSAGE_INVALID_TOKEN );
+        }
+
         String strProfileKey = request.getParameter( ProfilesConstants.PARAMETER_PROFILE_KEY );
 
         if ( !RBACService.isAuthorized( Profile.RESOURCE_TYPE, strProfileKey, ProfilesResourceIdService.PERMISSION_MANAGE_USERS_ASSIGNMENT,
@@ -1392,6 +1459,7 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
         model.put( ProfilesConstants.MARK_PERMISSION, bPermission );
         model.put( ProfilesConstants.MARK_ASSIGNED_VIEW, assignedView );
 
+        model.put( SecurityTokenService.MARK_TOKEN, getSecurityTokenService( ).getToken( request, ProfilesConstants.TOKEN_ACTION_ADMIN ) );
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_ASSIGN_VIEW_PROFILE, getLocale( ), model );
 
         return getAdminPage( template.getHtml( ) );
@@ -1404,8 +1472,13 @@ public class ProfilesJspBean extends PluginAdminPageJspBean
      *            HttpServletRequest
      * @return The Jsp URL of the process result
      */
-    public String doAssignViewProfile( HttpServletRequest request )
+    public String doAssignViewProfile( HttpServletRequest request ) throws AccessDeniedException
     {
+        if ( !getSecurityTokenService( ).validate( request, ProfilesConstants.TOKEN_ACTION_ADMIN ) )
+        {
+            throw new AccessDeniedException( ProfilesConstants.MESSAGE_INVALID_TOKEN );
+        }
+
         String strReturn;
 
         String strActionCancel = request.getParameter( ProfilesConstants.PARAMETER_CANCEL );

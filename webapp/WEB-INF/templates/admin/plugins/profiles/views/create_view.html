@@ -1,5 +1,6 @@
 <@pageContainer>    <@pageColumn>		<@pageHeader title='#i18n{profiles.create_view.pageTitle}' />
 		<@tform method='post' name='create_view' action='jsp/admin/plugins/profiles/DoCreateView.jsp' boxed=true id='create_view_page'>
+			<@input type='hidden' name='token' value='${token}' />
 			<@formGroup labelFor='view_key' labelKey='#i18n{profiles.create_view.key}' mandatory=true>
 				<@input type='text' id='view_key' name='view_key' maxlength=50 />
 			</@formGroup>

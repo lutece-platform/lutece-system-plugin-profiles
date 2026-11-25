@@ -11,6 +11,7 @@
 		</@pageHeader>
 		<#if available_list?size gt 0 >
 			<@tform name='assign-view-profile' method='post' action='jsp/admin/plugins/profiles/DoAssignViewProfile.jsp' boxed=true>
+				<@input type='hidden' name='token' value='${token}' />
 			<@input type='hidden' name='profile_key' value='${profile.key}' />
 			<@fieldSet legend='#i18n{profiles.assign_rights_profile.profileKey} : ${profile.key}'>
 					<#list available_list as available_item><@radioButton labelKey='${available_item.code}' name='view_key' value='${available_item.code}' checked=(assigned_view?exists && available_item.code == assigned_view.key)	 /></#list>

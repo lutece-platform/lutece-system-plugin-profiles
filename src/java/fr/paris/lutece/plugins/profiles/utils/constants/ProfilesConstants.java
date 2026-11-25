@@ -109,6 +109,9 @@ public final class ProfilesConstants
     public static final String MARK_MAP_COLUMN_ORDER_STATUS = "map_column_order_status";
 
     // PARAMETERS
+    // Security token: one action key for every back office action of the plugin (forms and confirmations)
+    public static final String TOKEN_ACTION_ADMIN = "profiles.admin";
+    public static final String MESSAGE_INVALID_TOKEN = "Invalid security token";
     public static final String PARAMETER_SEARCH_IS_SEARCH = "search_is_search";
     public static final String PARAMETER_SEARCH_KEY = "search_key";
     public static final String PARAMETER_SEARCH_DESCRIPTION = "search_description";

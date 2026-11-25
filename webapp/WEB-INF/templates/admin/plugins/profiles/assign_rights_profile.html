@@ -10,6 +10,7 @@
 					<@boxBody>
 					   <#if available_list?size gt 0>
 							<@tform name='assign-rights-profile' method='post' action='jsp/admin/plugins/profiles/DoAssignRightsProfile.jsp'>
+								<@input type='hidden' name='token' value='${token}' />
 								<@input type='hidden' name='profile_key' value='${profile.key}' />
 								<@formGroup labelFor='profile_key' labelKey='#i18n{profiles.assign_rights_profile.labelAvailableRights}' rows=2>
 									<@select name='rights_list' default_value='' multiple=15 items=available_list?sort_by('name') />
@@ -57,7 +58,7 @@
 										<@td>${assigned_item.level}</@td>
 										<@td>
 											<#if permission>
-												<@aButton href='jsp/admin/plugins/profiles/DoUnassignRightProfile.jsp?profile_key=${profile.key}&id_right=${assigned_item.id}&anchor=anchor-${anchor}' title='#i18n{profiles.assign_rights_profile.actionUnassign}' hideTitle=['all'] buttonIcon='trash' color='danger'  />
+												<@tform method='post' type='inline' class='d-inline-block' action='jsp/admin/plugins/profiles/DoUnassignRightProfile.jsp'><@input type='hidden' name='token' value='${token}' /><@input type='hidden' name='profile_key' value='${profile.key}' /><@input type='hidden' name='id_right' value='${assigned_item.id}' /><@input type='hidden' name='anchor' value='anchor-${anchor}' /><@button type='submit' title='#i18n{profiles.assign_rights_profile.actionUnassign}' hideTitle=['all'] buttonIcon='trash' color='danger' /></@tform>
 											</#if>
 										</@td>
 									</@tr>

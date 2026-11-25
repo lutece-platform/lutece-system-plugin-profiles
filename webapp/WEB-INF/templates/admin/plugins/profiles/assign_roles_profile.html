@@ -10,6 +10,7 @@
 					<@boxBody>
 					<#if available_list?size gt 0 >
 						<@tform name='assign-roles-profile' method='post' action='jsp/admin/plugins/profiles/DoAssignRolesProfile.jsp'>
+							<@input type='hidden' name='token' value='${token}' />
 							<@input type='hidden' name='profile_key' value='${profile.key}' />
 							<@formGroup labelFor='profile_key' labelKey='#i18n{profiles.assign_roles_profile.labelAvailableRoles}' rows=2>
 								<@select name='roles_list' default_value='' multiple=15 items=available_list?sort_by('name') />
@@ -62,7 +63,7 @@
 										<@td>
 											<@aButton href='jsp/admin/rbac/ViewRoleDescription.jsp?role_key=${assigned_item.key}' title='#i18n{profiles.actions.labelModify}' hideTitle=['all'] buttonIcon='edit'  />
 											<#if permission>
-												<@aButton href='jsp/admin/plugins/profiles/DoUnassignRoleProfile.jsp?profile_key=${profile.key}&role_key=${assigned_item.key}&anchor=anchor-${anchor}' title='#i18n{profiles.assign_roles_profile.actionUnassign}' hideTitle=['all'] buttonIcon='trash' color='danger'  />
+												<@tform method='post' type='inline' class='d-inline-block' action='jsp/admin/plugins/profiles/DoUnassignRoleProfile.jsp'><@input type='hidden' name='token' value='${token}' /><@input type='hidden' name='profile_key' value='${profile.key}' /><@input type='hidden' name='role_key' value='${assigned_item.key}' /><@input type='hidden' name='anchor' value='anchor-${anchor}' /><@button type='submit' title='#i18n{profiles.assign_roles_profile.actionUnassign}' hideTitle=['all'] buttonIcon='trash' color='danger' /></@tform>
 											</#if>
 										</@td>
 									</@tr>

@@ -25,6 +25,7 @@
 					</@boxHeader>
 					<@boxBody>
 						<@tform method='post' action='jsp/admin/plugins/profiles/DoModifyProfile.jsp'>
+							<@input type='hidden' name='token' value='${token}' />
 							<@input type='hidden' id='profile_key' name='profile_key' value='${profile.key}' />
 							<@fieldSet legend='#i18n{profiles.modify_profile.titleModificationForm}' hideLegend=['all']>
 								<@formGroup labelFor='profile_key' labelKey='#i18n{profiles.modify_profile.labelKey}' mandatory=true>

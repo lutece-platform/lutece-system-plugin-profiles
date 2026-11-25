@@ -2,6 +2,7 @@
     <@pageColumn>
 		<@pageHeader title='#i18n{profiles.create_profile.pageTitle}' />
 		<@tform method='post' name='create_profile' action='jsp/admin/plugins/profiles/DoCreateProfile.jsp' id='create_profile_page' boxed=true>
+			<@input type='hidden' name='token' value='${token}' />
 			<@formGroup labelFor='profile_key' labelKey='#i18n{profiles.create_profile.key}' mandatory=true>
 				<@input type='text' id='profile_key' name='profile_key' maxlength=500 />
 			</@formGroup>

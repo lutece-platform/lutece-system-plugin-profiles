@@ -11,6 +11,7 @@
 			<@manageFeatureItemColumn align='end'> 
 			<#-- column -->
 				<@tform type='inline' action='jsp/admin/plugins/profiles/DoMoveDashboard.jsp' method='post'>
+					<@input type='hidden' name='token' value='${token}' />
 					<@input type='hidden' name='dashboard_name' value='${dashboard.name}' />
 					<#if !dashboard.order?exists || dashboard.order == 0 ><#assign dashboard_order=1/><#else><#assign dashboard_order=dashboard.order/></#if>
 					<@input type='hidden' name='dashboard_order' value='${dashboard_order}' />
@@ -26,6 +27,7 @@
 			<#if order && list_available_orders_column?size gt 2>
 			<#-- order -->
 				<@tform type='inline' action='jsp/admin/plugins/profiles/DoMoveDashboard.jsp' method='post'>
+					<@input type='hidden' name='token' value='${token}' />
 					<@input type='hidden' name='dashboard_name' value='${dashboard.name}' />
 					<#if !dashboard.zone?exists  || dashboard.zone == 0>
 						<#assign dashboard_column=1 />
@@ -46,6 +48,7 @@
 			<#if unsetColumn>
 			<#-- unsetColumn -->
 				<@tform action='jsp/admin/plugins/profiles/DoUnsetColumn.jsp' method='post'>
+					<@input type='hidden' name='token' value='${token}' />
 					<@input type='hidden' name='dashboard_name' value='${dashboard.name}' />
 					<@input type='hidden' name='view_key' value='${view.key}' />
 					<@button type='submit' title='#i18n{profiles.manage_dashboards.action.unsetColumn}' hideTitle=['all'] buttonIcon='trash' class='ms-1 mt-3' color='danger' />
@@ -92,7 +95,7 @@
 					<#assign column_key = column_refItem.code />
 					<@box title='#i18n{portal.dashboard.title.column} ${column_key}'>
 					<#if map_column_order_status[column_key]?exists && !map_column_order_status[column_key]>
-						<@aButton href='jsp/admin/plugins/profiles/DoReorderColumn.jsp?column=${column_key}&view_key=${view.key}' title='#i18n{portal.dashboard.action.reorder}' hideTitle=['xs'] buttonIcon='arrows-sort' />
+						<@tform method='post' type='inline' class='d-inline-block' action='jsp/admin/plugins/profiles/DoReorderColumn.jsp'><@input type='hidden' name='token' value='${token}' /><@input type='hidden' name='column' value='${column_key}' /><@input type='hidden' name='view_key' value='${view.key}' /><@button type='submit' title='#i18n{portal.dashboard.action.reorder}' hideTitle=['xs'] buttonIcon='arrows-sort' /></@tform>
 					</#if>
 					<@dashboardTable items=map_dashboards[column_key] list_available_orders_column=map_available_orders[column_key] />
 					<#-- suggest reorder if the column is not well ordered -->

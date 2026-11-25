@@ -33,6 +33,8 @@
  */
 package fr.paris.lutece.plugins.profiles.web.views;
 
+import fr.paris.lutece.portal.service.security.SecurityTokenService;
+import fr.paris.lutece.portal.service.admin.AccessDeniedException;
 import fr.paris.lutece.api.user.User;
 import fr.paris.lutece.plugins.profiles.business.Profile;
 import fr.paris.lutece.plugins.profiles.business.ProfileFilter;
@@ -233,6 +235,7 @@ public class ViewsJspBean extends PluginAdminPageJspBean
 
         Map<String, Object> model = new HashMap<>( );
 
+        model.put( SecurityTokenService.MARK_TOKEN, getSecurityTokenService( ).getToken( request, ProfilesConstants.TOKEN_ACTION_ADMIN ) );
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_CREATE_VIEW, getLocale( ), model );
 
         return getAdminPage( template.getHtml( ) );
@@ -245,8 +248,13 @@ public class ViewsJspBean extends PluginAdminPageJspBean
      *            The HTTP Request
      * @return The Jsp URL of the process result
      */
-    public String doCreateView( HttpServletRequest request )
+    public String doCreateView( HttpServletRequest request ) throws AccessDeniedException
     {
+        if ( !getSecurityTokenService( ).validate( request, ProfilesConstants.TOKEN_ACTION_ADMIN ) )
+        {
+            throw new AccessDeniedException( ProfilesConstants.MESSAGE_INVALID_TOKEN );
+        }
+
         if ( !RBACService.isAuthorized( View.RESOURCE_TYPE, RBAC.WILDCARD_RESOURCES_ID, ViewsResourceIdService.PERMISSION_CREATE_VIEW, (User) getUser( ) ) )
         {
             return AdminMessageService.getMessageUrlReturningTo( request, Messages.USER_ACCESS_DENIED, AdminMessage.TYPE_STOP, getJspManageViews( request ) );
@@ -305,7 +313,11 @@ public class ViewsJspBean extends PluginAdminPageJspBean
         UrlItem url = new UrlItem( JSP_URL_DO_REMOVE_VIEW );
         url.addParameter( ProfilesConstants.PARAMETER_VIEW_KEY, strViewKey );
 
-        return AdminMessageService.getMessageUrl( request, ProfilesConstants.MESSAGE_CONFIRM_REMOVE_VIEW, url.getUrl( ), AdminMessage.TYPE_CONFIRMATION );
+        // the confirmation posts the token to the action
+        Map<String, Object> parameters = new HashMap<>( );
+        parameters.put( SecurityTokenService.PARAMETER_TOKEN, getSecurityTokenService( ).getToken( request, ProfilesConstants.TOKEN_ACTION_ADMIN ) );
+
+        return AdminMessageService.getMessageUrl( request, ProfilesConstants.MESSAGE_CONFIRM_REMOVE_VIEW, url.getUrl( ), AdminMessage.TYPE_CONFIRMATION, parameters );
     }
 
     /**
@@ -315,8 +327,13 @@ public class ViewsJspBean extends PluginAdminPageJspBean
      *            The Http request
      * @return Html form
      */
-    public String doRemoveView( HttpServletRequest request )
+    public String doRemoveView( HttpServletRequest request ) throws AccessDeniedException
     {
+        if ( !getSecurityTokenService( ).validate( request, ProfilesConstants.TOKEN_ACTION_ADMIN ) )
+        {
+            throw new AccessDeniedException( ProfilesConstants.MESSAGE_INVALID_TOKEN );
+        }
+
         String strViewKey = request.getParameter( ProfilesConstants.PARAMETER_VIEW_KEY );
 
         if ( !RBACService.isAuthorized( View.RESOURCE_TYPE, strViewKey, ViewsResourceIdService.PERMISSION_DELETE_VIEW, (User) getUser( ) ) )
@@ -364,6 +381,7 @@ public class ViewsJspBean extends PluginAdminPageJspBean
         model.put( ProfilesConstants.MARK_ITEM_NAVIGATOR, _itemNavigators.get( ProfilesConstants.PARAMETER_MODIFY_VIEW ) );
         model.put( ProfilesConstants.MARK_PERMISSION, bPermission );
 
+        model.put( SecurityTokenService.MARK_TOKEN, getSecurityTokenService( ).getToken( request, ProfilesConstants.TOKEN_ACTION_ADMIN ) );
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_MODIFY_VIEW, getLocale( ), model );
 
         return getAdminPage( template.getHtml( ) );
@@ -376,8 +394,13 @@ public class ViewsJspBean extends PluginAdminPageJspBean
      *            The Http request
      * @return Html form
      */
-    public String doModifyView( HttpServletRequest request )
+    public String doModifyView( HttpServletRequest request ) throws AccessDeniedException
     {
+        if ( !getSecurityTokenService( ).validate( request, ProfilesConstants.TOKEN_ACTION_ADMIN ) )
+        {
+            throw new AccessDeniedException( ProfilesConstants.MESSAGE_INVALID_TOKEN );
+        }
+
         String strViewKey = request.getParameter( ProfilesConstants.PARAMETER_VIEW_KEY );
 
         if ( !RBACService.isAuthorized( View.RESOURCE_TYPE, strViewKey, ViewsResourceIdService.PERMISSION_MODIFY_VIEW, (User) getUser( ) ) )
@@ -539,6 +562,7 @@ public class ViewsJspBean extends PluginAdminPageJspBean
         model.put( ProfilesConstants.MARK_LOCALE, getUser( ).getLocale( ) );
         model.put( ProfilesConstants.MARK_SORT_SEARCH_ATTRIBUTE, strSortSearchAttribute );
 
+        model.put( SecurityTokenService.MARK_TOKEN, getSecurityTokenService( ).getToken( request, ProfilesConstants.TOKEN_ACTION_ADMIN ) );
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_ASSIGN_PROFILES_VIEW, getLocale( ), model );
 
         return getAdminPage( template.getHtml( ) );
@@ -551,8 +575,13 @@ public class ViewsJspBean extends PluginAdminPageJspBean
      *            The HTTP Request
      * @return The Jsp URL of the process result
      */
-    public String doAssignProfilesView( HttpServletRequest request )
+    public String doAssignProfilesView( HttpServletRequest request ) throws AccessDeniedException
     {
+        if ( !getSecurityTokenService( ).validate( request, ProfilesConstants.TOKEN_ACTION_ADMIN ) )
+        {
+            throw new AccessDeniedException( ProfilesConstants.MESSAGE_INVALID_TOKEN );
+        }
+
         String strReturn;
 
         String strActionCancel = request.getParameter( ProfilesConstants.PARAMETER_CANCEL );
@@ -611,8 +640,13 @@ public class ViewsJspBean extends PluginAdminPageJspBean
      *            The HttpRequest
      * @return the HTML code of list assignations
      */
-    public String doUnassignProfileView( HttpServletRequest request )
+    public String doUnassignProfileView( HttpServletRequest request ) throws AccessDeniedException
     {
+        if ( !getSecurityTokenService( ).validate( request, ProfilesConstants.TOKEN_ACTION_ADMIN ) )
+        {
+            throw new AccessDeniedException( ProfilesConstants.MESSAGE_INVALID_TOKEN );
+        }
+
         String strViewKey = request.getParameter( ProfilesConstants.PARAMETER_VIEW_KEY );
 
         if ( !RBACService.isAuthorized( View.RESOURCE_TYPE, strViewKey, ViewsResourceIdService.PERMISSION_MANAGE_PROFILES_ASSIGNMENT, (User) getUser( ) ) )
@@ -675,6 +709,7 @@ public class ViewsJspBean extends PluginAdminPageJspBean
         model.put( ProfilesConstants.MARK_PERMISSION, bPermission );
         model.put( ProfilesConstants.MARK_ITEM_NAVIGATOR, _itemNavigators.get( ProfilesConstants.PARAMETER_ASSIGN_DASHBOARD ) );
 
+        model.put( SecurityTokenService.MARK_TOKEN, getSecurityTokenService( ).getToken( request, ProfilesConstants.TOKEN_ACTION_ADMIN ) );
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_MANAGE_DASHBOARDS, getLocale( ), model );
 
         return getAdminPage( template.getHtml( ) );
@@ -687,8 +722,13 @@ public class ViewsJspBean extends PluginAdminPageJspBean
      *            the request
      * @return url
      */
-    public String doReorderColumn( HttpServletRequest request )
+    public String doReorderColumn( HttpServletRequest request ) throws AccessDeniedException
     {
+        if ( !getSecurityTokenService( ).validate( request, ProfilesConstants.TOKEN_ACTION_ADMIN ) )
+        {
+            throw new AccessDeniedException( ProfilesConstants.MESSAGE_INVALID_TOKEN );
+        }
+
         String strViewKey = request.getParameter( ProfilesConstants.PARAMETER_VIEW_KEY );
 
         if ( !RBACService.isAuthorized( View.RESOURCE_TYPE, strViewKey, ViewsResourceIdService.PERMISSION_MANAGE_DASHBOARDS, (User) getUser( ) ) )
@@ -731,8 +771,13 @@ public class ViewsJspBean extends PluginAdminPageJspBean
      *            the request
      * @return url
      */
-    public String doMoveDashboard( HttpServletRequest request )
+    public String doMoveDashboard( HttpServletRequest request ) throws AccessDeniedException
     {
+        if ( !getSecurityTokenService( ).validate( request, ProfilesConstants.TOKEN_ACTION_ADMIN ) )
+        {
+            throw new AccessDeniedException( ProfilesConstants.MESSAGE_INVALID_TOKEN );
+        }
+
         String strViewKey = request.getParameter( ProfilesConstants.PARAMETER_VIEW_KEY );
 
         if ( !RBACService.isAuthorized( View.RESOURCE_TYPE, strViewKey, ViewsResourceIdService.PERMISSION_MANAGE_DASHBOARDS, (User) getUser( ) ) )
@@ -809,8 +854,13 @@ public class ViewsJspBean extends PluginAdminPageJspBean
      *            the request
      * @return url
      */
-    public String doUnsetColumn( HttpServletRequest request )
+    public String doUnsetColumn( HttpServletRequest request ) throws AccessDeniedException
     {
+        if ( !getSecurityTokenService( ).validate( request, ProfilesConstants.TOKEN_ACTION_ADMIN ) )
+        {
+            throw new AccessDeniedException( ProfilesConstants.MESSAGE_INVALID_TOKEN );
+        }
+
         String strViewKey = request.getParameter( ProfilesConstants.PARAMETER_VIEW_KEY );
 
         if ( !RBACService.isAuthorized( View.RESOURCE_TYPE, strViewKey, ViewsResourceIdService.PERMISSION_MANAGE_DASHBOARDS, (User) getUser( ) ) )

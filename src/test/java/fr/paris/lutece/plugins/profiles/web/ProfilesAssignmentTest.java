@@ -33,6 +33,10 @@
  */
 package fr.paris.lutece.plugins.profiles.web;
 
+import jakarta.enterprise.inject.spi.CDI;
+import fr.paris.lutece.plugins.profiles.utils.constants.ProfilesConstants;
+import fr.paris.lutece.portal.service.security.SecurityTokenService;
+import fr.paris.lutece.portal.service.security.ISecurityTokenService;
 import java.util.Locale;
 import java.util.Map;
 
@@ -298,6 +302,9 @@ public class ProfilesAssignmentTest extends LuteceTestCase
         user.setRoles( Map.of( ROLE_KEY, new RBACRole( ROLE_KEY, ROLE_KEY ) ) );
         AdminUserUtils.registerAdminUserWithRight( request, user, ProfilesJspBean.RIGHT_MANAGE_PROFILES );
         _bean.init( request, ProfilesJspBean.RIGHT_MANAGE_PROFILES );
+        // the token the forms and confirmations of the plugin carry
+        request.setParameter( SecurityTokenService.PARAMETER_TOKEN,
+                CDI.current( ).select( ISecurityTokenService.class ).get( ).getToken( request, ProfilesConstants.TOKEN_ACTION_ADMIN ) );
 
         return request;
     }
